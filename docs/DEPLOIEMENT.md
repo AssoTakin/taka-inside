@@ -1,220 +1,220 @@
-# 🚀 Déploiement — Taka Inside
+# 🚀 Déploiement Taka Inside
 
-> **Architecture :** Vercel (frontend) + Railway (Strapi) + Supabase (PostgreSQL) + Stripe (paiements)
+## Architecture de déploiement
 
----
-
-## 1. Prérequis
-
-- Compte [Vercel](https://vercel.com) ✅ (Sam)
-- Compte [Railway](https://railway.app) ✅ (Sam)
-- Compte [Supabase](https://supabase.com) ✅ (Sam)
-- Compte [Stripe](https://stripe.com) ✅ (Sam)
-- Compte [GitHub](https://github.com) (à créer/connecter)
-
----
-
-## 2. Setup Supabase (Base de données)
-
-### 2.1 Créer un projet
-1. Aller sur [supabase.com](https://supabase.com)
-2. "New Project" → nommer `taka-inside-db`
-3. Choisir la région la plus proche : `West Europe (Frankfurt)` ou `South Africa (Johannesburg)`
-4. Mot de passe sécurisé → **noter dans un password manager**
-
-### 2.2 Récupérer les credentials
-Dans le dashboard Supabase → Settings → Database :
-- `DATABASE_URL` : copier l'URL de connexion (format `postgresql://postgres:PASSWORD@HOST:6543/postgres`)
-- Activer **Connection Pooler** (recommandé pour Strapi)
-
-### 2.3 Créer le bucket Storage (pour les médias)
-Supabase → Storage → New bucket :
-- Nom : `taka-media`
-- Public : ✅ Yes (images publiques)
-- Règle CORS : autoriser `*` (ou domaine Vercel futur)
-
----
-
-## 3. Setup Railway (Strapi Backend)
-
-### 3.1 Créer le service
-1. Aller sur [railway.app](https://railway.app)
-2. "New Project" → "Deploy from GitHub repo"
-3. Connecter le repo GitHub `sam/taka-inside`
-4. Sélectionner le dossier `/backend` comme root
-
-### 3.2 Variables d'environnement Railway
-Dans Railway → Variables :
-
-```bash
-# Database (depuis Supabase)
-DATABASE_CLIENT=postgres
-DATABASE_URL=postgresql://postgres:PASSWORD@db.xxx.supabase.co:6543/postgres?pgbouncer=true
-DATABASE_SSL=true
-DATABASE_SSL_REJECT_UNAUTHORIZED=false
-
-# Strapi
-APP_KEYS=clé1,clé2,clé3,clé4          # Générer : openssl rand -base64 16 (x4)
-API_TOKEN_SALT=xxx                      # openssl rand -base64 16
-ADMIN_JWT_SECRET=xxx                    # openssl rand -base64 16
-TRANSFER_TOKEN_SALT=xxx                 # openssl rand -base64 16
-JWT_SECRET=xxx                          # openssl rand -base64 16
-
-# Supabase Storage (optionnel si on utilise Supabase au lieu de local)
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_ANON_KEY=xxx
-SUPABASE_SERVICE_ROLE_KEY=xxx
-
-# Email (Resend)
-RESEND_API_KEY=re_xxx
-
-# Frontend (CORS)
-FRONTEND_URL=https://takainside.vercel.app
+```
+┌─────────────────────────────────────────────┐
+│                 Vercel                       │
+│          (Next.js Frontend)                   │
+│    https://takainside.vercel.app            │
+└──────────────┬──────────────────────────────┘
+               │ API REST
+┌──────────────▼──────────────────────────────┐
+│                 Railway                      │
+│         (Strapi Backend + API)               │
+│     https://takainside.up.railway.app        │
+└──────────────┬──────────────────────────────┘
+               │
+┌──────────────▼──────────────────────────────┐
+│              Supabase                        │
+│  • PostgreSQL (Database)                     │
+│  • Storage (Médias / Images)               │
+└─────────────────────────────────────────────┘
 ```
 
-### 3.3 Domaine Railway
-Railway génère un domaine auto : `https://taka-inside-production.up.railway.app`
-- Noter cette URL pour le frontend
+## Comptes nécessaires
+
+Tu dois avoir ou créer des comptes sur :
+
+1. **GitHub** — pour le repo et le CI/CD
+2. **Vercel** — pour le frontend Next.js
+3. **Railway** — pour le backend Strapi
+4. **Supabase** — pour PostgreSQL + Storage
+5. **Stripe** — pour les paiements par carte
+6. **PayPal** — pour les paiements PayPal (optionnel)
+7. **FedaPay** — pour Mobile Money (optionnel)
 
 ---
 
-## 4. Setup Vercel (Next.js Frontend)
-
-### 4.1 Créer le projet
-1. Aller sur [vercel.com](https://vercel.com)
-2. "Add New Project" → importer le repo GitHub
-3. Framework preset : Next.js
-4. Root directory : `/frontend`
-
-### 4.2 Variables d'environnement Vercel
-Dans Vercel → Project → Settings → Environment Variables :
+## Étape 1 : GitHub Repository
 
 ```bash
-# API Strapi (depuis Railway)
-NEXT_PUBLIC_STRAPI_API_URL=https://taka-inside-production.up.railway.app
-STRAPI_API_TOKEN=xxx                    # Créer dans Strapi admin → API Tokens
+# 1. Génère un Personal Access Token sur GitHub
+#    https://github.com/settings/tokens → Tokens (classic) → Generate
+#    Coche le scope "repo"
 
-# Paiements
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
-STRIPE_SECRET_KEY=sk_test_xxx
+# 2. Exécute le script de setup
+cd /root/taka-inside
+./scripts/setup-github.sh ghp_TON_TOKEN_ICI
 
-# WhatsApp
-NEXT_PUBLIC_WHATSAPP_NUMBER=2290756987473
+# Le script crée le repo et push tout le code.
+# Une fois fait, supprime le token pour la sécurité.
+```
 
-# Site
+## Étape 2 : Supabase (Database + Storage)
+
+1. Va sur https://supabase.com et crée un nouveau projet
+2. Nomme-le `taka-inside`
+3. Dans **Project Settings → Database**, copie la **Connection String** (mode session, pas transaction)
+4. Va dans **Storage → New bucket**, crée un bucket public nommé `taka-media`
+5. Note les credentials :
+   - `DATABASE_URL` (connection string)
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+
+## Étape 3 : Railway (Backend Strapi)
+
+1. Va sur https://railway.app
+2. Crée un nouveau projet → Deploy from GitHub repo
+3. Sélectionne `takainside`
+4. Dans **Variables**, ajoute :
+   ```
+   DATABASE_CLIENT=postgres
+   DATABASE_URL=postgres://postgres:****@db.****.supabase.co:5432/postgres
+   JWT_SECRET=un-truc-aleatoire-de-32-caracteres
+   ADMIN_JWT_SECRET=un-autre-truc-aleatoire
+   APP_KEYS=cle1,cle2,cle3,cle4
+   API_TOKEN_SALT=un-salt-aleatoire
+   TRANSFER_TOKEN_SALT=un-autre-salt
+   ```
+5. Railway déploie automatiquement à chaque push sur `main`
+
+## Étape 4 : Vercel (Frontend)
+
+1. Va sur https://vercel.com/new
+2. Importe le repo GitHub `takainside`
+3. Framework preset : **Next.js**
+4. Root directory : `frontend/`
+5. Dans **Environment Variables**, ajoute :
+   ```
+   NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
+   NEXT_PUBLIC_SITE_URL=https://takainside.vercel.app
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   STRIPE_SECRET_KEY=*** PAYPAL_CLIENT_ID=...
+   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...
+   ```
+6. Déploie ! Vercel donne une URL `.vercel.app`
+7. Configure un domaine personnalisé si tu en as un
+
+## Étape 5 : Stripe (Paiements)
+
+1. Va sur https://dashboard.stripe.com
+2. Active le mode test d'abord pour tester
+3. Dans **Developers → API keys**, copie :
+   - `Publishable key` → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+   - `Secret key` → `STRIPE_SECRET_KEY`
+4. Ajoute un webhook pour `payment_intent.succeeded` pointant vers :
+   ```
+   https://takainside.vercel.app/api/webhooks/stripe
+   ```
+   (cette route n'existe pas encore mais peut être ajoutée)
+5. Pour la production, bascule vers les clés live
+
+## Étape 6 : PayPal
+
+1. Crée un compte développeur sur https://developer.paypal.com
+2. Crée une app dans le **Sandbox**
+3. Copie :
+   - `Client ID` → `NEXT_PUBLIC_PAYPAL_CLIENT_ID`
+   - `Secret` → `PAYPAL_SECRET`
+4. Pour la production, crée une app live dans le dashboard PayPal business
+
+## Étape 7 : FedaPay (Mobile Money)
+
+1. Crée un compte sur https://fedapay.com
+2. Configure ta clé API
+3. Mets à jour le lien de redirection dans `frontend/src/app/faire-un-don/page.tsx`
+4. Ou intègre leur SDK pour un flux natif
+
+## Étape 8 : GitHub Secrets (CI/CD)
+
+Dans les **Settings → Secrets → Actions** du repo GitHub, ajoute :
+
+```
+VERCEL_TOKEN=...
+VERCEL_ORG_ID=...
+VERCEL_PROJECT_ID=...
+RAILWAY_TOKEN=...
+NEXT_PUBLIC_STRAPI_API_URL=...
+STRIPE_SECRET_KEY=...
+PAYPAL_SECRET=...
+```
+
+> ℹ️ Les `VERCEL_ORG_ID` et `VERCEL_PROJECT_ID` se trouvent dans le fichier `.vercel/project.json` après avoir linké le projet via `vercel link`.
+
+---
+
+## Variables d'environnement récapitulatif
+
+### Frontend (.env.local)
+```
+NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
 NEXT_PUBLIC_SITE_URL=https://takainside.vercel.app
-
-# Supabase (Storage public)
-NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=*** PAYPAL_CLIENT_ID=...
+PAYPAL_SECRET=...
 ```
 
-### 4.3 Domaine custom (optionnel)
-Si Taka Inside a un domaine (ex: `takainside.org`) :
-- Vercel → Domains → Add `takainside.org`
-- Configurer DNS chez le registrar : CNAME → `cname.vercel-dns.com`
+### Backend (Railway Variables)
+```
+DATABASE_CLIENT=postgres
+DATABASE_URL=postgres://...
+JWT_SECRET=...
+ADMIN_JWT_SECRET=...
+APP_KEYS=...
+API_TOKEN_SALT=...
+TRANSFER_TOKEN_SALT=...
+```
 
 ---
 
-## 5. Stripe (Paiements)
+## Post-déploiement
 
-### 5.1 Configuration
-1. [Stripe Dashboard](https://dashboard.stripe.com)
-2. Activer **Test mode** pour le dev
-3. Récupérer les clés API → copier dans Vercel env vars
+1. **Accède au Strapi Admin** : `https://takainside.up.railway.app/admin`
+   - Crée un compte admin
+   - Ajoute des contenus (projets, artistes, produits)
 
-### 5.2 Webhooks Stripe
-Stripe → Developers → Webhooks → Add endpoint :
-- URL : `https://takainside.vercel.app/api/stripe/webhook`
-- Events à écouter :
-  - `checkout.session.completed`
-  - `payment_intent.succeeded`
-  - `invoice.payment_failed`
+2. **Teste les paiements** :
+   - Stripe : utilise la carte test `4242 4242 4242 4242`
+   - PayPal : utilise un compte sandbox
+   - FedaPay : test avec un vrai numéro MTN/Moov en mode test
 
-### 5.3 Produits Stripe
-Stripe → Products → Create :
-- "Don 5000 FCFA" → Price : 5000 XOF
-- "Don 10000 FCFA" → Price : 10000 XOF
-- "Album Gbévi" → Price : 3500 XOF
-- etc.
+3. **Vérifie le SEO** :
+   - Sitemap : `https://takainside.vercel.app/sitemap.xml`
+   - Robots : `https://takainside.vercel.app/robots.txt`
+
+4. **WhatsApp** : le bouton flottant fonctionne déjà avec le numéro configuré.
 
 ---
 
-## 6. PayPal (Optionnel)
+## Dépannage
 
-1. [PayPal Developer](https://developer.paypal.com)
-2. Créer une app → récupérer `Client ID` et `Secret`
-3. Ajouter à Vercel env vars :
-   ```
-   NEXT_PUBLIC_PAYPAL_CLIENT_ID=xxx
-   PAYPAL_SECRET=xxx
-   ```
-
----
-
-## 7. FedaPay (Mobile Money Bénin)
-
-1. [FedaPay Dashboard](https://fedapay.com)
-2. Récupérer clé API
-3. Ajouter à Vercel :
-   ```
-   FEDAPAY_SECRET_KEY=xxx
-   FEDAPAY_PUBLIC_KEY=xxx
-   ```
+| Problème | Solution |
+|----------|----------|
+| "Stripe non configuré" | Vérifie `STRIPE_SECRET_KEY` et `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` |
+| "PayPal non configuré" | Vérifie `PAYPAL_CLIENT_ID` et `PAYPAL_SECRET` |
+| Le build échoue | Vérifie les variables d'environnement requises |
+| Strapi ne démarre pas | Vérifie `DATABASE_URL` et que Supabase est accessible |
+| Images ne chargent pas | Vérifie la config `images.remotePatterns` dans `next.config.ts` |
 
 ---
 
-## 8. CI/CD (Automatique)
-
-### 8.1 GitHub Actions
-Les fichiers `.github/workflows/` dans le repo déclenchent :
-- **Push sur `main`** → Vercel auto-deploy + Railway auto-deploy
-- **Pull Request** → Preview deploy Vercel + tests
-
-### 8.2 Fichiers de workflow
-
-#### `frontend-ci.yml` (déjà créé dans `.github/workflows/`)
-#### `backend-ci.yml` (déjà créé dans `.github/workflows/`)
-
----
-
-## 9. Vérification Post-Déploiement
-
-### Checklist
-
-- [ ] Frontend Vercel accessible → `https://takainside.vercel.app`
-- [ ] Backend Strapi accessible → `https://taka-inside-production.up.railway.app/admin`
-- [ ] API Strapi répond → `/api/projets` retourne JSON
-- [ ] Base de données connectée → Strapi admin fonctionne
-- [ ] Images uploadables → Supabase Storage accessible
-- [ ] Stripe checkout fonctionne → test payment en mode test
-- [ ] Emails envoyés → Resend API OK
-- [ ] WhatsApp button → lien correct `wa.me/2290756987473`
-
----
-
-## 10. Commandes Utiles
+## Commandes utiles
 
 ```bash
-# Démarrer dev local
-docker-compose up
+# Build local
+npm run build
 
-# Démarrer Strapi seul
-cd backend && npm run develop
+# Lancer en dev
+npm run dev
 
-# Démarrer Next.js seul
-cd frontend && npm run dev
+# Lint
+npm run lint
 
-# Créer un admin Strapi
-cd backend && npx strapi admin:create-user
-
-# Générer des clés sécurisées
-openssl rand -base64 16
-
-# Export schema Strapi (backup)
-cd backend && npx strapi export --file backup
+# Vérifier les types TypeScript
+npx tsc --noEmit
 ```
 
 ---
 
-*Déploiement v1.0 — Prêt pour la mise en production*
+**Prêt à déployer !** 🚀
