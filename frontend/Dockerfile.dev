@@ -1,0 +1,17 @@
+# Frontend Dockerfile (Next.js 14 dev mode with hot reload)
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Expose Next.js dev port
+EXPOSE 3000
+
+# Hot reload env
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+CMD ["npm", "run", "dev"]
