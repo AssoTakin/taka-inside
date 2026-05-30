@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-taka-black: #0A0A0A;
+  --color-taka-cream: #F5F3EF;
+  --color-taka-gray: #8A8A8A;
+  --color-taka-gray-light: #E8E6E2;
+  --color-taka-yellow: #E5B800;
+  --color-taka-red: #C41E3A;
+  --color-taka-green: #1B8A3A;
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F5F3EF;
+  color: #0A0A0A;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Typography */
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* Rasta line decoration */
+.rasta-line {
+  background: linear-gradient(90deg, #1B8A3A 33%, #E5B800 33%, #E5B800 66%, #C41E3A 66%);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+  background-color: #E5B800;
+  color: #0A0A0A;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid #E5B800;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F3EF;
+}
+::-webkit-scrollbar-thumb {
+  background: #8A8A8A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0A0A0A;
 }
