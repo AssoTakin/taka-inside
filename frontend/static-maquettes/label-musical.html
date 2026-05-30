@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Label Musical — Taka Inside</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            taka: {
+              yellow: '#F2C94C',
+              red: '#D93025',
+              green: '#27AE60',
+              black: '#1A1A1A',
+              white: '#FAFAFA',
+              gray: '#6B7280',
+              lightgray: '#F3F4F6',
+            }
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            accent: ['"DM Serif Display"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .font-accent { font-family: 'DM Serif Display', serif; }
+    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .rasta-stripe { background: linear-gradient(90deg, #F2C94C 33%, #D93025 33%, #D93025 66%, #27AE60 66%); }
+    .btn-primary { background-color: #27AE60; color: white; transition: all 0.3s ease; }
+    .btn-primary:hover { background-color: #219A52; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(39,174,96,0.3); }
+    .btn-secondary { background-color: #F2C94C; color: #1A1A1A; transition: all 0.3s ease; }
+    .btn-secondary:hover { background-color: #E5B83B; transform: translateY(-2px); }
+    .artist-card:hover .artist-overlay { opacity: 1; }
+    .artist-card:hover img { transform: scale(1.05); }
+  </style>
+</head>
+<body class="font-body bg-taka-white text-taka-black antialiased">
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/2290756987473" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center gap-2" aria-label="WhatsApp">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+          <span class="font-display font-bold text-xl">Taka Inside</span>
+        </a>
+        <nav class="hidden lg:flex items-center gap-8">
+          <a href="index.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</a>
+          <a href="projets.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Nos Projets</a>
+          <a href="label-musical.html" class="text-sm font-medium text-taka-yellow">Label Musical</a>
+          <a href="boutique.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Boutique</a>
+          <a href="" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Devenir Bénévole</a>
+          <a href="" class="text-sm font-medium text-taka-yellow bg-taka-yellow/10 px-4 py-2 rounded-lg">Faire un Don</a>
+        </nav>
+        <button id="menuBtn" class="lg:hidden p-2 rounded-lg hover:bg-white/10">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Label -->
+  <section class="relative bg-taka-black text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-30">
+      <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=1920&q=80" alt="" class="w-full h-full object-cover" aria-hidden="true">
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/20 text-taka-red text-sm font-medium mb-6">
+          <span class="w-2 h-2 rounded-full bg-taka-red animate-pulse"></span>
+          Label Musical
+        </div>
+        <h1 class="font-display text-4xl md:text-6xl font-bold mb-6">
+          Taka <span class="font-accent text-taka-yellow">Inside</span> Records
+        </h1>
+        <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl">
+          Notre label musical déniche, accompagne et produit les talents de la scène béninoise. De l'afrobeat au traditionnel, en passant par le jazz fusion — nous croyons en la diversité musicale.
+        </p>
+        <div class="flex flex-wrap gap-6 mb-8">
+          <div class="text-center">
+            <p class="font-display text-3xl font-bold text-taka-yellow">5+</p>
+            <p class="text-gray-400 text-sm">Artistes signés</p>
+          </div>
+          <div class="text-center">
+            <p class="font-display text-3xl font-bold text-taka-red">12</p>
+            <p class="text-gray-400 text-sm">Albums produits</p>
+          </div>
+          <div class="text-center">
+            <p class="font-display text-3xl font-bold text-taka-green">50K+</p>
+            <p class="text-gray-400 text-sm">Streams</p>
+          </div>
+        </div>
+        <a href="boutique.html" class="btn-secondary px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-2">
+          Écouter / Acheter
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophie -->
+  <section class="py-16 md:py-24 bg-taka-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="text-taka-red font-semibold text-sm uppercase tracking-wider mb-3">Notre Philosophie</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold mb-6">
+            Plus qu'un label, une <span class="font-accent text-taka-yellow">famille</span>
+          </h2>
+          <p class="text-gray-600 text-lg leading-relaxed mb-6">
+            Chez Taka Inside Records, nous ne signons pas des contrats — nous tissons des liens. Chaque artiste est accompagné dans sa création, sa production et sa diffusion avec une vision à long terme.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-taka-yellow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold">Production sur mesure</p>
+                <p class="text-gray-500 text-sm">Studio mobile, producteurs expérimentés, approche artisanale</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-taka-red/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-taka-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v3c-1.168 1.232-3.168 2.496-6.168 2.496H9.5"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold">Distribution globale</p>
+                <p class="text-gray-500 text-sm">Spotify, Apple Music, Deezer, Boomplay, et nos plateformes partenaires africaines</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-taka-green/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold">Accompagnement complet</p>
+                <p class="text-gray-500 text-sm">Mentorat artistique, gestion de carrière, booking concerts</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="relative">
+          <div class="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80" alt="Studio Taka Inside" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-taka-red rounded-2xl -z-10"></div>
+          <div class="absolute -top-6 -right-6 w-24 h-24 bg-taka-yellow rounded-full -z-10"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nos Artistes -->
+  <section class="py-16 md:py-24 bg-taka-lightgray">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">Nos Artistes</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold">Découvrez nos <span class="text-taka-yellow">talents</span></h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Artiste 1 -->
+        <article class="artist-card bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer">
+          <div class="aspect-[4/5] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1493225257124-a3eb161ffa5f?w=600&q=80" alt="Tomiwa Kéfil" class="w-full h-full object-cover transition-transform duration-700">
+            <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent opacity-80 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <p class="text-taka-yellow text-sm font-medium mb-1">Afrobeat · World</p>
+              <h3 class="font-display text-2xl font-bold text-white">Tomiwa Kéfil</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4">Chanteur et auteur-compositeur, fusionne les rythmes traditionnels du Bénin avec l'afrobeat contemporain.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">2 albums</span>
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">15K streams</span>
+              </div>
+              <a href="boutique.html" class="text-taka-green font-semibold text-sm hover:underline">Écouter →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Artiste 2 -->
+        <article class="artist-card bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer">
+          <div class="aspect-[4/5] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=600&q=80" alt="Ami Sêdjro" class="w-full h-full object-cover transition-transform duration-700">
+            <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent opacity-80 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <p class="text-taka-yellow text-sm font-medium mb-1">Traditionnel · Jazz</p>
+              <h3 class="font-display text-2xl font-bold text-white">Ami Sêdjro</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4">Vocaliste et percussionniste, porte-voix des traditions vodun et des mélodies ancestrales du Sud-Bénin.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">1 album</span>
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">8K streams</span>
+              </div>
+              <a href="boutique.html" class="text-taka-green font-semibold text-sm hover:underline">Écouter →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Artiste 3 -->
+        <article class="artist-card bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer">
+          <div class="aspect-[4/5] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80" alt="DJ Gbèto" class="w-full h-full object-cover transition-transform duration-700">
+            <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent opacity-80 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <p class="text-taka-yellow text-sm font-medium mb-1">Électro · Afro-House</p>
+              <h3 class="font-display text-2xl font-bold text-white">DJ Gbèto</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4">Producteur et DJ, pionnier de l'afro-house béninoise. Mixe tradition et électro pour des sets explosifs.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">3 EPs</span>
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">22K streams</span>
+              </div>
+              <a href="boutique.html" class="text-taka-green font-semibold text-sm hover:underline">Écouter →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Artiste 4 -->
+        <article class="artist-card bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer">
+          <div class="aspect-[4/5] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=600&q=80" alt="Les Sœurs Dah" class="w-full h-full object-cover transition-transform duration-700">
+            <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent opacity-80 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <p class="text-taka-yellow text-sm font-medium mb-1">Gospel · Soul</p>
+              <h3 class="font-display text-2xl font-bold text-white">Les Sœurs Dah</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4">Trio vocal féminin alliant harmonies gospel et mélodies soul. Voix puissantes et message d'espoir.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">2 albums</span>
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">12K streams</span>
+              </div>
+              <a href="boutique.html" class="text-taka-green font-semibold text-sm hover:underline">Écouter →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Artiste 5 -->
+        <article class="artist-card bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer">
+          <div class="aspect-[4/5] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Kossi B" class="w-full h-full object-cover transition-transform duration-700">
+            <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent opacity-80 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <p class="text-taka-yellow text-sm font-medium mb-1">Hip-Hop · Conscious</p>
+              <h3 class="font-display text-2xl font-bold text-white">Kossi B</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4">Rappeur engagé, porte-parole de la jeunesse béninoise. Textes percutants sur la société, l'identité et l'avenir.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">3 mixtapes</span>
+                <span class="text-xs bg-taka-lightgray px-2 py-1 rounded">18K streams</span>
+              </div>
+              <a href="boutique.html" class="text-taka-green font-semibold text-sm hover:underline">Écouter →</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- CTA Rejoindre -->
+        <article class="bg-taka-black rounded-2xl overflow-hidden shadow-lg flex flex-col justify-center items-center p-8 text-center">
+          <div class="w-16 h-16 rounded-full bg-taka-yellow/20 flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-white mb-2">Vous êtes artiste ?</h3>
+          <p class="text-gray-400 text-sm mb-6">Envoyez-nous votre dossier. On étudie toutes les propositions avec passion.</p>
+          <a href="" class="btn-secondary px-6 py-3 rounded-xl font-semibold">Postuler au label</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Dernière sortie -->
+  <section class="py-16 md:py-24 bg-taka-black text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="text-taka-yellow font-semibold text-sm uppercase tracking-wider mb-3">Dernière sortie</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Gbévi — Tomiwa Kéfil</h2>
+          <p class="text-gray-400 mb-6">Son nouvel album explore les racines gèn du Bénin à travers 12 titres oscillant entre afrobeat pur et expérimentations électroniques.</p>
+
+          <!-- Lecteur -->
+          <div class="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 mb-6">
+            <div class="flex items-center gap-4 mb-4">
+              <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100&q=80" alt="Pochette" class="w-16 h-16 rounded-xl object-cover">
+              <div>
+                <p class="font-semibold">Gbévi</p>
+                <p class="text-gray-400 text-sm">Tomiwa Kéfil · Single</p>
+              </div>
+              <button class="w-12 h-12 rounded-full bg-taka-green flex items-center justify-center ml-auto hover:scale-105 transition-transform">
+                <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="flex items-end gap-1 h-8 mb-3">
+              <div class="w-1 bg-taka-yellow rounded-full h-3"></div>
+              <div class="w-1 bg-taka-red rounded-full h-6"></div>
+              <div class="w-1 bg-taka-green rounded-full h-4"></div>
+              <div class="w-1 bg-taka-yellow rounded-full h-8"></div>
+              <div class="w-1 bg-taka-red rounded-full h-5"></div>
+              <div class="w-1 bg-taka-green rounded-full h-7"></div>
+              <div class="w-1 bg-taka-yellow rounded-full h-4"></div>
+              <div class="w-1 bg-taka-red rounded-full h-6"></div>
+              <div class="w-1 bg-taka-green rounded-full h-3"></div>
+              <div class="w-1 bg-taka-yellow rounded-full h-5"></div>
+              <div class="w-1 bg-taka-red rounded-full h-8"></div>
+              <div class="w-1 bg-taka-green rounded-full h-4"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>01:24</span>
+              <span>03:45</span>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <a href="boutique.html" class="btn-primary px-6 py-3 rounded-xl font-semibold">Acheter l'album — 3 500 FCFA</a>
+            <a href="" class="px-6 py-3 rounded-xl font-semibold border border-white/20 hover:bg-white/10 transition-colors">
+              <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Voir sur YouTube
+            </a>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="aspect-square rounded-2xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&q=80" alt="Album Gbévi" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -bottom-4 -left-4 bg-taka-yellow text-taka-black px-4 py-2 rounded-lg font-bold shadow-lg">
+            🎵 Nouveauté
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+            <span class="font-display font-bold text-xl">Taka Inside</span>
+          </div>
+          <p class="text-gray-400 text-sm">L'art au service de l'humain.</p>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Navigation</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="index.html" class="hover:text-taka-yellow">Accueil</a></li>
+            <li><a href="projets.html" class="hover:text-taka-yellow">Nos Projets</a></li>
+            <li><a href="label-musical.html" class="hover:text-taka-yellow">Label Musical</a></li>
+            <li><a href="boutique.html" class="hover:text-taka-yellow">Boutique</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Informations</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="" class="hover:text-taka-yellow">Mentions Légales</a></li>
+            <li><a href="" class="hover:text-taka-yellow">Politique de Confidentialité</a></li>
+            <li><a href="" class="hover:text-taka-yellow">CGV</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Contact</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>contact@takainside.org</li>
+            <li>+229 07 56 98 74 73</li>
+            <li>Cotonou, Bénin</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm text-gray-500">© 2024 Taka Inside. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

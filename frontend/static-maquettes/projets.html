@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nos Projets — Taka Inside</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            taka: {
+              yellow: '#F2C94C',
+              red: '#D93025',
+              green: '#27AE60',
+              black: '#1A1A1A',
+              white: '#FAFAFA',
+              gray: '#6B7280',
+              lightgray: '#F3F4F6',
+            }
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            accent: ['"DM Serif Display"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .font-accent { font-family: 'DM Serif Display', serif; }
+    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .rasta-stripe { background: linear-gradient(90deg, #F2C94C 33%, #D93025 33%, #D93025 66%, #27AE60 66%); }
+    .btn-primary { background-color: #27AE60; color: white; transition: all 0.3s ease; }
+    .btn-primary:hover { background-color: #219A52; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(39,174,96,0.3); }
+    .badge-en-cours { background: #27AE60; }
+    .badge-urgent { background: #D93025; }
+    .badge-a-venir { background: #F2C94C; color: #1A1A1A; }
+    .badge-termine { background: #6B7280; }
+  </style>
+</head>
+<body class="font-body bg-taka-white text-taka-black antialiased">
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/2290756987473" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center gap-2" aria-label="Contacter via WhatsApp">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    <span class="hidden md:inline font-medium">WhatsApp</span>
+  </a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+          <span class="font-display font-bold text-xl tracking-tight">Taka Inside</span>
+        </a>
+        <nav class="hidden lg:flex items-center gap-8">
+          <a href="index.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</a>
+          <a href="projets.html" class="text-sm font-medium text-taka-yellow">Nos Projets</a>
+          <a href="label-musical.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Label Musical</a>
+          <a href="boutique.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Boutique</a>
+          <a href="" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Devenir Bénévole</a>
+          <a href="" class="text-sm font-medium text-taka-yellow bg-taka-yellow/10 px-4 py-2 rounded-lg">Faire un Don</a>
+        </nav>
+        <button id="menuBtn" class="lg:hidden p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Page -->
+  <section class="bg-taka-black text-white py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-taka-yellow font-semibold text-sm uppercase tracking-wider mb-3">Nos Projets</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Découvrez nos <span class="text-taka-yellow">actions</span></h1>
+      <p class="text-gray-400 text-lg max-w-2xl">De la radio communautaire aux festivals culturels, en passant par l'accompagnement des jeunes talents — voici comment nous mettons l'art au service de l'humain.</p>
+    </div>
+  </section>
+
+  <!-- Filtres -->
+  <section class="bg-white border-b sticky top-[65px] z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-sm font-medium text-gray-500 mr-2">Filtrer :</span>
+        <button class="px-4 py-2 rounded-lg bg-taka-black text-white text-sm font-medium">Tous</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors">En cours</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors">À venir</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors">Terminés</button>
+        <button class="px-4 py-2 rounded-lg bg-taka-red/10 text-taka-red text-sm font-medium hover:bg-taka-red/20 transition-colors">Urgents</button>
+        <div class="ml-auto relative">
+          <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Rechercher un projet..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-taka-green">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grille Projets -->
+  <section class="py-12 md:py-16 bg-taka-lightgray">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Projet 1 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=600&q=80" alt="MIBRADIO" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-en-cours text-white text-xs font-semibold px-3 py-1 rounded-full">En cours</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-taka-green text-xs font-semibold uppercase tracking-wider mb-2">Radio · Média</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Made In Bénin Radio (MIBRADIO)</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Web radio dédiée à la promotion de la musique béninoise et africaine. Écoutez en direct 24/7.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Cotonou, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projet 2 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1516280440614-6697288d5d38?w=600&q=80" alt="Festival" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-a-venir text-xs font-semibold px-3 py-1 rounded-full">À venir</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-taka-red text-xs font-semibold uppercase tracking-wider mb-2">Festival · Événement</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Taka Culture Festival 2024</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Grand festival culturel annuel réunissant artistes, artisans et passionnés pour célébrer nos traditions.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Porto-Novo, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projet 3 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=600&q=80" alt="Atelier" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-urgent text-white text-xs font-semibold px-3 py-1 rounded-full">Urgent</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-taka-yellow text-xs font-semibold uppercase tracking-wider mb-2">Éducation · Social</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Ateliers Jeunes Talents</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Programme d'accompagnement des jeunes artistes — formation, mentorat et première scène.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Cotonou, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projet 4 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80" alt="Studio" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-en-cours text-white text-xs font-semibold px-3 py-1 rounded-full">En cours</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-taka-green text-xs font-semibold uppercase tracking-wider mb-2">Musique · Production</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Studio d'Enregistrement Mobile</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Studio itinérant pour enregistrer les artistes dans leur environnement — authenticité et proximité.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Itinérant, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projet 5 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" alt="Forum" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-termine text-white text-xs font-semibold px-3 py-1 rounded-full">Terminé</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Forum · Réseau</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Forum des Arts Bénin 2023</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Rencontre annuelle des acteurs culturels béninois pour échanger, former et tisser des partenariats.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Cotonou, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projet 6 -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group cursor-pointer">
+          <div class="aspect-[16/10] overflow-hidden relative">
+            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80" alt="Concert solidaire" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-4 left-4">
+              <span class="badge-en-cours text-white text-xs font-semibold px-3 py-1 rounded-full">En cours</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-taka-yellow text-xs font-semibold uppercase tracking-wider mb-2">Concert · Social</p>
+            <h3 class="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">Concerts Solidaires Saison 2</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Série de concerts dont les bénéfices financent des projets éducatifs dans les communautés rurales.</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-500">📍 Multisites, Bénin</span>
+              <span class="text-taka-green font-semibold">En savoir plus →</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center mt-12">
+        <div class="flex gap-2">
+          <button class="w-10 h-10 rounded-lg bg-taka-black text-white flex items-center justify-center hover:bg-taka-green transition-colors">1</button>
+          <button class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">2</button>
+          <button class="w-10 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">3</button>
+          <span class="w-10 h-10 flex items-center justify-center text-gray-400">...</span>
+          <button class="px-4 h-10 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">Suivant →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer (simplifié) -->
+  <footer class="bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+            <span class="font-display font-bold text-xl">Taka Inside</span>
+          </div>
+          <p class="text-gray-400 text-sm">L'art au service de l'humain.</p>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Navigation</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="index.html" class="hover:text-taka-yellow">Accueil</a></li>
+            <li><a href="projets.html" class="hover:text-taka-yellow">Nos Projets</a></li>
+            <li><a href="label-musical.html" class="hover:text-taka-yellow">Label Musical</a></li>
+            <li><a href="boutique.html" class="hover:text-taka-yellow">Boutique</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Informations</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="" class="hover:text-taka-yellow">Mentions Légales</a></li>
+            <li><a href="" class="hover:text-taka-yellow">Politique de Confidentialité</a></li>
+            <li><a href="" class="hover:text-taka-yellow">CGV</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold mb-4">Contact</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>contact@takainside.org</li>
+            <li>+229 07 56 98 74 73</li>
+            <li>Cotonou, Bénin</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-8 text-center">
+        <p class="text-sm text-gray-500">© 2024 Taka Inside. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      alert('Menu mobile — intégration React à venir');
+    });
+  </script>
+
+</body>
+</html>

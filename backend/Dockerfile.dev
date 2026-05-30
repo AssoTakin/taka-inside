@@ -1,17 +1,18 @@
-# Backend Dockerfile (Strapi v5 dev mode)
+# Backend Dockerfile for Taka Inside Strapi v5
 FROM node:20-alpine
 
 WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Expose Strapi port
+# Copy source
+COPY . .
+
+# Build
+RUN npm run build
+
 EXPOSE 1337
-
-# Hot reload env
-ENV CHOKIDAR_USEPOLLING=true
-ENV WATCHPACK_POLLING=true
 
 CMD ["npm", "run", "develop"]

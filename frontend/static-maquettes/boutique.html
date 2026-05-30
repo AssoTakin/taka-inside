@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique — Taka Inside</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            taka: {
+              yellow: '#F2C94C',
+              red: '#D93025',
+              green: '#27AE60',
+              black: '#1A1A1A',
+              white: '#FAFAFA',
+              gray: '#6B7280',
+              lightgray: '#F3F4F6',
+            }
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .rasta-stripe { background: linear-gradient(90deg, #F2C94C 33%, #D93025 33%, #D93025 66%, #27AE60 66%); }
+    .btn-primary { background-color: #27AE60; color: white; transition: all 0.3s ease; }
+    .btn-primary:hover { background-color: #219A52; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(39,174,96,0.3); }
+    .badge-ticket { background: #D93025; }
+    .badge-album { background: #27AE60; }
+  </style>
+</head>
+<body class="font-body bg-taka-white text-taka-black antialiased">
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/2290756987473" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center gap-2" aria-label="WhatsApp">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+          <span class="font-display font-bold text-xl">Taka Inside</span>
+        </a>
+        <nav class="hidden lg:flex items-center gap-8">
+          <a href="index.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</a>
+          <a href="projets.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Nos Projets</a>
+          <a href="label-musical.html" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Label Musical</a>
+          <a href="boutique.html" class="text-sm font-medium text-taka-yellow">Boutique</a>
+          <a href="" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Devenir Bénévole</a>
+          <a href="" class="text-sm font-medium text-taka-yellow bg-taka-yellow/10 px-4 py-2 rounded-lg">Faire un Don</a>
+        </nav>
+        <!-- Panier -->
+        <div class="flex items-center gap-4">
+          <button class="relative p-2 hover:bg-white/10 rounded-lg transition-colors" aria-label="Panier">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-taka-red text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+          </button>
+          <button id="menuBtn" class="lg:hidden p-2 rounded-lg hover:bg-white/10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Page -->
+  <section class="bg-taka-black text-white py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-taka-yellow font-semibold text-sm uppercase tracking-wider mb-3">Boutique</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Soutenez-nous en <span class="text-taka-yellow">achetant</span></h1>
+      <p class="text-gray-400 text-lg max-w-2xl">Tickets de concerts, albums numériques, merchandising — chaque achat contribue directement au financement de nos projets culturels.</p>
+    </div>
+  </section>
+
+  <!-- Filtres -->
+  <section class="bg-white border-b sticky top-[65px] z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-sm font-medium text-gray-500 mr-2">Filtrer :</span>
+        <button class="px-4 py-2 rounded-lg bg-taka-black text-white text-sm font-medium">Tous</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200">🎫 Tickets</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200">🎵 Albums</button>
+        <button class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200">👕 Merch</button>
+        <div class="ml-auto flex gap-2">
+          <div class="relative">
+            <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-taka-green">
+          </div>
+          <button class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grille Produits -->
+  <section class="py-12 md:py-16 bg-taka-lightgray">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+        <!-- Produit 1 : Ticket -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1514525253440-b393452e8d26?w=400&q=80" alt="Ticket concert" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="badge-ticket text-white text-xs font-semibold px-3 py-1 rounded-full">Ticket</span>
+            </div>
+            <div class="absolute top-3 right-3">
+              <span class="bg-taka-yellow text-taka-black text-xs font-bold px-2 py-1 rounded">-20%</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">Concert Solidaire — Cotonou</h3>
+            <p class="text-gray-500 text-sm mb-3">15 Juin 2024 · Stade de l'Amitié</p>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-taka-red font-bold text-lg">4 000 FCFA</p>
+                <p class="text-gray-400 text-xs line-through">5 000 FCFA</p>
+              </div>
+              <button class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Ajouter</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Produit 2 : Album -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=400&q=80" alt="Album" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="badge-album text-white text-xs font-semibold px-3 py-1 rounded-full">Album</span>
+            </div>
+            <!-- Lecteur extrait overlay -->
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-taka-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="flex items-center gap-3">
+                <button class="w-10 h-10 rounded-full bg-taka-green flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <span class="text-white text-sm">Écouter l'extrait</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">Gbévi — Tomiwa Kéfil</h3>
+            <p class="text-gray-500 text-sm mb-3">Afrobeat · 12 titres · 2024</p>
+            <div class="flex items-center justify-between">
+              <p class="text-taka-green font-bold text-lg">3 500 FCFA</p>
+              <button class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Ajouter</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Produit 3 : Ticket -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&q=80" alt="Ticket" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="badge-ticket text-white text-xs font-semibold px-3 py-1 rounded-full">Ticket</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">Taka Culture Festival 2024</h3>
+            <p class="text-gray-500 text-sm mb-3">20 Août 2024 · Place de l'Indépendance</p>
+            <div class="flex items-center justify-between">
+              <p class="text-taka-green font-bold text-lg">8 000 FCFA</p>
+              <button class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Ajouter</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Produit 4 : Album -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1493225257124-a3eb161ffa5f?w=400&q=80" alt="Album" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="badge-album text-white text-xs font-semibold px-3 py-1 rounded-full">Album</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-taka-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="flex items-center gap-3">
+                <button class="w-10 h-10 rounded-full bg-taka-green flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <span class="text-white text-sm">Écouter l'extrait</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">Vodun Groove — Ami Sêdjro</h3>
+            <p class="text-gray-500 text-sm mb-3">Traditionnel · 8 titres · 2023</p>
+            <div class="flex items-center justify-between">
+              <p class="text-taka-green font-bold text-lg">2 500 FCFA</p>
+              <button class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Ajouter</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Produit 5 : Merch -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80" alt="T-shirt" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="bg-taka-black text-white text-xs font-semibold px-3 py-1 rounded-full">Merch</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">T-shirt Taka Inside Logo</h3>
+            <p class="text-gray-500 text-sm mb-3">Noir · 100% coton bio · S-XXL</p>
+            <div class="flex items-center justify-between">
+              <p class="text-taka-green font-bold text-lg">6 500 FCFA</p>
+              <button class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Ajouter</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Produit 6 : Ticket -->
+        <article class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover group">
+          <div class="aspect-square overflow-hidden relative bg-taka-lightgray">
+            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80" alt="Ticket" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute top-3 left-3">
+              <span class="badge-ticket text-white text-xs font-semibold px-3 py-1 rounded-full">Ticket</span>
+            </div>
+            <div class="absolute top-3 right-3">
+              <span class="bg-taka-yellow text-taka-black text-xs font-bold px-2 py-1 rounded">Épuisé</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-display text-lg font-bold mb-1">Masterclass Production Musicale</h3>
+            <p class="text-gray-500 text-sm mb-3">10 Juillet 2024 · Studio Taka</p>
+            <div class="flex items-center justify-between">
+              <p class="text-gray-400 font-bold text-lg">15 000 FCFA</p>
+              <button disabled class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-200 text-gray-400 cursor-not-allowed">Épuisé</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-taka-black text-white">
+    <div class="rasta-stripe h-1"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="text-center">
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-lg">TI</div>
+          <span class="font-display font-bold text-xl">Taka Inside</span>
+        </div>
+        <p class="text-gray-400 text-sm">L'art au service de l'humain.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
