@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_musique_albums",
+  "info": { "displayName": "Album", "icon": "music" },
+  "attributes": {
+    "titre": { "type": "string", "required": true },
+    "annee": { "type": "string" },
+    "pochette": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "lien_spotify": { "type": "string" },
+    "lien_apple": { "type": "string" },
+    "lien_youtube": { "type": "string" }
+  }
+}

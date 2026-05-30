@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "benevoles",
+  "info": { "singularName": "benevole", "pluralName": "benevoles", "displayName": "Bénévole" },
+  "attributes": {
+    "nom": { "type": "string", "required": true },
+    "prenom": { "type": "string", "required": true },
+    "email": { "type": "email", "required": true },
+    "telephone": { "type": "string" },
+    "ville": { "type": "string" },
+    "pays": { "type": "string" },
+    "competences": { "type": "text" },
+    "motivations": { "type": "text" },
+    "disponibilites": { "type": "text" },
+    "cv": { "type": "media", "multiple": false, "allowedTypes": ["files"] },
+    "statut": { "type": "enumeration", "enum": ["recue", "en_cours", "acceptee", "refusee"], "default": "recue" }
+  }
+}

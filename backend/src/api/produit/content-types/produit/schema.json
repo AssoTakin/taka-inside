@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "produits",
+  "info": { "singularName": "produit", "pluralName": "produits", "displayName": "Produit" },
+  "options": { "draftAndPublish": true },
+  "attributes": {
+    "titre": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "titre" },
+    "prix": { "type": "decimal", "required": true, "min": 0 },
+    "type": { "type": "enumeration", "enum": ["ticket", "album", "merch"], "default": "ticket" },
+    "description": { "type": "richtext" },
+    "image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "fichier_numerique": { "type": "media", "multiple": false, "allowedTypes": ["files"] },
+    "extrait_audio": { "type": "media", "multiple": false, "allowedTypes": ["audios"] },
+    "date_evenement": { "type": "datetime" },
+    "lieu_evenement": { "type": "string" },
+    "quantite_disponible": { "type": "integer", "default": -1 },
+    "categorie": { "type": "relation", "relation": "manyToOne", "target": "api::categorie-produit.categorie-produit" }
+  }
+}

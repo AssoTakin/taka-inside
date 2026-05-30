@@ -1,263 +1,294 @@
-# Charte Graphique — Taka Inside
+# Charte Graphique — Taka Inside (v2.0 Sobre & Élégant)
 
 > **Projet :** Taka Inside — Association culturelle & label musical (Bénin)  
 > **Stack :** Next.js 14 + Tailwind CSS + shadcn/ui  
-> **Orientation :** Vibrante, culturelle, moderne — jamais cheap.  
-> **Langue principale :** Français (multilingue-ready)
+> **Direction :** Sobre, élégant, premium — l'énergie rasta en accents, jamais en excès  
+> **Langue :** Français (i18n-ready)
 
 ---
 
 ## 1. Philosophie Visuelle
 
-Taka Inside incarne la vitalité de la culture béninoise et l’énergie du mouvement rasta/rastafari. L’identité visuelle doit être :
+Le logo Taka Inside est audacieux : piment rouge, dreadlocks colorées, lunettes rasta. Mais le **site doit être le contraire du logo** — un cadre sobre qui met en valeur le contenu. Comme une galerie d'art blanche qui expose des œuvres colorées.
 
-- **Chaleureuse et humaine** — comme le terroir et la musique live.
-- **Audacieuse sans être agressive** — les couleurs du CDC (jaune, rouge, vert, noir) sont portées avec intention, pas par accumulation.
-- **Moderne et lisible** — le site est un outil culturel et commercial, pas une affiche.
-- **Racines & futur** — motifs et textures inspirés du patrimoine, UI fluide et responsive.
+**Principes directeurs :**
+- **Noir profond comme base** — élégance, contraste, lecture confortable
+- **Blanc cassé comme toile** — chaleureux, moins agressif que le blanc pur
+- **Couleurs rasta en touches** — jaune, rouge, vert uniquement sur les CTA, badges, et éléments actifs
+- **Beaucoup d'espace** — aération généreuse, hierachie claire
+- **Typographie géométrique** — moderne, africaine dans l'esprit, européenne dans la forme
 
 **Moodboard textuel**
-
-- *Énergie* : concert en plein air à Cotonou, chaleur du bitume, danse au coucher du soleil.
-- *Texture* : terre battue, textile wax, peinture murale africaine, vinyle rayé.
-- *Forme* : cercles (unité), lignes brisées (rythme), espaces négatifs respirants.
-- *Contraste* : noir profond contre jaune lumineux, blanc cassé contre rouge ardent.
-- *Son* : graphiques audio visibles, formes d’onde, égaliseur minimaliste.
-- *Références lointaines* : Afropunk aesthetics, design ghanéen contemporain, editorial The FADER, covers albums reggae modernes.
+- *Énergie* : soirée jazz à Cotonou, chic et décontracté
+- *Texture* : béton ciré, bois brut, lin naturel, vinyl mat
+- *Forme* : rectangles nets, cercles parfaits, lignes fines
+- *Contraste* : noir & blanc avec une surprise de couleur
+- *Références* : site d'Abloh (Virgil), Sonos, Beats by Dre, Fenty, design africain contemporain
 
 ---
 
 ## 2. Palette de Couleurs
 
-### Couleurs primaires (CDC)
+### 2.1 Couleurs Primaires (90% de l'interface)
 
-| Token | Hex | Usage principal | Accessibilité |
-|-------|-----|-----------------|---------------|
-| `cdc-yellow` | `#F2C94C` | Accents, CTA secondaires, badges, icônes | Sur fond noir : AA. Sur fond blanc : AA (gras). |
-| `cdc-red` | `#D93025` | Alertes, CTA primaires, badges urgent, hover énergique | Sur fond blanc : AA (gras). Sur fond noir : AA. |
-| `cdc-green` | `#27AE60` | Validation, succès, état actif, accents nature | Sur fond blanc : AA. Sur fond noir : AA. |
-| `cdc-black` | `#1A1A1A` | Fonds sombres, texte principal sur clair, navigation | — |
-| `cdc-white` | `#FAFAFA` | Fonds clairs, texte sur fond sombre | — |
+| Nom | Hex | Usage |
+|-----|-----|-------|
+| **Noir Taka** | `#0A0A0A` | Fonds sombres, header, footer, texte principal |
+| **Blanc Cassé** | `#F5F3EF` | Fond principal, cartes, sections claires |
+| **Gris Souris** | `#8A8A8A` | Texte secondaire, placeholders, bordures |
+| **Gris Clair** | `#E8E6E2` | Arrière-plans de cartes, séparations |
 
-### Couleurs dérivées / nuancier fonctionnel
+### 2.2 Couleurs d'Accent Rasta (10% de l'interface — uniquement)
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| `yellow-50` | `#FEF9E7` | Fonds subtils jaunes |
-| `yellow-100`| `#FCF3CF` | Hover léger, badges pastels |
-| `yellow-500`| `#F2C94C` | **cdc-yellow** |
-| `yellow-700`| `#B8961A` | Texte jaune sur fond clair |
-| `red-50` | `#FDECEA` | Fonds alerte légers |
-| `red-100` | `#F9D2D0` | Bordures alerte |
-| `red-500` | `#D93025` | **cdc-red** |
-| `red-700` | `#9E1B16` | Texte rouge profond |
-| `green-50` | `#E9F7EF` | Fonds succès |
-| `green-100`| `#D4EFDF` | Bordures validation |
-| `green-500`| `#27AE60` | **cdc-green** |
-| `green-700`| `#1E8449` | Texte vert profond |
-| `black-900`| `#1A1A1A` | **cdc-black** |
-| `black-800`| `#2D2D2D` | Surfaces sombres élevées (cards) |
-| `black-700`| `#404040` | Bordures sombres, icônes inactives |
-| `white-50` | `#FAFAFA` | **cdc-white** |
-| `white-100`| `#F5F5F5` | Fonds de section alternés |
-| `white-200`| `#E5E5E5` | Bordures, séparateurs |
+Ces couleurs sortent **exclusivement** du logo. Elles ne s'utilisent que pour :
+- Boutons d'action primaires
+- Badges de statut
+- Indicateurs actifs (lecteur radio, "en direct")
+- Hover states subtils
+- La bande rasta décorative (1-2px max)
 
-### Usage chromatique par contexte
+| Nom | Hex | Usage |
+|-----|-----|-------|
+| **Jaune Piment** | `#E5B800` | CTA principal, accents or, badges premium |
+| **Rouge Piment** | `#C41E3A` | Urgence, alertes, badges "sold out", hover destructif |
+| **Vert Piment** | `#1B8A3A` | Succès, validation, boutons "ajouter", badges "en cours" |
 
-- **Fonds sombres** (mode principal artistique) : `cdc-black` + `black-800` pour les cards. Texte en `cdc-white` ou `cdc-yellow`.
-- **Fonds clairs** (mode informatif / e-commerce) : `cdc-white` ou `white-100`. Texte en `cdc-black`.
-- **CTA primaire** : `cdc-red` ou `cdc-green` selon l’intention (achat = vert, alerte/urgence = rouge).
-- **CTA secondaire** : `cdc-yellow` avec texte `cdc-black`.
-- **Accent décoratif** : bande horizontale tricolore (jaune/rouge/vert) en 2–4 px de haut, utilisée avec parcimonie (sous-nav, footer).
+### 2.3 Gradients (utilisation parcimonieuse)
 
-### Accessibilité WCAG 2.1 — Contraste
+```css
+/* Gradient hero — subtil, sombre */
+hero-gradient: linear-gradient(180deg, #0A0A0A 0%, #1A1A1A 100%);
 
-| Combinaison | Ratio | Niveau WCAG |
-|-------------|-------|-------------|
-| `cdc-yellow` (`#F2C94C`) sur `cdc-black` (`#1A1A1A`) | 9.8:1 | AAA |
-| `cdc-red` (`#D93025`) sur `cdc-white` (`#FAFAFA`) | 5.4:1 | AA (texte normal) |
-| `cdc-green` (`#27AE60`) sur `cdc-white` (`#FAFAFA`) | 4.6:1 | AA (texte normal) |
-| `cdc-black` (`#1A1A1A`) sur `cdc-white` (`#FAFAFA`) | 16.2:1 | AAA |
-| `cdc-white` (`#FAFAFA`) sur `cdc-black` (`#1A1A1A`) | 16.2:1 | AAA |
-| `yellow-700` (`#B8961A`) sur `cdc-white` | 4.5:1 | AA |
-| `red-700` (`#9E1B16`) sur `cdc-white` | 7.1:1 | AAA |
+/* Gradient rasta décoratif — 2px max */
+rasta-line: linear-gradient(90deg, #1B8A3A 33%, #E5B800 33%, #E5B800 66%, #C41E3A 66%);
+```
 
-> **Règle d’or :** jamais de `cdc-yellow` sur `cdc-white` en texte courant (ratio ~1.9:1, échec). Toujours utiliser `yellow-700` pour du texte jaune sur fond clair.
+### 2.4 Table de Contrastes WCAG 2.1
+
+| Combinaison | Ratio | Niveau |
+|-------------|-------|--------|
+| Blanc Cassé `#F5F3EF` sur Noir `#0A0A0A` | 16.4:1 | AAA |
+| Noir `#0A0A0A` sur Blanc Cassé `#F5F3EF` | 16.4:1 | AAA |
+| Gris Souris `#8A8A8A` sur Noir `#0A0A0A` | 5.2:1 | AA |
+| Jaune `#E5B800` sur Noir `#0A0A0A` | 9.1:1 | AAA |
+| Rouge `#C41E3A` sur Blanc Cassé `#F5F3EF` | 6.8:1 | AA |
+| Vert `#1B8A3A` sur Blanc Cassé `#F5F3EF` | 5.4:1 | AA |
 
 ---
 
 ## 3. Typographie
 
-### Familles de polices
+### 3.1 Police de titres : **Space Grotesk**
+- **Pourquoi :** Géométrique, moderne, légèrement excentrique — comme le Bénin d'aujourd'hui
+- **Usage :** Tous les titres H1-H6, boutons, navigation, chiffres en gras
+- **Fallback :** system-ui, -apple-system, sans-serif
 
-| Rôle | Police principale | Fallback stack | Usage |
-|------|-------------------|--------------|-------|
-| **Titres / Display** | *Space Grotesk* | `"Space Grotesk", "Inter", system-ui, -apple-system, sans-serif` | H1–H3, chiffres, navigation, boutons, badges |
-| **Corps de texte** | *Inter* | `"Inter", "Helvetica Neue", Arial, sans-serif` | Paragraphes, descriptions, formulaires, cartes |
-| **Accent / Citations** | *DM Serif Display* | `"DM Serif Display", Georgia, "Times New Roman", serif` | Citations, slogans, titres événements spéciaux |
+| Élément | Taille mobile | Taille desktop | Graisse | Interligne |
+|---------|--------------|----------------|---------|------------|
+| H1 (Hero) | 40px | 72px | 700 | 1.05 |
+| H2 (Section) | 32px | 48px | 600 | 1.1 |
+| H3 (Carte) | 24px | 32px | 600 | 1.2 |
+| H4 (Sous-titre) | 18px | 20px | 500 | 1.3 |
+| Body | 16px | 16px | 400 | 1.6 |
+| Petit | 12px | 14px | 400 | 1.5 |
+| Bouton | 14px | 14px | 500 | 1 |
 
-> **Chargement :** via Google Fonts (2 requêtes) ou self-hosting dans `/public/fonts/`.
+### 3.2 Police de corps : **Inter**
+- **Pourquoi :** Ultra lisible, conçue pour les écrans, excellente en français
+- **Usage :** Paragraphes, descriptions, formulaires, labels
 
-### Échelle typographique (Mobile → Desktop)
-
-| Token | Mobile | Tablet (≥768px) | Desktop (≥1024px) | Graisse | Line-height |
-|-------|--------|-----------------|-------------------|---------|-------------|
-| `display` | 40px | 56px | 72px | 700 | 1.1 |
-| `h1` | 32px | 40px | 48px | 700 | 1.2 |
-| `h2` | 28px | 32px | 36px | 700 | 1.25 |
-| `h3` | 24px | 28px | 30px | 600 | 1.3 |
-| `h4` | 20px | 22px | 24px | 600 | 1.35 |
-| `body-lg` | 18px | 18px | 20px | 400 | 1.6 |
-| `body` | 16px | 16px | 16px | 400 | 1.6 |
-| `body-sm` | 14px | 14px | 14px | 400 | 1.5 |
-| `caption` | 12px | 12px | 12px | 500 | 1.4 |
-| `button` | 14px | 14px | 16px | 600 | 1 |
-| `nav` | 14px | 14px | 16px | 500 | 1 |
-
-> **Principe responsive :** la taille augmente sur les écrans larges uniquement pour les titres. Le corps reste stable (`16px`) pour la lisibilité.
-
-### Règles typographiques
-
-- **Titres :** majuscules autorisées pour H1 et display UNIQUEMENT. Jamais de `text-transform: uppercase` sur du corps de texte.
-- **Letter-spacing :** `tracking-tight` (-0.025em) sur display, `tracking-wide` (0.05em) sur captions et badges.
-- **Maximum de largeur pour le texte :** `max-w-prose` (65ch) pour les paragraphes longs.
-- **Antialiasing :** `antialiased` sur l’ensemble du site pour un rendu net.
+### 3.3 Police d'accent (occasionnelle) : **DM Serif Display**
+- **Pourquoi :** Touche d'élégance, contraste avec le sans-serif
+- **Usage :** Uniquement pour un mot clé par section (ex: "L'Art" dans le hero), jamais pour des phrases entières
 
 ---
 
-## 4. Espacement & Grille
+## 4. Système d'Espacement
 
-### Système d’espacement (Tailwind scale)
+**Grille :** 12 colonnes, gouttière 24px (16px mobile)
+**Max-width :** 1280px (80rem)
+**Padding horizontal :** 16px mobile / 24px tablette / 48px desktop
 
-Base : `4px` (0.25rem). Utiliser les tokens Tailwind natifs.
-
-| Token | Valeur | Usage typique |
-|-------|--------|---------------|
-| `space-1` | 4px | Gaps internes fines |
-| `space-2` | 8px | Gaps boutons, icônes |
-| `space-4` | 16px | Padding cards interne |
-| `space-6` | 24px | Gap sections petites |
-| `space-8` | 32px | Padding sections |
-| `space-12`| 48px | Gap sections moyennes |
-| `space-16`| 64px | Padding page (mobile) |
-| `space-24`| 96px | Padding page (desktop) |
-
-### Grille responsive
-
-- **Mobile** (< 640px) : 1 colonne, padding horizontal `px-4` (16px).
-- **Tablet** (640–1024px) : 2 colonnes possibles, padding `px-6` (24px).
-- **Desktop** (> 1024px) : 12 colonnes, max-width `1280px`, padding `px-8` (32px).
-- **Large** (> 1280px) : max-width `1440px`, centré.
+**Échelle de spacing (Tailwind) :**
+- `space-1` : 4px (micro)
+- `space-2` : 8px (tight)
+- `space-4` : 16px (standard)
+- `space-6` : 24px (relaxed)
+- `space-8` : 32px (section gap)
+- `space-16` : 64px (section padding)
+- `space-24` : 96px (hero padding)
 
 ---
 
-## 5. Formes & Ombres
+## 5. Composants UI (Sobres)
 
-| Token | Valeur | Usage |
-|-------|--------|-------|
-| `radius-sm` | 4px | Badges, tags |
-| `radius-md` | 8px | Boutons, inputs |
-| `radius-lg` | 12px | Petites cards |
-| `radius-xl` | 16px | Cards projet, images |
-| `radius-2xl`| 24px | Cards produit, lecteur audio |
-| `radius-full` | 9999px | Pills, avatars, badges arrondis |
+### 5.1 Boutons
 
-| Token | Valeur | Usage |
-|-------|--------|-------|
-| `shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Cards plates |
-| `shadow-md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards interactives |
-| `shadow-lg` | `0 10px 15px rgba(0,0,0,0.15)` | Modales, dropdowns |
-| `shadow-glow-yellow` | `0 0 20px rgba(242,201,76,0.3)` | Hover CTA spécial |
-| `shadow-glow-red` | `0 0 20px rgba(217,48,37,0.3)` | Hover alerte/urgence |
+**Primaire (CTA)**
+```
+Background : #E5B800 (Jaune Piment)
+Text : #0A0A0A (Noir Taka)
+Border-radius : 8px
+Padding : 12px 24px
+Hover : darken 10%, translateY(-1px)
+Shadow : none (flat design élégant)
+```
+
+**Secondaire**
+```
+Background : transparent
+Border : 1px solid #0A0A0A
+Text : #0A0A0A
+Hover : background #0A0A0A, text #F5F3EF
+```
+
+**Ghost (sur fond sombre)**
+```
+Background : transparent
+Border : 1px solid rgba(245,243,239,0.3)
+Text : #F5F3EF
+Hover : border full opacity, background rgba(245,243,239,0.05)
+```
+
+### 5.2 Cartes
+
+```
+Background : #FFFFFF
+Border : 1px solid #E8E6E2
+Border-radius : 12px
+Shadow : 0 1px 3px rgba(0,0,0,0.04)
+Hover : shadow 0 4px 12px rgba(0,0,0,0.08), translateY(-2px)
+Padding : 24px
+```
+
+### 5.3 Formulaires
+
+```
+Input background : #FFFFFF
+Border : 1px solid #E8E6E2
+Border-radius : 8px
+Focus : border #E5B800, ring #E5B800/20
+Placeholder : #8A8A8A
+Error : border #C41E3A, text #C41E3A
+```
+
+### 5.4 Badge de statut (seul endroit où les 3 couleurs apparaissent)
+
+| Statut | Style |
+|--------|-------|
+| En cours | `bg-verte text-blanc-casse` |
+| À venir | `bg-jaune text-noir` |
+| Terminé | `bg-gris-souris text-blanc-casse` |
+| Urgent | `bg-rouge text-blanc-casse` |
 
 ---
 
-## 6. Icônes & Motifs
+## 6. Éléments de Layout
 
-### Icônes
+### 6.1 Header
+```
+Background : #0A0A0A
+Height : 64px
+Logo : blanc
+Navigation : Gris Souris, hover Blanc Cassé
+CTA : Jaune Piment
+Bande rasta : 2px en bas (seul gradient autorisé)
+```
 
-- **Librairie :** `lucide-react` (cohérent avec shadcn/ui).
-- **Taille standard :** 20px (`w-5 h-5`) dans les boutons et formulaires.
-- **Taille navigation :** 24px (`w-6 h-6`).
-- **Stroke-width :** 2px (par défaut Lucide), sauf sur fond sombre où 1.5px peut être plus élégant.
+### 6.2 Footer
+```
+Background : #0A0A0A
+Text : Gris Souris
+Liens : Blanc Cassé, hover Jaune Piment
+Bande rasta : 2px en haut
+```
 
-### Motifs décoratifs (utilisation parcimonieuse)
+### 6.3 Hero Section
+```
+Background : #0A0A0A (jamais d'image de fond à moins qu'elle soit très sombre)
+Titre : Blanc Cassé
+Accent mot clé : Jaune Piment ou Rouge Piment (un seul par page)
+Sous-titre : Gris Souris
+```
 
-- **Bande tricolore CDC :** barre horizontale de 3px avec dégradé `yellow → red → green`. Utilisée sous le header ou au-dessus du footer.
-- **Cercles concentriques :** motif abstrait inspiré des cibles africaines, utilisé en filigrane (`opacity-5` à `opacity-10`) sur les fonds sombres.
-- **Forme d’onde :** svg stylisée en accent sur les pages musique.
+### 6.4 Lecteur Audio (MIBRADIO)
+```
+Background : #1A1A1A
+Bouton play : Vert Piment
+Waveform : Jaune Piment (fine, 2px)
+Texte : Gris Souris
+```
 
 ---
 
-## 7. Directives d’Utilisation
+## 7. Animations & Transitions
 
-### Ce qu’il faut faire ✅
+**Principe :** Discrètes, jamais tape-à-l'œil
 
-- Utiliser les couleurs CDC avec intention : une dominante par section.
-- Respecter les ratios de contraste WCAG AA minimum.
-- Privilégier le fond sombre (`cdc-black`) pour les sections artistiques et le fond clair (`cdc-white`) pour le shop / informatif.
-- Garder des marges généreuses — l’air est aussi important que le contenu.
-- Animer avec modération : transitions `150ms–300ms`, `ease-out`.
+```css
+/* Transition standard */
+transition : all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-### Ce qu’il ne faut PAS faire ❌
+/* Hover cards */
+transform : translateY(-2px);
+box-shadow : 0 8px 24px rgba(0,0,0,0.12);
 
-- Ne jamais empiler jaune, rouge et vert en volumes égaux sur la même surface — ça crée de la confusion visuelle.
-- Ne pas utiliser `cdc-yellow` pour du texte sur fond blanc.
-- Ne pas dépasser 3 polices sur une même page.
-- Ne pas utiliser de gradients flashy ou néons — l’identité est vibrante mais terre-à-terre.
-- Ne pas utiliser de faux effets 3D, de skeuomorphisme, ou de textures cheap (carbon fiber, etc.).
+/* Page transitions (Next.js) */
+/* App Router — pas de page transition globale, 
+   uniquement micro-interactions */
+```
 
 ---
 
-## 8. Tokens Tailwind (configuration suggérée)
+## 8. Breakpoints Responsive
 
-```js
-// tailwind.config.ts — extend theme
-{
+| Nom | Valeur | Usage |
+|-----|--------|-------|
+| Mobile | < 640px | Navigation burger, colonne unique |
+| Tablette | 640px – 1024px | 2 colonnes, nav simplifiée |
+| Desktop | > 1024px | Layout final, nav complète |
+| Large | > 1280px | Max-width atteinte, centré |
+
+---
+
+## 9. Tailwind Config (extrait)
+
+```typescript
+// tailwind.config.ts
+export default {
   theme: {
     extend: {
       colors: {
-        'cdc-yellow': '#F2C94C',
-        'cdc-red': '#D93025',
-        'cdc-green': '#27AE60',
-        'cdc-black': '#1A1A1A',
-        'cdc-white': '#FAFAFA',
-        'black-800': '#2D2D2D',
-        'black-700': '#404040',
-        'yellow-700': '#B8961A',
-        'red-700': '#9E1B16',
-        'green-700': '#1E8449',
+        taka: {
+          black: '#0A0A0A',
+          cream: '#F5F3EF',
+          gray: '#8A8A8A',
+          'gray-light': '#E8E6E2',
+          yellow: '#E5B800',
+          red: '#C41E3A',
+          green: '#1B8A3A',
+        }
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
-        body: ['"Inter"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-        accent: ['"DM Serif Display"', 'Georgia', 'serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+        accent: ['DM Serif Display', 'serif'],
       },
-      boxShadow: {
-        'glow-yellow': '0 0 20px rgba(242,201,76,0.3)',
-        'glow-red': '0 0 20px rgba(217,48,37,0.3)',
-      },
-      borderRadius: {
-        '2xl': '24px',
-      },
-    },
-  },
+    }
+  }
 }
 ```
 
 ---
 
-## 9. Notes pour shadcn/ui
+## 10. Règles d'or (à respecter)
 
-- Surclasser les variables CSS de shadcn dans `globals.css` avec les tokens CDC.
-- `--primary` → `cdc-green` (action positive) ou `cdc-red` (selon le contexte de la page).
-- `--secondary` → `cdc-yellow`.
-- `--background` → `cdc-black` ou `cdc-white` selon le mode.
-- `--foreground` → inverse du background.
-- `--destructive` → `cdc-red`.
-- `--accent` → `yellow-700` ou `green-700`.
+1. **Jamais plus d'une couleur d'accent par section**
+2. **Jamais de texte en jaune/rouge/vert sur fond clair** — uniquement sur noir
+3. **Le gradient rasta est une ligne de 2px max** — jamais un fond entier
+4. **Les images sont en noir & blanc ou très désaturées** — sauf projets/artistes
+5. **Beaucoup d'espace = luxe** — ne pas remplir chaque pixel
 
 ---
 
-*Charte graphique Taka Inside — v1.0*  
-*Dernière mise à jour : 2025*
+*Charte v2.0 — Direction sobre & élégante*

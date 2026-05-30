@@ -1,0 +1,9 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categorie_produits",
+  "info": { "singularName": "categorie-produit", "pluralName": "categorie-produits", "displayName": "Catégorie Produit" },
+  "attributes": {
+    "nom": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "nom" }
+  }
+}

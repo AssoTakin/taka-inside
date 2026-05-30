@@ -1,0 +1,10 @@
+{
+  "collectionName": "components_evenement_concerts",
+  "info": { "displayName": "Concert", "icon": "calendar" },
+  "attributes": {
+    "ville": { "type": "string" },
+    "date": { "type": "datetime" },
+    "salle": { "type": "string" },
+    "lien_ticket": { "type": "string" }
+  }
+}
