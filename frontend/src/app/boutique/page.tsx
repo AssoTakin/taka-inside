@@ -1,12 +1,37 @@
-import SiteLayout from "@/components/layout/SiteLayout";
-import { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Boutique",
-  description: "Collection de produits Taka Inside : CDS, t-shirts, produits dérivés. Livraison partout au Bénin.",
-};
+import SiteLayout from "@/components/layout/SiteLayout";
+import { useCart } from "@/contexts/CartContext";
+import { useState } from "react";
+
+const PRODUCTS = [
+  { id: 1, documentId: 'cd-taka-v1', name: "CD - Taka Volume 1", prix: 5000, type: "fixe" as const },
+  { id: 2, documentId: 'tshirt-taka', name: "T-shirt Taka Inside", prix: 7500, type: "fixe" as const },
+  { id: 3, documentId: 'album-tomiwa', name: "Album Digital - Tomiwa Kéfil", prix: 2500, type: "fixe" as const },
+  { id: 4, documentId: 'tshirt-custom', name: "T-shirt Personnalisé", prix: 8000, type: "personnalisable" as const },
+  { id: 5, documentId: 'cd-ami', name: "CD - Ami Sêdjro", prix: 4500, type: "fixe" as const },
+  { id: 6, documentId: 'sac-wax', name: "Sac en wax Taka", prix: 12000, type: "fixe" as const },
+  { id: 7, documentId: 'bracelet', name: "Bracelet artisanal", prix: 2000, type: "fixe" as const },
+  { id: 8, documentId: 'poster', name: "Poster A3 artiste", prix: 3500, type: "fixe" as const },
+];
 
 export default function BoutiquePage() {
+  const { addItem, setIsOpen } = useCart();
+  const [customTexts, setCustomTexts] = useState<Record<number, string>>({});
+
+  const handleAdd = (product: typeof PRODUCTS[0]) => {
+    addItem({
+      id: product.id,
+      documentId: product.documentId,
+      name: product.name,
+      price: product.prix,
+      quantity: 1,
+      slug: product.documentId,
+      type: product.type,
+      customization: product.type === 'personnalisable' ? customTexts[product.id] : undefined,
+    });
+  };
+
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -36,25 +61,30 @@ export default function BoutiquePage() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[
-              { name: "CD - Taka Volume 1", prix: "5 000", type: "fixe" },
-              { name: "T-shirt Taka Inside", prix: "7 500", type: "fixe" },
-              { name: "Album Digital - Tomiwa Kéfil", prix: "2 500", type: "fixe" },
-              { name: "T-shirt Personnalisé", prix: "À partir de 8 000", type: "variable" },
-              { name: "CD - Ami Sêdjro", prix: "4 500", type: "fixe" },
-              { name: "Sac en wax Taka", prix: "12 000", type: "fixe" },
-              { name: "Bracelet artisanal", prix: "2 000", type: "fixe" },
-              { name: "Poster A3 artiste", prix: "3 500", type: "fixe" },
-            ].map((product) => (
-              <div key={product.name} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all">
+            {PRODUCTS.map((product) => (
+              <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all">
                 <div className="aspect-square bg-taka-gray-light flex items-center justify-center">
                   <span className="text-taka-gray">{product.type === 'fixe' ? 'Image produit' : 'Personnalisable'}</span>
                 </div>
                 <div className="p-4">
                   <h3 className="font-display font-semibold text-sm">{product.name}</h3>
+
+                  {product.type === 'personnalisable' && (
+                    <input
+                      type="text"
+                      placeholder="Texte personnalisé..."
+                      value={customTexts[product.id] || ''}
+                      onChange={(e) => setCustomTexts(prev => ({ ...prev, [product.id]: e.target.value }))}
+                      className="w-full mt-2 px-3 py-1.5 rounded-lg border border-taka-gray-light text-sm focus:border-taka-yellow outline-none"
+                    />
+                  )}
+
                   <div className="flex items-center justify-between mt-3">
-                    <span className="font-bold">{product.prix} FCFA</span>
-                    <button className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors">
+                    <span className="font-bold">{product.prix.toLocaleString()} FCFA</span>
+                    <button
+                      onClick={() => handleAdd(product)}
+                      className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"
+                    >
                       Ajouter
                     </button>
                   </div>
