@@ -27,11 +27,18 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+import SiteLayout from "@/components/layout/SiteLayout";
+import CartDrawer from "@/components/ui/CartDrawer";
+import { CartProvider } from "@/contexts/CartContext";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="font-body bg-taka-cream text-taka-black antialiased">
-        {children}
+        <CartProvider>
+          <SiteLayout>{children}</SiteLayout>
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
