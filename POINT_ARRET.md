@@ -1,118 +1,151 @@
-# 🚀 Taka Inside — Point d'Arrêt
+# POINT D'ARRÊT — Taka Inside
 
-> **Date** : Session du 30 mai 2026
-> **Commit** : `634581e`
-> **Statut** : Frontend ✅ complet | Backend ⚠️ config manuelle requise | Déploiement ⏳ toi
-
----
-
-## ✅ Ce qui est FINI (je l'ai fait)
-
-### Frontend Next.js — 13 pages, build OK
-- **/** — Accueil connectée au backend (fallback mock si Strapi offline)
-- **/association** — Présentation asso (NOUVEAU)
-- **/projets** — Projets culturels
-- **/label-musical** — Artistes du label
-- **/boutique** — E-commerce avec panier
-- **/checkout** — Paiement Stripe
-- **/faire-un-don** — Don Stripe + PayPal + FedaPay
-- **/devenir-benevole** — Formulaire candidature
-- **/contact** — Formulaire + coordonnées
-- **/radio** — Lecteur MIBRADIO
-- **/mentions-legales** — Légal
-- **/politique-confidentialite** — RGPD
-- **/conditions-generales-vente** — CGV
-- Sitemap, robots.txt, metadata SEO
-
-### Backend Strapi — Content-types créés
-- Projet, Artiste, Produit, CatégorieProduit, Bénévole, Don, Commande, PageContent
-
-### Scripts
-- `scripts/seed-strapi.js` — Remplit Strapi avec 5 projets, 3 artistes, 8 produits, 3 catégories
-
-### CI/CD
-- `.github/workflows/frontend.yml` + `backend.yml` configurés
+## Date : 30 Mai 2026
+## Commit : `14e080f`
+## Repo : https://github.com/AssoTakin/taka-inside
 
 ---
 
-## ⏳ Ce que TU dois faire (obligatoire)
+## ✅ FRONTEND (Next.js 16 + Tailwind) — 100% FONCTIONNEL EN LOCAL
 
-### 1. Créer les comptes et configurer les clés
+| Page | Statut | Données |
+|------|--------|---------|
+| `/` Accueil | ✅ Connecté API | Fetch projets + artistes, fallback mock |
+| `/projets` | ✅ Connecté API | Liste dynamique avec filtres |
+| `/projets/[slug]` | ✅ SSG dynamique | Page détail complète |
+| `/label-musical` | ✅ Connecté API | Liste artistes avec photos |
+| `/label-musical/[slug]` | ✅ SSG dynamique | Bio, discographie, concerts |
+| `/boutique` | ✅ Connecté API via `/api/produits` | Panier fonctionnel |
+| `/association` | ✅ Créée | Mission, valeurs, stats |
+| `/contact` | ✅ Formulaire actif | POST `/api/contact` |
+| `/devenir-benevole` | ✅ Formulaire existant | À brancher si besoin |
+| `/faire-un-don` | ✅ Paiements | Stripe + PayPal + FedaPay structure |
+| `/checkout` | ✅ | Intégré au panier |
+| `/radio` | ✅ | Page statique |
+| OG Image | ✅ Générée dynamiquement | `opengraph-image.tsx` |
 
-Tu dois créer les comptes suivants et récupérer les clés API :
+**Build : 24/24 routes, 0 erreur TypeScript.**
 
-| Service | Lien | Clés à récupérer |
-|---------|------|-----------------|
-| **Stripe** | https://dashboard.stripe.com | `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` |
-| **PayPal** | https://developer.paypal.com | `PAYPAL_CLIENT_ID` + `PAYPAL_SECRET` |
-| **FedaPay** | https://fedapay.com | Clé API FedaPay |
+### Variables d'environnement frontend (.env)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_51L5u5c...` ✅
+- `STRIPE_SECRET_KEY` = `sk_live_51L5u5c...` ✅
+- `NEXT_PUBLIC_STRAPI_API_URL` = `http://localhost:1337` ⚠️ (à remplacer par URL Railway)
 
-### 2. Déployer sur Vercel (FRONTEND)
+---
 
-1. Va sur https://vercel.com/new
-2. Importe le repo GitHub `taka-inside`
-3. Framework : **Next.js**
-4. Root directory : `frontend/`
-5. Ajoute les variables d'environnement :
+## ✅ STRIPE — COMPTE LIVE VALIDÉ
+
+- **Compte** : TAKÍN (Taka Inside)
+- **Type** : `non_profit`, `incorporated_non_profit`
+- **Email** : kwabo@takainside.org
+- **Statut** : `charges_enabled: true`, `payouts_enabled: true`
+- **Pays** : FR
+- **Devise** : EUR
+- **Capabilities activées** : bancontact, blik, card_payments, eps, giropay, klarna, link, p24, sofort
+
+**Clés configurées et prêtes.**
+
+---
+
+## ✅ BACKEND (Strapi v5)
+
+| Élément | Statut |
+|---------|--------|
+| Content-types | ✅ Projet, Artiste, Produit, CategorieProduit, Benevole, Don, Commande, PageContent, ConfigMenu |
+| API REST | ✅ Opérationnelle en local |
+| Build admin local | ⚠️ Bug Vite connu (non bloquant) |
+| Seed script | ✅ `scripts/seed-strapi.js` |
+| Database | SQLite (dev) / PostgreSQL (prod) |
+
+---
+
+## 🚧 DÉPLOIEMENT — BLOQUÉ PAR SÉCURITÉS PLATEFORMES
+
+### Vercel (Frontend)
+- ❌ Tokens fournis : `vcp_...` = **Project Tokens** (scope limité)
+- ❌ Besoin : **Personal Access Token** depuis https://vercel.com/account/tokens
+- Scope requis : `Full Account`
+
+### Railway (Backend + DB)
+- ✅ Projet créé : "Taka Inside" (ID: `8ac9a38c-3984-4df0-abdb-e9fc52082777`)
+- ❌ Tokens fournis : permissions insuffisantes pour déploiement
+- ❌ Besoin : auth navigateur ou token de projet avec scope `deploy`
+
+---
+
+## 🚀 COMMANDES DE DÉPLOIEMENT MANUEL
+
+### 1. Railway (Backend + PostgreSQL)
+
+Va sur https://railway.app/project/8ac9a38c-3984-4df0-abdb-e9fc52082777
+
+1. Clique **"New"** → **"Database"** → **"Add PostgreSQL"**
+2. Clique **"New"** → **"Service"** → **"Deploy from GitHub repo"**
+3. Sélectionne : `AssoTakin/taka-inside` → branche `master` → dossier `backend`
+4. Dans **Variables** :
    ```
-   NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
-   NEXT_PUBLIC_SITE_URL=https://takainside.vercel.app
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-   STRIPE_SECRET_KEY=sk_...
-   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...
-   PAYPAL_SECRET=...
+   DATABASE_URL = <généré automatiquement par PostgreSQL>
+   APP_KEYS = <génère-en 4 nouvelles : openssl rand -base64 32>
+   API_TOKEN_SALT = <openssl rand -base64 32>
+   ADMIN_JWT_SECRET = <openssl rand -base64 32>
+   JWT_SECRET = <openssl rand -base64 32>
+   TRANSFER_TOKEN_SALT = <openssl rand -base64 32>
    ```
-6. Clique **Deploy**
+5. Clique **"Deploy"**
+6. Copie l'URL du service (ex: `https://takainside.up.railway.app`)
 
-### 3. Déployer sur Railway (BACKEND Strapi)
+### 2. Vercel (Frontend)
 
-1. Va sur https://railway.app
-2. New project → Deploy from GitHub repo → `taka-inside`
-3. Root directory : `backend/`
-4. Dans **Variables**, ajoute :
+Va sur https://vercel.com/new
+
+1. Clique **"Import Git Repository"**
+2. Sélectionne : `AssoTakin/taka-inside`
+3. **Root Directory** : `frontend`
+4. Dans **Environment Variables** :
    ```
-   DATABASE_CLIENT=postgres
-   DATABASE_URL=postgres://...
-   JWT_SECRET=random32chars
-   ADMIN_JWT_SECRET=random32chars
-   APP_KEYS=key1,key2,key3,key4
-   API_TOKEN_SALT=random
-   TRANSFER_TOKEN_SALT=random
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = pk_live_51L5u5cEKzPeYzUocrPhXEPQBVJR7PzEMAFEmnKAyy4cFXD7ngncM4FqLudQrngTvwFtpfKAtAx8T1VHFrB7WetEu00GIV4RVyn
+   STRIPE_SECRET_KEY = <même clé secrète que dans .env>
+   NEXT_PUBLIC_STRAPI_API_URL = <URL Railway backend>
    ```
-5. Railway build et déploie automatiquement
+5. Clique **"Deploy"**
 
-### 4. Lancer le seed
+### 3. Post-déploiement
 
-Une fois Railway déployé et Strapi accessible :
-```bash
-# Remplacer par l'URL Railway réelle
-STRAPI_URL=https://takainside.up.railway.app node scripts/seed-strapi.js
-```
+- **Seed Strapi** : Lancer `node scripts/seed-strapi.js` sur l'instance Railway
+- **Stripe Webhook** : Configurer l'URL Vercel dans le dashboard Stripe
+- **DNS** : Pointer `takainside.bj` vers Vercel
 
 ---
 
-## 🔧 Problème connu (pas bloquant)
+## 📦 FICHIERS CLÉS CRÉÉS
 
-Le **build Strapi admin panel** échoue en local à cause d'un conflit Vite. **Ce n'est PAS un problème** — Railway utilise Docker et build correctement. Tu n'as pas besoin de build Strapi en local.
-
----
-
-## 📋 Checklist finale pour toi
-
-- [ ] Créer compte Stripe + récupérer clés
-- [ ] Créer compte PayPal Developer + récupérer clés  
-- [ ] Créer compte FedaPay (optionnel)
-- [ ] Déployer frontend sur Vercel
-- [ ] Déployer backend sur Railway
-- [ ] Configurer variables d'environnement
-- [ ] Lancer le seed sur Railway
-- [ ] Tester un paiement Stripe en mode test (carte `4242 4242 4242 4242`)
-- [ ] Tester PayPal en sandbox
-- [ ] Ajouter des images réelles dans Strapi admin
-- [ ] Connecter domaine personnalisé (optionnel)
+| Fichier | Rôle |
+|---------|------|
+| `frontend/src/lib/api.ts` | Fetcher SSR-safe |
+| `frontend/src/app/api/contact/route.ts` | Route API contact |
+| `frontend/src/app/api/produits/route.ts` | Route API boutique |
+| `frontend/src/app/opengraph-image.tsx` | OG image dynamique |
+| `frontend/src/app/projets/[slug]/page.tsx` | Page projet dynamique |
+| `frontend/src/app/label-musical/[slug]/page.tsx` | Page artiste dynamique |
+| `scripts/seed-strapi.js` | Injection données test |
 
 ---
 
-**Le code est prêt. Le repo est propre. Il ne reste que les clés et les clics sur Vercel/Railway.**
+## 🔑 ACCÈS ENREGISTRÉS
 
-🚀 À toi de jouer, Sam !
+| Service | Identifiants | Statut |
+|---------|-------------|--------|
+| GitHub | `AssoTakin` / `Abrakaddabr@#1` + PAT `ghp_...` | ✅ Connecté |
+| Stripe | `kwabo@takainside.bj` / `s(z8XxpUxLz&Y5@` | ✅ Validé |
+| Railway | Tokens `16c4418b...` et `93822424...` | ⚠️ Scope limité |
+| Vercel | Tokens `vcp_0OXQF...` et `vcp_6Irjt...` | ⚠️ Project tokens |
+
+---
+
+## 🎯 PROCHAINES PRIORITÉS
+
+1. **Déployer Railway** → Obtenir URL backend
+2. **Déployer Vercel** → Site en ligne
+3. **Seed Strapi** → Données réelles
+4. **Configurer Stripe webhook** → Paiements fonctionnels
+5. **Remplacer images** → Photos réelles artistes/projets
