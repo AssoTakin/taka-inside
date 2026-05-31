@@ -5,10 +5,11 @@ import { useState } from "react";
 
 interface PayPalDonFormProps {
   amount: number;
-  frequency: "one-time" | "monthly";
+  frequency?: "one-time" | "monthly";
+  onSuccess?: () => void;
 }
 
-export default function PayPalDonForm({ amount, frequency }: PayPalDonFormProps) {
+export default function PayPalDonForm({ amount, frequency = "one-time", onSuccess }: PayPalDonFormProps) {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -49,6 +50,7 @@ export default function PayPalDonForm({ amount, frequency }: PayPalDonFormProps)
               if (res.ok) {
                 setSuccess(true);
                 setMessage("");
+                onSuccess?.();
               } else {
                 setMessage(captureData.error || "Erreur lors de la capture");
               }

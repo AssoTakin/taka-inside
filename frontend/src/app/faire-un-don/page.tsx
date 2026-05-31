@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import SiteLayout from "@/components/layout/SiteLayout";
 import DonStripeForm from '@/components/payments/DonStripeForm';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
@@ -174,15 +173,7 @@ export default function DonPage() {
                   )}
 
                   {paymentMethod === 'paypal' && (
-                    <PayPalScriptProvider
-                      options={{
-                        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test',
-                        currency: 'USD',
-                        intent: 'capture',
-                      }}
-                    >
-                      <PayPalDonForm amount={finalAmount} frequency={frequency} />
-                    </PayPalScriptProvider>
+                    <PayPalDonForm amount={finalAmount} frequency={frequency} />
                   )}
 
                   {paymentMethod === 'fedapay' && (

@@ -5,8 +5,12 @@ import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { useCart } from '@/contexts/CartContext';
+import PayPalDonForm from '@/components/payments/PayPalDonForm';
+import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
+type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
 
 function CheckoutForm() {
   const stripe = useStripe();
@@ -44,7 +48,7 @@ function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement />
-      
+
       {message && (
         <div className={`p-4 rounded-xl ${message.includes('succès') ? 'bg-taka-green/15 text-taka-green' : 'bg-taka-red/15 text-taka-red'}`}>
           {message}
@@ -66,6 +70,8 @@ export default function CheckoutPage() {
   const [clientSecret, setClientSecret] = useState('');
   const [stripeReady, setStripeReady] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   // Nettoyer les items du panier avec prix trop bas (anciennes données corrompues)
   useEffect(() => {
@@ -132,7 +138,11 @@ export default function CheckoutPage() {
     },
   }), [clientSecret]);
 
-  if (items.length === 0) {
+  const handleSuccess = () => {
+    setPaymentSuccess(true);
+  };
+
+  if (items.length === 0 && !paymentSuccess) {
     return (
       <SiteLayout>
         <div className="min-h-[50vh] flex items-center justify-center bg-taka-cream">
@@ -140,6 +150,27 @@ export default function CheckoutPage() {
             <h1 className="font-display text-2xl font-bold mb-4">Votre panier est vide</h1>
             <a href="/boutique" className="text-taka-green font-semibold hover:underline">
               Retourner à la boutique →
+            </a>
+          </div>
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  if (paymentSuccess) {
+    return (
+      <SiteLayout>
+        <div className="min-h-[50vh] flex items-center justify-center bg-taka-cream">
+          <div className="text-center max-w-md mx-auto">
+            <div className="w-16 h-16 rounded-full bg-taka-green/15 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="font-display text-2xl font-bold mb-4">Paiement confirmé !</h1>
+            <p className="text-taka-gray mb-6">Merci pour votre commande. Vous recevrez un email de confirmation sous peu.</p>
+            <a href="/" className="inline-block bg-taka-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">
+              Retour à l'accueil
             </a>
           </div>
         </div>
@@ -171,22 +202,68 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Paiement Stripe */}
+            {/* Paiement */}
             <div className="bg-white rounded-2xl p-6 border border-taka-gray-light">
               <h2 className="font-display text-lg font-bold mb-4">Paiement sécurisé</h2>
+
+              {/* Sélecteur de méthode */}
+              <div className="flex gap-2 mb-6">
+                <button
+                  onClick={() => setPaymentMethod('stripe')}
+                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                    paymentMethod === 'stripe'
+                      ? 'bg-taka-black text-white'
+                      : 'bg-taka-cream text-taka-gray hover:text-taka-black'
+                  }`}
+                >
+                  Carte bancaire
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('paypal')}
+                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                    paymentMethod === 'paypal'
+                      ? 'bg-taka-black text-white'
+                      : 'bg-taka-cream text-taka-gray hover:text-taka-black'
+                  }`}
+                >
+                  PayPal
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('fedapay')}
+                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                    paymentMethod === 'fedapay'
+                      ? 'bg-taka-black text-white'
+                      : 'bg-taka-cream text-taka-gray hover:text-taka-black'
+                  }`}
+                >
+                  Mobile Money
+                </button>
+              </div>
 
               {apiError ? (
                 <div className="p-4 rounded-xl bg-taka-red/15 text-taka-red text-sm mb-4">
                   {apiError}
                 </div>
-              ) : clientSecret && stripeReady ? (
-                <Elements stripe={stripePromise} options={options}>
-                  <CheckoutForm />
-                </Elements>
-              ) : (
-                <div className="text-center py-8 text-taka-gray">
-                  {clientSecret && !stripeReady ? 'Initialisation de Stripe...' : 'Chargement du formulaire de paiement...'}
-                </div>
+              ) : null}
+
+              {paymentMethod === 'stripe' && (
+                clientSecret && stripeReady ? (
+                  <Elements stripe={stripePromise} options={options}>
+                    <CheckoutForm />
+                  </Elements>
+                ) : (
+                  <div className="text-center py-8 text-taka-gray">
+                    {clientSecret && !stripeReady ? 'Initialisation de Stripe...' : 'Chargement du formulaire de paiement...'}
+                  </div>
+                )
+              )}
+
+              {paymentMethod === 'paypal' && (
+                <PayPalDonForm amount={total} onSuccess={handleSuccess} />
+              )}
+
+              {paymentMethod === 'fedapay' && (
+                <FedaPayDonButton amount={total} onSuccess={handleSuccess} />
               )}
             </div>
           </div>

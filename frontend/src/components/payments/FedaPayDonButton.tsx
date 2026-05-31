@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function FedaPayDonButton({ amount }: { amount: number | string }) {
+export default function FedaPayDonButton({ amount, onSuccess }: { amount: number | string; onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
