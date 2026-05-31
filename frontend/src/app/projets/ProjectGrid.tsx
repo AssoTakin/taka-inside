@@ -102,8 +102,8 @@ export default function ProjectGrid({ projets }: { projets: Projet[] }) {
               const categorie = String(projet.categorie || "");
               const description = String(projet.description || "");
               const coverUrl = getImageUrl(projet.image_couverture || null);
-              const ctaDon = Boolean(projet.cta_don);
-              const ctaBenevole = Boolean(projet.cta_benevole);
+              const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
+              const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
 
               return (
                 <div key={slug} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-taka-gray-light group flex flex-col">

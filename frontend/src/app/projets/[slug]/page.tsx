@@ -63,8 +63,8 @@ export default async function ProjetPage({ params }: Props) {
   const partenaires = String(projet.partenaires || "");
   const dateDebut = String(projet.date_debut || "");
   const dateFin = String(projet.date_fin || "");
-  const ctaDon = Boolean(projet.cta_don);
-  const ctaBenevole = Boolean(projet.cta_benevole);
+  const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
+  const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
 
   return (
     <SiteLayout>
