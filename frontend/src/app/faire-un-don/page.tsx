@@ -5,6 +5,7 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import SiteLayout from "@/components/layout/SiteLayout";
 import DonStripeForm from '@/components/payments/DonStripeForm';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
+import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 
 type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
 type Frequency = 'one-time' | 'monthly';
@@ -185,17 +186,7 @@ export default function DonPage() {
                   )}
 
                   {paymentMethod === 'fedapay' && (
-                    <div className="text-center py-6">
-                      <p className="text-taka-gray text-sm mb-4">Redirection vers FedaPay pour le paiement Mobile Money...</p>
-                      <a
-                        href={`https://fedapay.com/pay/takainside?amount=${finalAmount}&description=Don Taka Inside`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block bg-taka-yellow text-taka-black px-8 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all"
-                      >
-                        Payer avec FedaPay
-                      </a>
-                    </div>
+                    <FedaPayDonButton amount={finalAmount} />
                   )}
                 </>
               ) : (
