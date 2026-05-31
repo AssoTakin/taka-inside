@@ -2,7 +2,7 @@
 
 export default function WhatsAppButton() {
   const message = encodeURIComponent("Bonjour Taka Inside !");
-  const phone = "2290756987473";
+  const phone = "33756987473";
 
   return (
     <a
