@@ -11,9 +11,11 @@ export async function POST(req: NextRequest) {
 
     const secretKey = process.env.FEDAPAY_SECRET_KEY;
     if (!secretKey) {
+      // Ne jamais exposer les détails de configuration côté client
+      console.error("[FedaPay] FEDAPAY_SECRET_KEY manquante");
       return NextResponse.json(
-        { error: "FedaPay non configuré — ajoutez FEDAPAY_SECRET_KEY dans les variables d'environnement" },
-        { status: 500 }
+        { error: "Service temporairement indisponible" },
+        { status: 503 }
       );
     }
 
@@ -37,10 +39,11 @@ export async function POST(req: NextRequest) {
     const tx = txData["v1/transaction"];
 
     if (!response.ok || !tx?.id) {
-      console.error("FedaPay create error:", txData);
+      console.error("[FedaPay] Create error:", JSON.stringify(txData).slice(0, 500));
+      // Message générique côté client, détails dans les logs serveur
       return NextResponse.json(
-        { error: txData.message || "Erreur création transaction FedaPay" },
-        { status: response.status || 500 }
+        { error: "Impossible de créer le paiement — réessayez plus tard" },
+        { status: 500 }
       );
     }
 

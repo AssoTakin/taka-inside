@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function FedaPayDonButton({ amount }: { amount: number }) {
+export default function FedaPayDonButton({ amount }: { amount: number | string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -10,30 +10,46 @@ export default function FedaPayDonButton({ amount }: { amount: number }) {
     setLoading(true);
     setError("");
 
+    // Robustesse: convertir en nombre entier
+    const numericAmount = typeof amount === 'string' ? parseInt(amount, 10) || 0 : Math.round(amount);
+
+    if (numericAmount <= 0) {
+      setError("Veuillez entrer un montant valide");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/fedapay/create-transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount,
-          description: `Don Taka Inside — ${amount.toLocaleString()} FCFA`,
+          amount: numericAmount,
+          description: `Don Taka Inside — ${numericAmount.toLocaleString()} FCFA`,
         }),
       });
 
-      const data = await res.json();
+      let data: { url?: string; error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        // Réponse non-JSON
+      }
 
       if (!res.ok || data.error) {
-        setError(data.error || "Erreur lors de la création du paiement");
+        setError("Paiement indisponible — réessayez plus tard");
+        console.error("[FedaPay] Server error:", res.status, data.error);
         return;
       }
 
-      if (data.url) {
+      if (typeof data.url === "string" && data.url) {
         window.location.href = data.url;
       } else {
-        setError("URL de paiement indisponible");
+        setError("Paiement indisponible — réessayez plus tard");
+        console.error("[FedaPay] Missing payment URL");
       }
-    } catch (e) {
-      setError("Erreur réseau — réessayez");
+    } catch {
+      setError("Connexion instable — vérifiez votre réseau");
     } finally {
       setLoading(false);
     }
