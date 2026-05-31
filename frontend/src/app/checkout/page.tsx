@@ -62,19 +62,29 @@ function CheckoutForm() {
 }
 
 export default function CheckoutPage() {
-  const { items, total } = useCart();
+  const { items, total, removeItem } = useCart();
   const [clientSecret, setClientSecret] = useState('');
   const [stripeReady, setStripeReady] = useState(false);
+  const [apiError, setApiError] = useState('');
+
+  // Nettoyer les items du panier avec prix trop bas (anciennes données corrompues)
+  useEffect(() => {
+    items.forEach((item) => {
+      if (item.price < 300) {
+        removeItem(item.id);
+      }
+    });
+  }, [items, removeItem]);
 
   useEffect(() => {
-    // Vérifier que Stripe est chargé
     stripePromise.then(() => setStripeReady(true)).catch((err) => {
       console.error('Stripe load error:', err);
     });
   }, []);
 
   useEffect(() => {
-    if (total > 0) {
+    setApiError('');
+    if (total > 0 && total >= 300) {
       fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,17 +98,24 @@ export default function CheckoutPage() {
         }),
       })
         .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          if (!res.ok) {
+            return res.json().then((data) => {
+              throw new Error(data.error || `HTTP ${res.status}`);
+            });
+          }
           return res.json();
         })
         .then((data) => {
           if (data.clientSecret) {
             setClientSecret(data.clientSecret);
-          } else if (data.error) {
-            console.error('API error:', data.error);
           }
         })
-        .catch((err) => console.error('Erreur création intent:', err));
+        .catch((err) => {
+          console.error('Erreur création intent:', err);
+          setApiError(err.message || 'Erreur de paiement');
+        });
+    } else if (total > 0 && total < 300) {
+      setApiError('Le montant minimum est de 300 FCFA. Ajoutez d\'autres articles ou choisissez un produit plus cher.');
     }
   }, [total, items]);
 
@@ -157,7 +174,12 @@ export default function CheckoutPage() {
             {/* Paiement Stripe */}
             <div className="bg-white rounded-2xl p-6 border border-taka-gray-light">
               <h2 className="font-display text-lg font-bold mb-4">Paiement sécurisé</h2>
-              {clientSecret && stripeReady ? (
+
+              {apiError ? (
+                <div className="p-4 rounded-xl bg-taka-red/15 text-taka-red text-sm mb-4">
+                  {apiError}
+                </div>
+              ) : clientSecret && stripeReady ? (
                 <Elements stripe={stripePromise} options={options}>
                   <CheckoutForm />
                 </Elements>

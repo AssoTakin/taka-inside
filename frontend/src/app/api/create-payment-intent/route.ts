@@ -14,9 +14,11 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const { amount, currency = "xof", metadata = {} } = await req.json();
 
-    if (!amount || amount <= 0) {
+    // Stripe exige un minimum de 50 cents (~300 FCFA au taux actuel)
+    const minAmount = currency === 'xof' ? 300 : 50;
+    if (!amount || amount < minAmount) {
       return NextResponse.json(
-        { error: "Montant invalide" },
+        { error: `Montant minimum: ${minAmount} ${currency.toUpperCase()}` },
         { status: 400 }
       );
     }

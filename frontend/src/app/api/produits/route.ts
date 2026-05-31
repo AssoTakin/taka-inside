@@ -24,10 +24,10 @@ export async function GET(_req: NextRequest) {
     id: Number(p.id) || i + 1,
     documentId: String(p.documentId || `prod-${i}`),
     nom: String(p.nom || "Produit"),
-    prix: Number(p.prix || 0),
+    prix: Math.max(Number(p.prix || 0), 500), // Prix minimum 500 FCFA
     type: (String(p.type || "fixe") as "fixe" | "personnalisable"),
     image: (p.image as { url: string } | null)?.url || null,
-  }));
+  })).filter(p => p.prix >= 500); // Exclure les produits sans prix valide
 
   return NextResponse.json({ produits });
 }
