@@ -9,15 +9,9 @@ export const metadata: Metadata = {
   description: "Découvrez les artistes du label Taka Inside - musique béninoise et culture béninoise.",
 };
 
-const MOCK_ARTISTES: Array<Record<string, unknown>> = [
-  { nom: "Tomiwa Kéfil", genre_musical: "Afrobeat · World", biographie: "Chanteur et auteur-compositeur, fusionne les rythmes traditionnels du Bénin avec l'afrobeat contemporain.", slug: "tomiwa-kefil", photo: null },
-  { nom: "Ami Sêdjro", genre_musical: "Traditionnel · Jazz", biographie: "Vocaliste et percussionniste, porte-voix des traditions vodun et des mélodies ancestrales du Sud-Bénin.", slug: "ami-sedjro", photo: null },
-  { nom: "Koffi Agbossou", genre_musical: "Hip-Hop · Afrotrap", biographie: "Rappeur engagé, mêle francais, fon et anglais pour raconter le quotidien des jeunes Béninois.", slug: "koffi-agbossou", photo: null },
-];
-
 export default async function LabelMusicalPage() {
   const artistesData = await fetchStrapiList("artistes?populate=*");
-  const artistes = artistesData && Array.isArray(artistesData) && artistesData.length ? artistesData : MOCK_ARTISTES;
+  const artistes = artistesData && Array.isArray(artistesData) ? artistesData : [];
 
   return (
     <SiteLayout>

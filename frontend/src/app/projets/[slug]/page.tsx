@@ -12,12 +12,13 @@ interface Props {
 export async function generateStaticParams() {
   const data = await fetchStrapiList("projets?fields[0]=slug");
   if (!data) return [];
-  return data.map((p) => ({ slug: String(p.slug || "") })).filter((p) => p.slug);
+  return data.map((p) => ({ slug: String(p.slug || "").toLowerCase() })).filter((p) => p.slug);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const p = await fetchStrapiSingle(`projets?filters[slug][$eq]=${slug}&populate=*`);
+  const normalizedSlug = slug.toLowerCase();
+  const p = await fetchStrapiSingle(`projets?filters[slug][$eqi]=${normalizedSlug}&populate=*`);
   if (!p) return { title: "Projet | Taka Inside" };
   return {
     title: `${p.titre} | Taka Inside`,
@@ -47,7 +48,8 @@ function statutColor(s: string) {
 
 export default async function ProjetPage({ params }: Props) {
   const { slug } = await params;
-  const projet = await fetchStrapiSingle(`projets?filters[slug][$eq]=${slug}&populate=*`);
+  const normalizedSlug = slug.toLowerCase();
+  const projet = await fetchStrapiSingle(`projets?filters[slug][$eqi]=${normalizedSlug}&populate=*`);
 
   if (!projet) notFound();
 
