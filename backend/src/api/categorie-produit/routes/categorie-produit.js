@@ -1,7 +1,4 @@
 'use strict';
+const { createCoreRouter } = require('@strapi/strapi').factories;
 
-module.exports = {
-  routes: [
-    { method: 'GET', path: '/categorie-produits', handler: 'categorie-produit.find', config: { auth: false } }
-  ]
-};
+module.exports = createCoreRouter('api::categorie-produit.categorie-produit');

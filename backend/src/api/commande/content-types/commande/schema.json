@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "commandes",
+  "info": {
+    "singularName": "commande",
+    "pluralName": "commandes",
+    "displayName": "Commande",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "nomClient": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "adresse": {
+      "type": "text"
+    },
+    "produits": {
+      "type": "json"
+    },
+    "total": {
+      "type": "decimal"
+    },
+    "statut": {
+      "type": "enumeration",
+      "enum": ["en_attente", "paye", "expedie", "livre", "annule"],
+      "default": "en_attente"
+    }
+  }
+}
