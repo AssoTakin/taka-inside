@@ -45,7 +45,7 @@ export default function CGVPage() {
 
             <article>
               <h2 className="font-display text-xl font-bold mb-3">6. Contact</h2>
-              <p className="text-taka-gray">Pour toute question relative à une commande : contact@takainside.org</p>
+              <p className="text-taka-gray">Pour toute question relative à une commande : kwabo@takainside.org</p>
             </article>
           </div>
         </div>

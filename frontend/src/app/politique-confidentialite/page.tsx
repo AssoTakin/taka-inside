@@ -35,7 +35,7 @@ export default function PolitiqueConfidentialitePage() {
 
             <article>
               <h2 className="font-display text-xl font-bold mb-3">4. Vos droits</h2>
-              <p className="text-taka-gray">Conformément au RGPD, vous disposez des droits d'accès, de rectification, d'effacement, de portabilité et d'opposition. Pour exercer ces droits : contact@takainside.org.</p>
+              <p className="text-taka-gray">Conformément au RGPD, vous disposez des droits d'accès, de rectification, d'effacement, de portabilité et d'opposition. Pour exercer ces droits : kwabo@takainside.org.</p>
             </article>
 
             <article>

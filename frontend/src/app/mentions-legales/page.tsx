@@ -45,7 +45,7 @@ export default function MentionsLegalesPage() {
 
             <article>
               <h2 className="font-display text-xl font-bold mb-3">6. Contact</h2>
-              <p className="text-taka-gray">Pour toute question relative aux mentions légales : contact@takainside.org</p>
+              <p className="text-taka-gray">Pour toute question relative aux mentions légales : kwabo@takainside.org</p>
             </article>
           </div>
         </div>
