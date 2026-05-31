@@ -48,7 +48,7 @@ function statutColor(s: string) {
 
 export default async function ProjetsPage() {
   const projetsData = await fetchStrapiList("projets?populate=*");
-  const projets = projetsData ?? MOCK_PROJETS;
+  const projets = projetsData && Array.isArray(projetsData) && projetsData.length ? projetsData : MOCK_PROJETS;
 
   return (
     <SiteLayout>

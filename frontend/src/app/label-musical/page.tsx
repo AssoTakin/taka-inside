@@ -17,7 +17,7 @@ const MOCK_ARTISTES: Array<Record<string, unknown>> = [
 
 export default async function LabelMusicalPage() {
   const artistesData = await fetchStrapiList("artistes?populate=*");
-  const artistes = artistesData ?? MOCK_ARTISTES;
+  const artistes = artistesData && Array.isArray(artistesData) && artistesData.length ? artistesData : MOCK_ARTISTES;
 
   return (
     <SiteLayout>
