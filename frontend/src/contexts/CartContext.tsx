@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 export interface CartItem {
   id: number;
@@ -31,6 +31,21 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Load cart from localStorage on mount (évite les erreurs d'hydratation)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('taka-cart');
+      if (saved) {
+        setItems(JSON.parse(saved));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // Persist cart
+  useEffect(() => {
+    localStorage.setItem('taka-cart', JSON.stringify(items));
+  }, [items]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
