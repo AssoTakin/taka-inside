@@ -10,47 +10,62 @@ export default function FedaPayDonButton({ amount }: { amount: number | string }
     setLoading(true);
     setError("");
 
-    // Robustesse: convertir en nombre entier
-    const numericAmount = typeof amount === 'string' ? parseInt(amount, 10) || 0 : Math.round(amount);
+    // === DEBUG ===
+    console.log("[FedaPay] Raw amount prop:", amount, "type:", typeof amount);
 
-    if (numericAmount <= 0) {
-      setError("Veuillez entrer un montant valide");
+    // Robustesse: convertir en nombre entier
+    const numericAmount = typeof amount === 'string' ? parseInt(amount, 10) || 0 : Math.round(Number(amount) || 0);
+
+    console.log("[FedaPay] Parsed amount:", numericAmount);
+
+    if (numericAmount <= 0 || Number.isNaN(numericAmount)) {
+      setError("Veuillez sélectionner un montant valide");
       setLoading(false);
       return;
     }
 
     try {
+      const payload = {
+        amount: numericAmount,
+        description: `Don Taka Inside — ${numericAmount.toLocaleString()} FCFA`,
+      };
+      console.log("[FedaPay] Sending payload:", payload);
+
       const res = await fetch("/api/fedapay/create-transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: numericAmount,
-          description: `Don Taka Inside — ${numericAmount.toLocaleString()} FCFA`,
-        }),
+        body: JSON.stringify(payload),
       });
+
+      console.log("[FedaPay] Response status:", res.status);
 
       let data: { url?: string; error?: string } = {};
       try {
         data = await res.json();
       } catch {
-        // Réponse non-JSON
+        console.error("[FedaPay] Invalid JSON response");
       }
 
+      console.log("[FedaPay] Response data:", data);
+
       if (!res.ok || data.error) {
-        setError("Paiement indisponible — réessayez plus tard");
         console.error("[FedaPay] Server error:", res.status, data.error);
+        setError("Paiement indisponible — réessayez plus tard");
+        setLoading(false);
         return;
       }
 
       if (typeof data.url === "string" && data.url) {
+        console.log("[FedaPay] Redirecting to:", data.url);
         window.location.href = data.url;
       } else {
+        console.error("[FedaPay] Missing URL in response");
         setError("Paiement indisponible — réessayez plus tard");
-        console.error("[FedaPay] Missing payment URL");
+        setLoading(false);
       }
-    } catch {
+    } catch (err) {
+      console.error("[FedaPay] Network error:", err);
       setError("Connexion instable — vérifiez votre réseau");
-    } finally {
       setLoading(false);
     }
   };

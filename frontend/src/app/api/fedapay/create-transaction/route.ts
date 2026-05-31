@@ -40,10 +40,9 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok || !tx?.id) {
       console.error("[FedaPay] Create error:", JSON.stringify(txData).slice(0, 500));
-      // Message générique côté client, détails dans les logs serveur
       return NextResponse.json(
         { error: "Impossible de créer le paiement — réessayez plus tard" },
-        { status: 500 }
+        { status: 500, headers: { "Cache-Control": "no-store" } }
       );
     }
 
@@ -62,7 +61,7 @@ export async function POST(req: NextRequest) {
       token: tokenData.token,
       transactionId: tx.id,
       reference: tx.reference,
-    });
+    }, { headers: { "Cache-Control": "no-store" } });
   } catch (err: unknown) {
     console.error("FedaPay error:", err);
     const message = err instanceof Error ? err.message : "Erreur serveur";
