@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import SiteLayout from '@/components/layout/SiteLayout';
@@ -64,6 +64,14 @@ function CheckoutForm() {
 export default function CheckoutPage() {
   const { items, total } = useCart();
   const [clientSecret, setClientSecret] = useState('');
+  const [stripeReady, setStripeReady] = useState(false);
+
+  useEffect(() => {
+    // Vérifier que Stripe est chargé
+    stripePromise.then(() => setStripeReady(true)).catch((err) => {
+      console.error('Stripe load error:', err);
+    });
+  }, []);
 
   useEffect(() => {
     if (total > 0) {
@@ -71,7 +79,7 @@ export default function CheckoutPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: total, // en centimes
+          amount: total,
           currency: 'xof',
           metadata: {
             order_type: 'shop',
@@ -79,11 +87,33 @@ export default function CheckoutPage() {
           },
         }),
       })
-        .then((res) => res.json())
-        .then((data) => setClientSecret(data.clientSecret))
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          } else if (data.error) {
+            console.error('API error:', data.error);
+          }
+        })
         .catch((err) => console.error('Erreur création intent:', err));
     }
   }, [total, items]);
+
+  const options = useMemo<StripeElementsOptions>(() => ({
+    clientSecret,
+    appearance: {
+      theme: 'stripe',
+      variables: {
+        colorPrimary: '#E5B800',
+        colorBackground: '#F5F3EF',
+        colorText: '#0A0A0A',
+        borderRadius: '12px',
+      },
+    },
+  }), [clientSecret]);
 
   if (items.length === 0) {
     return (
@@ -140,12 +170,14 @@ export default function CheckoutPage() {
             {/* Paiement Stripe */}
             <div className="bg-white rounded-2xl p-6 border border-taka-gray-light">
               <h2 className="font-display text-lg font-bold mb-4">Paiement sécurisé</h2>
-              {clientSecret ? (
+              {clientSecret && stripeReady ? (
                 <Elements stripe={stripePromise} options={options}>
                   <CheckoutForm />
                 </Elements>
               ) : (
-                <div className="text-center py-8 text-taka-gray">Chargement du formulaire de paiement...</div>
+                <div className="text-center py-8 text-taka-gray">
+                  {clientSecret && !stripeReady ? 'Initialisation de Stripe...' : 'Chargement du formulaire de paiement...'}
+                </div>
               )}
             </div>
           </div>

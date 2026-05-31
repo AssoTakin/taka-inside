@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
@@ -56,6 +56,13 @@ function DonForm({ amount, frequency }: { amount: number; frequency: 'one-time' 
 
 export default function DonStripeForm({ amount, frequency }: { amount: number; frequency: 'one-time' | 'monthly' }) {
   const [clientSecret, setClientSecret] = useState('');
+  const [stripeReady, setStripeReady] = useState(false);
+
+  useEffect(() => {
+    stripePromise.then(() => setStripeReady(true)).catch((err) => {
+      console.error('Stripe load error:', err);
+    });
+  }, []);
 
   useEffect(() => {
     if (amount > 0) {
@@ -71,29 +78,40 @@ export default function DonStripeForm({ amount, frequency }: { amount: number; f
           },
         }),
       })
-        .then((res) => res.json())
-        .then((data) => setClientSecret(data.clientSecret))
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          } else if (data.error) {
+            console.error('API error:', data.error);
+          }
+        })
         .catch((err) => console.error('Erreur:', err));
     }
   }, [amount, frequency]);
 
-  if (!clientSecret) {
+  const options = useMemo(() => ({
+    clientSecret,
+    appearance: {
+      theme: 'stripe',
+      variables: {
+        colorPrimary: '#1B8A3A',
+        colorBackground: '#F5F3EF',
+        colorText: '#0A0A0A',
+        borderRadius: '12px',
+      },
+    },
+  }), [clientSecret]);
+
+  if (!clientSecret || !stripeReady) {
     return <div className="text-center py-4 text-taka-gray text-sm">Chargement du paiement...</div>;
   }
 
   return (
-    <Elements stripe={stripePromise} options={{
-      clientSecret,
-      appearance: {
-        theme: 'stripe',
-        variables: {
-          colorPrimary: '#1B8A3A',
-          colorBackground: '#F5F3EF',
-          colorText: '#0A0A0A',
-          borderRadius: '12px',
-        },
-      },
-    }}>
+    <Elements stripe={stripePromise} options={options}>
       <DonForm amount={amount} frequency={frequency} />
     </Elements>
   );
