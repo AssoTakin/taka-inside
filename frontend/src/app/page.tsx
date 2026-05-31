@@ -182,7 +182,7 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link href="/association" className="inline-flex items-center gap-2 text-taka-green font-semibold hover:gap-4 transition-all">
+              <Link href="/association" className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all">
                 En savoir plus
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               </Link>
@@ -237,7 +237,7 @@ export default async function HomePage() {
                       <span className="text-taka-gray text-xs">{String(projet.tags || 'Projet')}</span>
                     </div>
                     <Link href={`/projets/${slug}`}>
-                      <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">{String(projet.titre)}</h3>
+                      <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-yellow transition-colors">{String(projet.titre)}</h3>
                     </Link>
                     <p className="text-taka-gray text-sm mb-4 flex-1">{desc}{desc.length >= 120 ? '...' : ''}</p>
                     <div className="flex flex-wrap gap-2 mt-auto">
