@@ -130,19 +130,6 @@ export default function CheckoutPage() {
     );
   }
 
-  const options: StripeElementsOptions = {
-    clientSecret,
-    appearance: {
-      theme: 'stripe',
-      variables: {
-        colorPrimary: '#E5B800',
-        colorBackground: '#F5F3EF',
-        colorText: '#0A0A0A',
-        borderRadius: '12px',
-      },
-    },
-  };
-
   return (
     <SiteLayout>
       <section className="py-16 md:py-24 bg-taka-cream">
