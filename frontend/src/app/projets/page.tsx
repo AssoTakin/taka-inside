@@ -19,6 +19,7 @@ const filters = [
 
 const MOCK_PROJETS: Array<Record<string, unknown>> = [
   { titre: "Made In Bénin Radio", statut: "en_cours", categorie: "Radio · Média", description: "LA Radio des Béninois. 24H/24 · 7J/7. Art, musique béninoise d'hier d'aujourd'hui et de demain.", slug: "made-in-benin-radio", image_couverture: null },
+  { titre: "MIB Talents À Suivre", statut: "en_cours", categorie: "Label · Développement", description: "Programme pluriannuel d'accompagnement de 2 artistes béninois émergents. Sélection, direction artistique, production, résidence France, tournée nationale et diaspora.", slug: "mib-talents-a-suivre", image_couverture: null },
   { titre: "Taka Culture Festival", statut: "a_venir", categorie: "Festival · Événement", description: "Grand festival culturel annuel réunissant artistes et artisans.", slug: "taka-culture-festival", image_couverture: null },
   { titre: "Ateliers Jeunes Talents", statut: "urgent", categorie: "Éducation · Social", description: "Programme d'accompagnement des jeunes artistes béninois.", slug: "ateliers-jeunes-talents", image_couverture: null },
   { titre: "Taka Inside Village", statut: "a_venir", categorie: "Social · Culturel", description: "Création d'un espace culturel communautaire avec bibliothèque, studio et salle de répétition.", slug: "taka-inside-village", image_couverture: null },
