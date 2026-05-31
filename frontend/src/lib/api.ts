@@ -1,5 +1,5 @@
 // lib/api.ts — SSR-safe fetcher for Next.js App Router
-const API_BASE = 'https://taka-inside-production.up.railway.app';
+const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'https://taka-inside-production.up.railway.app';
 
 export interface StrapiImage {
   id: number;

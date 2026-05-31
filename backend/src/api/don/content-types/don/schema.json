@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dons",
+  "info": {
+    "singularName": "don",
+    "pluralName": "dons",
+    "displayName": "Don",
+    "description": "Dons et contributions"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "montant": {
+      "type": "decimal",
+      "required": true
+    },
+    "message": {
+      "type": "text"
+    },
+    "anonyme": {
+      "type": "boolean",
+      "default": false
+    },
+    "newsletter": {
+      "type": "boolean",
+      "default": false
+    },
+    "statut": {
+      "type": "enumeration",
+      "enum": ["en_attente", "recu", "rembourse"],
+      "default": "en_attente"
+    }
+  }
+}

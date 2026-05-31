@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "config_menus",
+  "info": {
+    "singularName": "config-menu",
+    "pluralName": "config-menus",
+    "displayName": "Config Menu",
+    "description": "Configuration du menu de navigation"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "lien": {
+      "type": "string",
+      "required": true
+    },
+    "ordre": {
+      "type": "integer",
+      "default": 0
+    },
+    "actif": {
+      "type": "boolean",
+      "default": true
+    },
+    "externe": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
