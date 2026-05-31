@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -93,7 +93,7 @@ export default function DonStripeForm({ amount, frequency }: { amount: number; f
     }
   }, [amount, frequency]);
 
-  const options = useMemo(() => ({
+  const options = useMemo<StripeElementsOptions>(() => ({
     clientSecret,
     appearance: {
       theme: 'stripe',
