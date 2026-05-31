@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 
 const navLinks = [
@@ -23,7 +24,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-taka-yellow via-taka-red to-taka-green flex items-center justify-center font-display font-bold text-taka-black text-sm">TI</div>
+            <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={36} height={36} className="w-9 h-9 rounded-full object-cover" />
             <span className="font-display font-bold text-lg tracking-tight">Taka Inside</span>
           </Link>
 

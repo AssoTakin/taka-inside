@@ -17,6 +17,17 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: { template: "%s | Taka Inside", default: "Taka Inside — L'Art au Service de l'Humain" },
   description: "Association culturelle et label musical basée au Bénin. Projets innovants, brassage culturel, Made In Bénin Radio.",
+  icons: {
+    icon: [
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/icon.png"],
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
