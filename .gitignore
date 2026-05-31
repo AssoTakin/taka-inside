@@ -40,3 +40,9 @@ coverage/
 # Uploads (dev)
 uploads/
 public/uploads/
+# Secrets - never commit these
+frontend/.env
+backend/.env
+backend/.env.*
+backend/.strapi-updater.json
+backend/.strapi/client/

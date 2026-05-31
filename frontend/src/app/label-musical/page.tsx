@@ -1,12 +1,24 @@
-import SiteLayout from "@/components/layout/SiteLayout";
 import { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import SiteLayout from "@/components/layout/SiteLayout";
+import { fetchStrapiList, getImageUrl } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Label Musical",
   description: "Découvrez les artistes du label Taka Inside - musique béninoise et africaine.",
 };
 
-export default function LabelMusicalPage() {
+const MOCK_ARTISTES: Array<Record<string, unknown>> = [
+  { nom: "Tomiwa Kéfil", genre_musical: "Afrobeat · World", biographie: "Chanteur et auteur-compositeur, fusionne les rythmes traditionnels du Bénin avec l'afrobeat contemporain.", slug: "tomiwa-kefil", photo: null },
+  { nom: "Ami Sêdjro", genre_musical: "Traditionnel · Jazz", biographie: "Vocaliste et percussionniste, porte-voix des traditions vodun et des mélodies ancestrales du Sud-Bénin.", slug: "ami-sedjro", photo: null },
+  { nom: "Koffi Agbossou", genre_musical: "Hip-Hop · Afrotrap", biographie: "Rappeur engagé, mêle francais, fon et anglais pour raconter le quotidien des jeunes Béninois.", slug: "koffi-agbossou", photo: null },
+];
+
+export default async function LabelMusicalPage() {
+  const artistesData = await fetchStrapiList("artistes?populate=*");
+  const artistes = artistesData ?? MOCK_ARTISTES;
+
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -30,23 +42,37 @@ export default function LabelMusicalPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-bold mb-8">Artistes du label</h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              { name: "Tomiwa Kéfil", genre: "Afrobeat · World", bio: "Chanteur et auteur-compositeur, fusionne les rythmes traditionnels du Bénin avec l'afrobeat contemporain." },
-              { name: "Ami Sêdjro", genre: "Traditionnel · Jazz", bio: "Vocaliste et percussionniste, porte-voix des traditions vodun et des mélodies ancestrales du Sud-Bénin." },
-              { name: "Koffi Agbossou", genre: "Hip-Hop · Afrotrap", bio: "Rappeur engagé, mêle francais, fon et anglais pour raconter le quotidien des jeunes Béninois." },
-            ].map((artiste) => (
-              <div key={artiste.name} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4">
-                <div className="w-20 h-20 rounded-xl bg-taka-gray-light flex-shrink-0 overflow-hidden">
-                  <div className="w-full h-full bg-taka-black/10 flex items-center justify-center text-taka-gray text-xs">Photo</div>
-                </div>
-                <div>
-                  <p className="text-taka-red text-sm font-medium">{artiste.genre}</p>
-                  <h3 className="font-display text-xl font-bold mt-1">{artiste.name}</h3>
-                  <p className="text-taka-gray text-sm mt-2">{artiste.bio}</p>
-                </div>
-              </div>
-            ))}
+          {artistes.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-taka-gray">Aucun artiste pour le moment. Revenez bientôt !</p>
+            </div>
+          )}
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {artistes.map((artiste, i) => {
+              const nom = String(artiste.nom || "");
+              const slug = String(artiste.slug || `artiste-${i}`);
+              const genre = String(artiste.genre_musical || "");
+              const bio = String(artiste.biographie || "");
+              const photoUrl = getImageUrl(artiste.photo as { url: string } | null);
+
+              return (
+                <Link href={`/label-musical/${slug}`} key={slug} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md transition-all group">
+                  <div className="w-20 h-20 rounded-xl bg-taka-gray-light flex-shrink-0 overflow-hidden relative">
+                    {photoUrl ? (
+                      <Image src={photoUrl} alt={nom} fill className="object-cover" sizes="80px" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-taka-gray text-xs font-display font-bold text-xl">{nom.charAt(0)}</div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-taka-red text-sm font-medium">{genre}</p>
+                    <h3 className="font-display text-xl font-bold mt-1 group-hover:text-taka-yellow transition-colors">{nom}</h3>
+                    <p className="text-taka-gray text-sm mt-2 line-clamp-3">{bio}</p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

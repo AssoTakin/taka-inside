@@ -1,12 +1,39 @@
-import SiteLayout from "@/components/layout/SiteLayout";
-import { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Contactez Taka Inside par email, WhatsApp, téléphone ou via les réseaux sociaux.",
-};
+import { useState } from "react";
+import SiteLayout from "@/components/layout/SiteLayout";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ nom: "", email: "", sujet: "", message: "" });
+  const [status, setStatus] = useState<{ type: "success" | "error" | null; msg: string }>({ type: null, msg: "" });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus({ type: null, msg: "" });
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus({ type: "success", msg: "Message envoyé ! Nous vous répondrons sous 48h." });
+        setForm({ nom: "", email: "", sujet: "", message: "" });
+      } else {
+        setStatus({ type: "error", msg: data.error || "Erreur lors de l'envoi." });
+      }
+    } catch {
+      setStatus({ type: "error", msg: "Erreur réseau. Veuillez réessayer." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -25,21 +52,26 @@ export default function ContactPage() {
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light">
               <h2 className="font-display text-2xl font-bold mb-6">Envoyez-nous un message</h2>
 
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold mb-1">Nom *</label>
-                    <input type="text" required className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all" placeholder="Votre nom" />
+                    <input type="text" required value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all"
+                      placeholder="Votre nom" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-1">Email *</label>
-                    <input type="email" required className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all" placeholder="votre@email.com" />
+                    <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all"
+                      placeholder="votre@email.com" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">Sujet *</label>
-                  <select required className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all bg-white">
+                  <select required value={form.sujet} onChange={(e) => setForm({ ...form, sujet: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all bg-white">
                     <option value="">Sélectionnez...</option>
                     <option>Question générale</option>
                     <option>Partenariat</option>
@@ -53,11 +85,20 @@ export default function ContactPage() {
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">Message *</label>
-                  <textarea required rows={5} className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all resize-none" placeholder="Votre message..."></textarea>
+                  <textarea required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    rows={5} className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all resize-none"
+                    placeholder="Votre message..."></textarea>
                 </div>
 
-                <button type="submit" className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all">
-                  Envoyer le message
+                {status.type && (
+                  <div className={`p-4 rounded-xl ${status.type === "success" ? "bg-taka-green/15 text-taka-green" : "bg-taka-red/15 text-taka-red"}`}>
+                    {status.msg}
+                  </div>
+                )}
+
+                <button type="submit" disabled={loading}
+                  className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50">
+                  {loading ? "Envoi en cours..." : "Envoyer le message"}
                 </button>
               </form>
             </div>
