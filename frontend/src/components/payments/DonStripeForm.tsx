@@ -48,7 +48,7 @@ function DonForm({ amount, frequency }: { amount: number; frequency: 'one-time' 
         disabled={!stripe || isLoading}
         className="w-full bg-taka-green text-white py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50"
       >
-        {isLoading ? 'Traitement...' : `Donner ${amount.toLocaleString()} FCFA ${frequency === 'monthly' ? '/mois' : ''}`}
+        {isLoading ? 'Traitement...' : `Donner ${amount.toLocaleString('fr-FR')} FCFA ${frequency === 'monthly' ? '/mois' : ''}`}
       </button>
     </form>
   );

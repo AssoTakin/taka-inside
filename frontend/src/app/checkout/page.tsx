@@ -55,7 +55,7 @@ function CheckoutForm() {
         disabled={!stripe || isLoading}
         className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Traitement en cours...' : `Payer ${total.toLocaleString()} FCFA`}
+        {isLoading ? 'Traitement en cours...' : `Payer ${total.toLocaleString('fr-FR')} FCFA`}
       </button>
     </form>
   );
@@ -127,12 +127,12 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.name} x{item.quantity}</span>
-                    <span className="font-semibold">{(item.price * item.quantity).toLocaleString()} FCFA</span>
+                    <span className="font-semibold">{(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span>
                   </div>
                 ))}
                 <div className="border-t border-taka-gray-light pt-3 flex justify-between font-bold">
                   <span>Total</span>
-                  <span>{total.toLocaleString()} FCFA</span>
+                  <span>{total.toLocaleString('fr-FR')} FCFA</span>
                 </div>
               </div>
             </div>

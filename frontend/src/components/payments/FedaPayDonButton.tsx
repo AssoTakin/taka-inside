@@ -27,7 +27,7 @@ export default function FedaPayDonButton({ amount }: { amount: number | string }
     try {
       const payload = {
         amount: numericAmount,
-        description: `Don Taka Inside — ${numericAmount.toLocaleString()} FCFA`,
+        description: `Don Taka Inside — ${numericAmount.toLocaleString('fr-FR')} FCFA`,
       };
       console.log("[FedaPay] Sending payload:", payload);
 

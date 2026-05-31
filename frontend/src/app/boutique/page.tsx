@@ -99,7 +99,7 @@ export default function BoutiquePage() {
                     )}
 
                     <div className="flex items-center justify-between mt-3">
-                      <span className="font-bold">{product.prix.toLocaleString()} FCFA</span>
+                      <span className="font-bold">{product.prix.toLocaleString('fr-FR')} FCFA</span>
                       <button
                         onClick={() => handleAdd(product)}
                         className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"

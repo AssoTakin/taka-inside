@@ -64,7 +64,7 @@ export default function CartDrawer() {
                   {item.customization && (
                     <p className="text-xs text-taka-gray mt-1">Personnalisation : {item.customization}</p>
                   )}
-                  <p className="font-bold mt-1">{item.price.toLocaleString()} FCFA</p>
+                  <p className="font-bold mt-1">{item.price.toLocaleString('fr-FR')} FCFA</p>
 
                   <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center border border-taka-gray-light rounded-lg overflow-hidden">
@@ -96,7 +96,7 @@ export default function CartDrawer() {
           <div className="border-t border-taka-gray-light p-6 space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-taka-gray">Sous-total</span>
-              <span className="font-bold text-lg">{total.toLocaleString()} FCFA</span>
+              <span className="font-bold text-lg">{total.toLocaleString('fr-FR')} FCFA</span>
             </div>
             <p className="text-xs text-taka-gray">Frais de livraison calculés à l'étape suivante.</p>
             <Link
