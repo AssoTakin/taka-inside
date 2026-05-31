@@ -49,7 +49,16 @@ function statutColor(s: string) {
 
 export default async function ProjetsPage() {
   const projetsData = await fetchStrapiList("projets?populate=*");
-  const projets = projetsData && Array.isArray(projetsData) && projetsData.length ? projetsData : MOCK_PROJETS;
+  const projetsFromStrapi = projetsData && Array.isArray(projetsData) ? projetsData : [];
+  // Merge Strapi + mocks, éliminer doublons par slug
+  const allProjets = [...MOCK_PROJETS, ...projetsFromStrapi];
+  const seenSlugs = new Set<string>();
+  const projets = allProjets.filter((p: Record<string, unknown>) => {
+    const slug = String(p.slug || '');
+    if (!slug || seenSlugs.has(slug)) return false;
+    seenSlugs.add(slug);
+    return true;
+  });
 
   return (
     <SiteLayout>

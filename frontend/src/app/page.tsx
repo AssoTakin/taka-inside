@@ -61,7 +61,16 @@ export default async function HomePage() {
   const projetsRaw = projetsData as Record<string, unknown>[] | null;
   const artistesRaw = artistesData as Record<string, unknown>[] | null;
 
-  const projets = projetsRaw && Array.isArray(projetsRaw) && projetsRaw.length ? projetsRaw : MOCK_PROJETS as Record<string, unknown>[];
+  const projetsFromStrapi = projetsRaw && Array.isArray(projetsRaw) ? projetsRaw : [];
+  // Merge Strapi + mocks, éliminer doublons par slug, prendre les 3 premiers
+  const allProjets = [...MOCK_PROJETS, ...projetsFromStrapi];
+  const seenSlugs = new Set<string>();
+  const projets = allProjets.filter((p: Record<string, unknown>) => {
+    const slug = String(p.slug || '');
+    if (!slug || seenSlugs.has(slug)) return false;
+    seenSlugs.add(slug);
+    return true;
+  }).slice(0, 3);
   const artistes = artistesRaw && Array.isArray(artistesRaw) && artistesRaw.length ? artistesRaw : MOCK_ARTISTES as Record<string, unknown>[];
 
   return (
