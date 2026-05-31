@@ -1,15 +1,21 @@
-import type { Core } from '@strapi/strapi';
+import { parse } from 'pg-connection-string';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => ({
-  connection: {
-    client: 'postgres',
+export default ({ env }: any) => {
+  const { host, port, database, user, password } = parse(env('DATABASE_URL', ''));
+
+  return {
     connection: {
-      connectionString: env('DATABASE_URL'),
-      ssl: env.bool('DATABASE_SSL', false) ? { rejectUnauthorized: false } : false,
+      client: 'postgres',
+      connection: {
+        host: host || 'localhost',
+        port: Number(port) || 5432,
+        database: database || 'strapi',
+        user: user || 'strapi',
+        password: password || '',
+        ssl: env.bool('DATABASE_SSL', false) ? { rejectUnauthorized: false } : false,
+      },
+      pool: { min: 2, max: 10 },
+      acquireConnectionTimeout: 60000,
     },
-    pool: { min: 2, max: 10 },
-    acquireConnectionTimeout: 60000,
-  },
-});
-
-export default config;
+  };
+};
