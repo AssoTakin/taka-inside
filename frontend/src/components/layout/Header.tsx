@@ -21,11 +21,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-taka-black text-white">
       <div className="rasta-line h-1"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={36} height={36} className="w-9 h-9 rounded-full object-cover" />
-            <span className="font-display font-bold text-lg tracking-tight">Taka Inside</span>
+            <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+            <span className="font-display font-bold text-xl tracking-tight">Taka Inside</span>
           </Link>
 
           {/* Desktop Nav */}

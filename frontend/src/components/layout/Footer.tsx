@@ -31,8 +31,8 @@ export default function Footer() {
           {/* Logo */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={36} height={36} className="w-9 h-9 rounded-full object-cover" />
-              <span className="font-display font-bold text-lg">Taka Inside</span>
+              <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+              <span className="font-display font-bold text-xl">Taka Inside</span>
             </div>
             <p className="text-taka-gray text-sm">Carrefour culturel et label musical associatif. L'art au service de l'humain.</p>
             <div className="flex gap-4 mt-4">
