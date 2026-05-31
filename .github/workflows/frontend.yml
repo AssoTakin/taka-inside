@@ -2,12 +2,12 @@ name: Frontend CI/CD — Vercel
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, main, develop]
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend.yml'
   pull_request:
-    branches: [main]
+    branches: [master, main]
     paths:
       - 'frontend/**'
 
@@ -70,7 +70,7 @@ jobs:
 
   deploy-production:
     name: Deploy Production
-    if: github.ref == 'refs/heads/main'
+    if: contains(fromJson('["refs/heads/main", "refs/heads/master"]'), github.ref)
     needs: lint-and-test
     runs-on: ubuntu-latest
     defaults:
