@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Made In Bénin Radio",
-  description: "LA Radio des Béninois. Web radio 100% culture béninoise, 24H/24 et 7J/7. Musique, émissions, podcasts et bien plus.",
+  description: "LA Radio des Béninois. Web radio 100% culture béninoise, 24H/24 et 7J/7. #MibTalentASuivre, art, musique, podcasts, live et bien plus.",
   openGraph: {
     type: "website",
     locale: "fr_FR",
@@ -102,7 +102,7 @@ export default function RadioPage() {
               <span className="text-white font-semibold">LA Radio des Béninois</span> — exclusivement dédiée à la culture béninoise.
             </p>
             <p className="text-taka-gray max-w-xl mx-auto">
-              Écoutez la musique béninoise, africaine et world music 24 heures sur 24. Découvrez les talents du Bénin, nos émissions, podcasts et actualités culturelles.
+              Art, musique béninoise d'hier, d'aujourd'hui et de demain. #MibTalentASuivre, émissions, podcasts, live et bien plus. Exclusivement culture béninoise.
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function RadioPage() {
                 </div>
                 <div>
                   <h2 className="font-display text-xl md:text-2xl font-bold">Écoutez en direct</h2>
-                  <p className="text-taka-gray text-sm">Flux audio continu · Musique béninoise &amp; africaine</p>
+                  <p className="text-taka-gray text-sm">24H/24 · 7J/7 · 100% culture béninoise</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -130,11 +130,11 @@ export default function RadioPage() {
               </div>
             </div>
 
-            {/* Audio Player */}
+            {/* Player CTA */}
             <div className="bg-taka-black rounded-2xl p-6 md:p-8 mb-8">
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-14 h-14 rounded-full bg-taka-yellow flex items-center justify-center flex-shrink-0">
-                  <svg className="w-7 h-7 text-taka-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 rounded-full bg-taka-yellow flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 text-taka-black ml-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                 </div>
@@ -142,15 +142,18 @@ export default function RadioPage() {
                   <p className="text-white font-semibold text-lg">Made In Bénin Radio</p>
                   <p className="text-taka-gray text-sm">Stream continu · 100% culture béninoise</p>
                 </div>
-                <audio
-                  controls
-                  className="w-full sm:w-56 md:w-72"
-                  aria-label="Lecteur radio"
-                  preload="none"
+                <a
+                  href="https://www.madeinbeninradio.bj"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-taka-yellow text-taka-black px-6 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 whitespace-nowrap"
                 >
-                  <source src="https://stream.zeno.fm/0r0xa79288zuv" type="audio/mpeg" />
-                  Votre navigateur ne supporte pas la lecture audio.
-                </audio>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Écouter en direct
+                </a>
               </div>
             </div>
 
@@ -240,8 +243,8 @@ export default function RadioPage() {
               </h2>
               <p className="text-taka-gray text-lg leading-relaxed mb-6">
                 Made In Bénin Radio est LA web radio des Béninois. Lancée par Taka Inside, elle diffuse en continu 
-                la musique béninoise, africaine et world music, avec des émissions, des interviews et des podcasts 
-                exclusivement dédiés à la promotion de la culture du Bénin.
+                Art, musique béninoise d'hier, d'aujourd'hui et de demain, avec des émissions, des interviews et des podcasts
+                exclusivement dédiés à la promotion de la culture béninoise.
               </p>
               <ul className="space-y-3 text-taka-gray">
                 {[

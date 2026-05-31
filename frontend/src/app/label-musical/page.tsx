@@ -6,7 +6,7 @@ import { fetchStrapiList, getImageUrl } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Label Musical",
-  description: "Découvrez les artistes du label Taka Inside - musique béninoise et africaine.",
+  description: "Découvrez les artistes du label Taka Inside - musique béninoise et culture béninoise.",
 };
 
 const MOCK_ARTISTES: Array<Record<string, unknown>> = [

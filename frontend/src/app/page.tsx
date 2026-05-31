@@ -5,7 +5,7 @@ import { fetchStrapi, getImageUrl } from "@/lib/api";
 
 /* ─── Mock fallback ─── */
 const MOCK_PROJETS = [
-  { id: 1, titre: "Made In Bénin Radio", statut: "en_cours", tags: "Radio · Média", description: "Web radio dédiée à la promotion de la musique béninoise et africaine.", slug: "made-in-benin-radio" },
+  { id: 1, titre: "Made In Bénin Radio", statut: "en_cours", tags: "Radio · Média", description: "LA Radio des Béninois. 24H/24 · 7J/7. Art, musique béninoise d'hier d'aujourd'hui et de demain.", slug: "made-in-benin-radio" },
   { id: 2, titre: "Taka Culture Festival", statut: "a_venir", tags: "Festival · Événement", description: "Grand festival culturel annuel réunissant artistes et artisans.", slug: "taka-culture-festival" },
   { id: 3, titre: "Ateliers Jeunes Talents", statut: "urgent", tags: "Éducation · Social", description: "Programme d'accompagnement des jeunes artistes béninois.", slug: "ateliers-jeunes-talents" },
 ];
