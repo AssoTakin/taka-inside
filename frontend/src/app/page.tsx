@@ -241,7 +241,7 @@ export default async function HomePage() {
                     </Link>
                     <p className="text-taka-gray text-sm mb-4 flex-1">{desc}{desc.length >= 120 ? '...' : ''}</p>
                     <div className="flex flex-wrap gap-2 mt-auto">
-                      <Link href={`/projets/${slug}`} className="text-taka-green font-semibold text-sm hover:underline">
+                      <Link href={`/projets/${slug}`} className="text-sm font-medium text-taka-black hover:text-taka-yellow transition-colors">
                         En savoir plus →
                       </Link>
                       {ctaDon && (
