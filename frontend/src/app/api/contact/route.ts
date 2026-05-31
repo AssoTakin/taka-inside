@@ -3,9 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nom, email, sujet, message } = body;
+    const { nom, name, email, sujet, subject, message } = body;
 
-    if (!nom || !email || !sujet || !message) {
+    const finalNom = nom || name;
+    const finalSujet = sujet || subject;
+
+    if (!finalNom || !email || !finalSujet || !message) {
       return NextResponse.json(
         { error: "Tous les champs sont requis" },
         { status: 400 }
@@ -23,11 +26,11 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         data: {
-          nom,
+          nom: finalNom,
           prenom: "Contact",
           email,
           ville: "Inconnue",
-          competences: sujet,
+          competences: finalSujet,
           motivations: message,
           statut: "recue",
         },

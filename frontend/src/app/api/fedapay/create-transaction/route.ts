@@ -26,26 +26,39 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         description: description || "Don Taka Inside",
         amount: amount,
-        currency: { code: currency.toUpperCase(), name: currency.toUpperCase() },
+        currency: { iso: currency.toUpperCase() },
         callback_url:
           callback_url ||
           `${process.env.NEXT_PUBLIC_APP_URL || "https://frontend-mu-one-82.vercel.app"}/paiement/confirmation?method=fedapay`,
       }),
     });
 
-    const data = await response.json();
+    const txData = await response.json();
+    const tx = txData["v1/transaction"];
 
-    if (!response.ok) {
-      console.error("FedaPay error:", data);
+    if (!response.ok || !tx?.id) {
+      console.error("FedaPay create error:", txData);
       return NextResponse.json(
-        { error: data.message || "Erreur FedaPay" },
-        { status: response.status }
+        { error: txData.message || "Erreur création transaction FedaPay" },
+        { status: response.status || 500 }
       );
     }
 
+    // Générer le token/payment page
+    const tokenRes = await fetch(`https://api.fedapay.com/v1/transactions/${tx.id}/token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const tokenData = await tokenRes.json();
+
     return NextResponse.json({
-      url: data.url || data.data?.url,
-      transactionId: data.id || data.data?.id,
+      url: tokenData.url,
+      token: tokenData.token,
+      transactionId: tx.id,
+      reference: tx.reference,
     });
   } catch (err: unknown) {
     console.error("FedaPay error:", err);
