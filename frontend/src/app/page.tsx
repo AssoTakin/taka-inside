@@ -216,25 +216,47 @@ export default async function HomePage() {
             {projets.map((projet: Record<string, unknown>) => {
               const coverUrl = extractUrl(projet.image_couverture);
               const desc = String(projet.description || '').substring(0, 120);
+              const statut = String(projet.statut || '');
+              const slug = String(projet.slug || '');
+              const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
+              const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
               return (
-                <Link href={`/projets/${projet.slug || ''}`} key={String(projet.id)} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group">
-                  <div className="aspect-[16/10] bg-taka-gray-light relative">
-                    {coverUrl ? (
-                      <Image src={getImageUrl({ url: coverUrl }) || ''} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/20 to-taka-green/20" />
-                    )}
-                  </div>
-                  <div className="p-6">
+                <div key={String(projet.id)} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group flex flex-col">
+                  <Link href={`/projets/${slug}`} className="block">
+                    <div className="aspect-[16/10] bg-taka-gray-light relative">
+                      {coverUrl ? (
+                        <Image src={getImageUrl({ url: coverUrl }) || ''} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/20 to-taka-green/20" />
+                      )}
+                    </div>
+                  </Link>
+                  <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className={`${statutColor(String(projet.statut))} text-white text-xs font-semibold px-3 py-1 rounded-full`}>{statutLabel(String(projet.statut))}</span>
+                      <span className={`${statutColor(statut)} text-white text-xs font-semibold px-3 py-1 rounded-full`}>{statutLabel(statut)}</span>
                       <span className="text-taka-gray text-xs">{String(projet.tags || 'Projet')}</span>
                     </div>
-                    <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">{String(projet.titre)}</h3>
-                    <p className="text-taka-gray text-sm mb-4">{desc}{desc.length >= 120 ? '...' : ''}</p>
-                    <span className="text-taka-green font-semibold text-sm">En savoir plus →</span>
+                    <Link href={`/projets/${slug}`}>
+                      <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-green transition-colors">{String(projet.titre)}</h3>
+                    </Link>
+                    <p className="text-taka-gray text-sm mb-4 flex-1">{desc}{desc.length >= 120 ? '...' : ''}</p>
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      <Link href={`/projets/${slug}`} className="text-taka-green font-semibold text-sm hover:underline">
+                        En savoir plus →
+                      </Link>
+                      {ctaDon && (
+                        <Link href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
+                          Soutenir 💛
+                        </Link>
+                      )}
+                      {ctaBenevole && (
+                        <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">
+                          Bénévolat 🌱
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>
