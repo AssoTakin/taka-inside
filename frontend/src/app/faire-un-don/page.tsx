@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import SiteLayout from "@/components/layout/SiteLayout";
 import DonStripeForm from '@/components/payments/DonStripeForm';
-import PayPalDonForm from '@/components/payments/PayPalDonForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 
 type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
@@ -131,16 +130,19 @@ export default function DonPage() {
               <div className="grid grid-cols-3 gap-2 mb-4">
                 {[
                   { id: 'stripe' as PaymentMethod, label: '💳 Stripe' },
-                  { id: 'paypal' as PaymentMethod, label: '🅿️ PayPal' },
+                  { id: 'paypal' as PaymentMethod, label: '🅿️ PayPal', disabled: true },
                   { id: 'fedapay' as PaymentMethod, label: '📱 Mobile Money' },
                 ].map((method) => (
                   <button
                     key={method.id}
-                    onClick={() => { setPaymentMethod(method.id); setShowPayment(false); }}
+                    onClick={() => { if (!method.disabled) { setPaymentMethod(method.id); setShowPayment(false); } }}
+                    disabled={method.disabled}
                     className={`py-2 rounded-lg border text-sm font-medium transition-all ${
                       paymentMethod === method.id
                         ? 'border-taka-green bg-taka-green/10 text-taka-green'
-                        : 'border-taka-gray-light hover:border-taka-green'
+                        : method.disabled
+                          ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'border-taka-gray-light hover:border-taka-green'
                     }`}
                   >
                     {method.label}
@@ -162,7 +164,7 @@ export default function DonPage() {
               <h3 className="font-display text-xl font-bold mb-2">Paiement sécurisé</h3>
               <p className="text-taka-gray text-sm mb-6">
                 {paymentMethod === 'stripe' && 'Carte bancaire via Stripe'}
-                {paymentMethod === 'paypal' && 'Via votre compte PayPal'}
+                {paymentMethod === 'paypal' && 'PayPal — Bientôt disponible'}
                 {paymentMethod === 'fedapay' && 'Mobile Money (MTN, Moov, Celtiis)'}
               </p>
 
@@ -173,7 +175,10 @@ export default function DonPage() {
                   )}
 
                   {paymentMethod === 'paypal' && (
-                    <PayPalDonForm amount={finalAmount} frequency={frequency} />
+                    <div className="text-center py-8 text-taka-gray">
+                      <p className="mb-2">🅿️ PayPal sera bientôt disponible.</p>
+                      <p className="text-sm">En attendant, utilisez Stripe ou Mobile Money.</p>
+                    </div>
                   )}
 
                   {paymentMethod === 'fedapay' && (

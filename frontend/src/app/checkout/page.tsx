@@ -220,13 +220,10 @@ export default function CheckoutPage() {
                 </button>
                 <button
                   onClick={() => setPaymentMethod('paypal')}
-                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
-                    paymentMethod === 'paypal'
-                      ? 'bg-taka-black text-white'
-                      : 'bg-taka-cream text-taka-gray hover:text-taka-black'
-                  }`}
+                  disabled
+                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all bg-gray-100 text-gray-400 cursor-not-allowed`}
                 >
-                  PayPal
+                  PayPal — Bientôt
                 </button>
                 <button
                   onClick={() => setPaymentMethod('fedapay')}
