@@ -12,7 +12,22 @@ function getStripe(): Stripe {
 export async function POST(req: NextRequest) {
   try {
     const stripe = getStripe();
-    const { amount, currency = "xof", metadata = {} } = await req.json();
+    const {
+      amount,
+      currency = "xof",
+      metadata = {},
+      nomClient,
+      email,
+      telephone,
+      adresse,
+      ville,
+      code_postal,
+      pays,
+      type_livraison,
+      cout_livraison,
+      produits,
+      hasDigital,
+    } = await req.json();
 
     // Stripe exige un minimum de 50 cents (~300 FCFA au taux actuel)
     const minAmount = currency === 'xof' ? 300 : 50;
@@ -23,11 +38,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Métadonnées enrichies pour le webhook
+    const enrichedMetadata = {
+      ...metadata,
+      ...(nomClient && { nomClient }),
+      ...(email && { email }),
+      ...(telephone && { telephone }),
+      ...(adresse && { adresse }),
+      ...(ville && { ville }),
+      ...(code_postal && { code_postal }),
+      ...(pays && { pays }),
+      ...(type_livraison && { type_livraison }),
+      ...(cout_livraison !== undefined && { cout_livraison: String(cout_livraison) }),
+      ...(produits && { produits: JSON.stringify(produits) }),
+      ...(hasDigital !== undefined && { hasDigital: String(hasDigital) }),
+    };
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
       automatic_payment_methods: { enabled: true },
-      metadata,
+      metadata: enrichedMetadata,
     });
 
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });

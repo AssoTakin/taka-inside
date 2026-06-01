@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "zone_livraisons",
+  "info": {
+    "singularName": "zone-livraison",
+    "pluralName": "zone-livraisons",
+    "displayName": "Zone de Livraison",
+    "description": "Tarifs de livraison par zone géographique"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "code_pays": {
+      "type": "string",
+      "required": true
+    },
+    "type_livraison": {
+      "type": "enumeration",
+      "enum": ["standard", "express", "economique"],
+      "default": "standard",
+      "required": true
+    },
+    "cout_base": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "cout_par_kg": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0
+    },
+    "delai_estime_jours": {
+      "type": "integer",
+      "default": 7,
+      "min": 1
+    },
+    "actif": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

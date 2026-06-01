@@ -72,6 +72,18 @@ export default function CheckoutPage() {
   const [apiError, setApiError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [isDigitalOnly, setIsDigitalOnly] = useState(false);
+
+  // Formulaire adresse
+  const [formData, setFormData] = useState({
+    nom: '',
+    email: '',
+    telephone: '',
+    adresse: '',
+    ville: '',
+    code_postal: '',
+    pays: 'Benin',
+  });
 
   // Nettoyer les items du panier avec prix trop bas (anciennes données corrompues)
   useEffect(() => {
@@ -88,9 +100,17 @@ export default function CheckoutPage() {
     });
   }, []);
 
+  // Détecter si tous les produits sont digitaux
+  useEffect(() => {
+    const digital = items.every((item) => item.productType === 'digital' || item.productType === 'album' || item.productType === 'single');
+    setIsDigitalOnly(digital);
+  }, [items]);
+
   useEffect(() => {
     setApiError('');
     if (total > 0 && total >= 300) {
+      const hasDigital = items.some((item) => item.productType === 'digital' || item.productType === 'album' || item.productType === 'single');
+      
       fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -101,6 +121,23 @@ export default function CheckoutPage() {
             order_type: 'shop',
             items_count: items.length,
           },
+          nomClient: formData.nom || undefined,
+          email: formData.email || undefined,
+          telephone: formData.telephone || undefined,
+          adresse: formData.adresse || undefined,
+          ville: formData.ville || undefined,
+          code_postal: formData.code_postal || undefined,
+          pays: formData.pays || undefined,
+          type_livraison: isDigitalOnly ? 'numerique' : 'physique',
+          cout_livraison: isDigitalOnly ? 0 : undefined,
+          produits: items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            productType: item.productType,
+          })),
+          hasDigital,
         }),
       })
         .then((res) => {

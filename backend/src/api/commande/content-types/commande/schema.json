@@ -11,30 +11,39 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "nomClient": {
-      "type": "string",
+    "nomClient": { "type": "string", "required": true },
+    "email": { "type": "email", "required": true },
+    "telephone": { "type": "string" },
+    "adresse": { "type": "text" },
+    "ville": { "type": "string" },
+    "code_postal": { "type": "string" },
+    "pays": { "type": "string", "default": "Benin" },
+    "type_livraison": {
+      "type": "enumeration",
+      "enum": ["physique", "numerique", "ticket"],
+      "default": "physique",
       "required": true
     },
-    "email": {
-      "type": "email",
-      "required": true
+    "cout_livraison": { "type": "decimal", "default": 0, "min": 0 },
+    "produits": { "type": "json" },
+    "total": { "type": "decimal" },
+    "montant_paye": { "type": "decimal", "min": 0 },
+    "methode_paiement": {
+      "type": "enumeration",
+      "enum": ["stripe", "fedapay", "paypal", "gratuit"],
+      "default": "stripe"
     },
-    "telephone": {
-      "type": "string"
-    },
-    "adresse": {
-      "type": "text"
-    },
-    "produits": {
-      "type": "json"
-    },
-    "total": {
-      "type": "decimal"
-    },
+    "transaction_id": { "type": "string" },
     "statut": {
       "type": "enumeration",
-      "enum": ["en_attente", "paye", "expedie", "livre", "annule"],
+      "enum": ["en_attente", "paye", "expedie", "livre", "annule", "rembourse"],
       "default": "en_attente"
-    }
+    },
+    "token_telechargement": { "type": "string", "unique": true },
+    "date_expiration_telechargement": { "type": "datetime" },
+    "nombre_telechargements": { "type": "integer", "default": 0 },
+    "date_livraison_estimee": { "type": "date" },
+    "notes": { "type": "text" },
+    "stripe_event_id": { "type": "string", "unique": true }
   }
 }

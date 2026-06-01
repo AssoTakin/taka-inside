@@ -11,6 +11,7 @@ export interface CartItem {
   image?: string;
   slug: string;
   type: 'fixe' | 'personnalisable';
+  productType?: 'ticket' | 'album' | 'single' | 'merch' | 'digital';
   customization?: string;
 }
 
