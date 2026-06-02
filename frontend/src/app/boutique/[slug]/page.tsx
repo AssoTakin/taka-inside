@@ -6,7 +6,7 @@ import { formatPrice } from "@/lib/price";
 import AddToCartButton from "./AddToCartButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
-const KIKOKO_FALLBACK_IMAGE = "https://pub-9c330323a1895c9f923862371ec9acfe.r2.dev/images/produits/kikoko-cover.jpg";
+const KIKOKO_FALLBACK_IMAGE = "/images/kikoko-cover.jpg";
 
 interface Product {
   id: number;
