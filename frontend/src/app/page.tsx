@@ -93,9 +93,8 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex items-center gap-6">
-              {/* Logo avec halo pulsant rouge + rotation au hover */}
+              {/* Logo - pas de halo, fond jaune déjà vibrant */}
               <div className="relative flex-shrink-0">
-                <div className="absolute -inset-3 rounded-2xl animate-pulse-ring bg-taka-red/40 ring-4 ring-taka-red/50"></div>
                 <Image
                   src="/images/madeinbeninradio-logo.png"
                   alt="Made In Bénin Radio"
