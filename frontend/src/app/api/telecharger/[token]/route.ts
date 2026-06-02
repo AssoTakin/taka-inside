@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // R2 Client
 const s3Client = new S3Client({
@@ -90,15 +89,20 @@ export async function GET(
     const bucket = "taka-inside-digital";
     const key = `albums/${slug}.zip`;
 
-    // 6. Générer URL signée R2 (valide 1 heure)
+    // 6. Télécharger le fichier depuis R2
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: key,
     });
 
-    const signedUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: 3600, // 1 heure
-    });
+    const s3Response = await s3Client.send(command);
+
+    if (!s3Response.Body) {
+      return NextResponse.json(
+        { error: "Fichier non trouvé" },
+        { status: 404 }
+      );
+    }
 
     // 7. Incrémenter le compteur de téléchargements
     try {
@@ -119,8 +123,23 @@ export async function GET(
       // Non bloquant
     }
 
-    // 8. Rediriger vers l'URL signée R2
-    return NextResponse.redirect(signedUrl, 302);
+    // 8. Streamer le fichier au client
+    const contentType = s3Response.ContentType || "application/zip";
+    const contentLength = s3Response.ContentLength;
+    const fileName = `${slug.toUpperCase()}_Album.zip`;
+
+    // Convertir le stream en Response
+    const headers = new Headers();
+    headers.set("Content-Type", contentType);
+    headers.set("Content-Disposition", `attachment; filename="${fileName}"`);
+    if (contentLength) {
+      headers.set("Content-Length", contentLength.toString());
+    }
+
+    return new Response(s3Response.Body as ReadableStream, {
+      status: 200,
+      headers,
+    });
 
   } catch (err) {
     console.error("[Download] Erreur:", err);
