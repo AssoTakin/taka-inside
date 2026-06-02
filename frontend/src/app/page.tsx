@@ -83,21 +83,38 @@ export default async function HomePage() {
       </section>
 
       {/* Section Made In Bénin Radio en vedette */}
-      <section className="py-12 md:py-20 bg-taka-yellow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-12 md:py-20 bg-taka-yellow relative overflow-hidden">
+        {/* Notes de musique flottantes */}
+        <span className="absolute top-6 left-8 text-white/40 text-3xl animate-float-note" style={{ animationDelay: '0s' }}>🎵</span>
+        <span className="absolute top-12 right-20 text-white/30 text-2xl animate-float-note" style={{ animationDelay: '1s' }}>🎶</span>
+        <span className="absolute bottom-8 left-1/4 text-white/25 text-xl animate-float-note" style={{ animationDelay: '2s' }}>🎵</span>
+        <span className="absolute bottom-10 right-1/3 text-white/35 text-2xl animate-float-note" style={{ animationDelay: '0.5s' }}>🎶</span>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex items-center gap-6">
-              <Image
-                src="/images/madeinbeninradio-logo.png"
-                alt="Made In Bénin Radio"
-                width={120}
-                height={120}
-                className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-contain flex-shrink-0"
-              />
+              {/* Logo avec halo pulsant + rotation au hover */}
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 rounded-2xl animate-pulse-ring bg-taka-red/20"></div>
+                <Image
+                  src="/images/madeinbeninradio-logo.png"
+                  alt="Made In Bénin Radio"
+                  width={120}
+                  height={120}
+                  className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300"
+                />
+              </div>
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-semibold mb-3">
                   <span className="w-2 h-2 rounded-full bg-taka-red animate-pulse"></span>
                   EN DIRECT
+                  {/* Petit égaliseur visuel */}
+                  <span className="flex items-end gap-[2px] h-3 ml-1">
+                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0s' }}></span>
+                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.15s' }}></span>
+                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.3s' }}></span>
+                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.45s' }}></span>
+                  </span>
                 </div>
                 <h2 className="font-display text-2xl md:text-3xl font-bold text-taka-black mb-2">
                   Made In <span className="text-taka-red">Bénin</span> Radio
@@ -108,13 +125,14 @@ export default async function HomePage() {
                 <div className="flex flex-wrap gap-3">
                   <a
                     href="/radio"
-                    className="inline-flex items-center gap-2 bg-taka-black text-white px-5 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all"
+                    className="relative overflow-hidden inline-flex items-center gap-2 bg-taka-black text-white px-5 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all animate-glow"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className="absolute inset-0 animate-shimmer pointer-events-none"></span>
+                    <svg className="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Écouter la radio
+                    <span className="relative z-10">Écouter la radio</span>
                   </a>
                   <a
                     href="https://bit.ly/4uvR1sY"
