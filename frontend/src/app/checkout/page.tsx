@@ -74,7 +74,7 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
 // Composant principal du checkout
 // ===========================================
 export default function CheckoutPage() {
-  const { items, total, removeItem } = useCart();
+  const { items, total, subtotal, shippingCost, setShippingCost, removeItem } = useCart();
   const [clientSecret, setClientSecret] = useState('');
   const [stripeReady, setStripeReady] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -83,6 +83,7 @@ export default function CheckoutPage() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isDigitalOnly, setIsDigitalOnly] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [deliveryInfo, setDeliveryInfo] = useState<{ frais: number; delai: number; source: string } | null>(null);
 
   // Formulaire acheteur
   const [formData, setFormData] = useState({
@@ -109,10 +110,39 @@ export default function CheckoutPage() {
     if (allDigital) setFormData((prev) => ({ ...prev, pays: 'Autre' }));
   }, [items]);
 
-  // Supprimer les items prix corrompus
+  // Calculer frais livraison quand pays/type change
   useEffect(() => {
-    items.forEach((item) => { if (item.price < 300) removeItem(item.id); });
-  }, [items, removeItem]);
+    if (isDigitalOnly) {
+      setShippingCost(0);
+      setDeliveryInfo(null);
+      return;
+    }
+    if (step !== 2 && step !== 3) return; // pas encore à l'étape livraison
+
+    const fetchShipping = async () => {
+      try {
+        const res = await fetch(
+          `/api/livraison/calcul?pays=${encodeURIComponent(formData.pays)}&type_livraison=${formData.type_livraison}&poids=1`
+        );
+        if (!res.ok) throw new Error('Erreur calcul livraison');
+        const data = await res.json();
+        setShippingCost(data.frais_livraison || 0);
+        setDeliveryInfo({
+          frais: data.frais_livraison,
+          delai: data.delai_estime_jours,
+          source: data.source,
+        });
+      } catch {
+        // Fallback silencieux
+        const fallbackMap: Record<string, number> = {
+          standard: 1000, express: 2000, economique: 500,
+        };
+        setShippingCost(fallbackMap[formData.type_livraison] || 1000);
+      }
+    };
+
+    fetchShipping();
+  }, [formData.pays, formData.type_livraison, step, isDigitalOnly, setShippingCost]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -149,7 +179,7 @@ export default function CheckoutPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: total,
+        amount: total, // total inclut livraison via shippingCost dans CartContext
         currency: 'xof',
         metadata: { order_type: 'shop', items_count: items.length },
         nomClient: formData.nom,
@@ -160,7 +190,7 @@ export default function CheckoutPage() {
         code_postal: formData.code_postal,
         pays: formData.pays,
         type_livraison: isDigitalOnly ? 'numerique' : formData.type_livraison,
-        cout_livraison: isDigitalOnly ? 0 : undefined,
+        cout_livraison: isDigitalOnly ? 0 : shippingCost,
         produits: items.map((item) => ({
           id: item.id,
           name: item.name,
@@ -257,13 +287,23 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                   <div className="border-t border-taka-gray-light pt-3 space-y-2">
-                    {!isDigitalOnly && (
-                      <div className="flex justify-between text-sm text-taka-gray">
-                        <span>Livraison</span>
-                        <span>Calculé à l'étape 2</span>
+                    <div className="flex justify-between text-sm">
+                      <span>Sous-total</span>
+                      <span className="font-medium">{subtotal.toLocaleString('fr-FR')} FCFA</span>
+                    </div>
+                    {!isDigitalOnly && deliveryInfo && (
+                      <div className="flex justify-between text-sm">
+                        <span>Livraison ({formData.type_livraison})</span>
+                        <span className="font-medium">{shippingCost.toLocaleString('fr-FR')} FCFA <small className="text-taka-gray">(~{deliveryInfo.delai} j)</small></span>
                       </div>
                     )}
-                    <div className="flex justify-between font-bold text-lg">
+                    {!isDigitalOnly && !deliveryInfo && step >= 2 && (
+                      <div className="flex justify-between text-sm text-taka-gray">
+                        <span>Livraison</span>
+                        <span>Calcul en cours…</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between font-bold text-lg pt-2 border-t border-taka-gray-light">
                       <span>Total</span>
                       <span>{total.toLocaleString('fr-FR')} FCFA</span>
                     </div>

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-06-20" as any,
-});
+function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("STRIPE_SECRET_KEY manquante");
+  return new Stripe(key, { apiVersion: "2024-06-20" as any });
+}
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+function getEndpointSecret(): string {
+  return process.env.STRIPE_WEBHOOK_SECRET || "";
+}
 
 export async function POST(req: NextRequest) {
   const payload = await req.text();
@@ -14,7 +18,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(payload, signature, endpointSecret);
+    event = getStripe().webhooks.constructEvent(payload, signature, getEndpointSecret());
   } catch (err: any) {
     console.error("[Stripe Webhook] Signature invalide:", err.message);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -149,10 +153,3 @@ async function processEvent(event: Stripe.Event) {
       console.log(`[Webhook] Événement non géré: ${event.type}`);
   }
 }
-
-// Empêcher le parsing JSON automatique de Next.js pour laisser Stripe lire le raw body
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};

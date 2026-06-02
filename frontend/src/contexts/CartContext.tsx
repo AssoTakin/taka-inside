@@ -22,6 +22,9 @@ interface CartContextType {
   updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
   total: number;
+  subtotal: number;
+  shippingCost: number;
+  setShippingCost: (cost: number) => void;
   itemCount: number;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
@@ -32,8 +35,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [shippingCost, setShippingCost] = useState(0);
 
-  // Load cart from localStorage on mount (évite les erreurs d'hydratation)
+  // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('taka-cart');
@@ -77,9 +81,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    setShippingCost(0);
   }, []);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal + shippingCost;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -91,6 +97,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         clearCart,
         total,
+        subtotal,
+        shippingCost,
+        setShippingCost,
         itemCount,
         isOpen,
         setIsOpen,
