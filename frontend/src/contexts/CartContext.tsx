@@ -10,7 +10,7 @@ export interface CartItem {
   quantity: number;
   image?: string;
   slug: string;
-  type: 'fixe' | 'personnalisable';
+  type: 'fixe' | 'personnalisable' | 'digital' | 'album' | 'single' | 'merch' | 'ticket';
   productType?: 'ticket' | 'album' | 'single' | 'merch' | 'digital';
   customization?: string;
 }

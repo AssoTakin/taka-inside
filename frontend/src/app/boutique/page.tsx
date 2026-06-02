@@ -9,8 +9,10 @@ interface Product {
   documentId: string;
   nom: string;
   prix: number;
-  type: "fixe" | "personnalisable";
+  type: "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket";
   image: string | null;
+  slug: string;
+  description: string;
 }
 
 export default function BoutiquePage() {
@@ -36,9 +38,10 @@ export default function BoutiquePage() {
       name: product.nom,
       price: product.prix,
       quantity: 1,
-      slug: product.documentId,
+      slug: product.slug || product.documentId,
       type: product.type,
       image: product.image || undefined,
+      productType: product.type === "digital" || product.type === "album" || product.type === "single" ? product.type : undefined,
       customization: product.type === "personnalisable" ? customTexts[product.id] : undefined,
     });
   };
@@ -82,11 +85,27 @@ export default function BoutiquePage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (
                 <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all">
-                  <div className="aspect-square bg-taka-gray-light flex items-center justify-center">
-                    <span className="text-taka-gray">{product.type === "fixe" ? "Image produit" : "Personnalisable"}</span>
+                  <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
+                    {product.image ? (
+                      <img 
+                        src={product.image} 
+                        alt={product.nom}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <span className="text-taka-gray">{product.type === "personnalisable" ? "Personnalisable" : "Image produit"}</span>
+                    )}
+                    {product.type === "digital" && (
+                      <span className="absolute top-3 left-3 bg-taka-red text-white text-xs font-bold px-2 py-1 rounded-lg">
+                        ALBUM DIGITAL
+                      </span>
+                    )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-display font-semibold text-sm">{product.nom}</h3>
+                    <h3 className="font-display font-semibold text-sm mb-1">{product.nom}</h3>
+                    {product.description && (
+                      <p className="text-taka-gray text-xs line-clamp-2 mb-2">{product.description}</p>
+                    )}
 
                     {product.type === "personnalisable" && (
                       <input

@@ -23,11 +23,13 @@ export async function GET(_req: NextRequest) {
   const produits = data.map((p, i) => ({
     id: Number(p.id) || i + 1,
     documentId: String(p.documentId || `prod-${i}`),
-    nom: String(p.nom || "Produit"),
-    prix: Math.max(Number(p.prix || 0), 500), // Prix minimum 500 FCFA
-    type: (String(p.type || "fixe") as "fixe" | "personnalisable"),
+    nom: String(p.titre || p.nom || "Produit"),
+    prix: Math.max(Number(p.prix || 0), 500),
+    type: (String(p.type || "fixe") as "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket"),
     image: (p.image as { url: string } | null)?.url || null,
-  })).filter(p => p.prix >= 500); // Exclure les produits sans prix valide
+    slug: String(p.slug || ""),
+    description: String(p.description || ""),
+  })).filter(p => p.prix >= 500);
 
   return NextResponse.json({ produits });
 }
