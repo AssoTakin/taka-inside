@@ -93,9 +93,9 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="flex items-center gap-6">
-              {/* Logo avec halo pulsant + rotation au hover */}
+              {/* Logo avec halo pulsant rouge + rotation au hover */}
               <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 rounded-2xl animate-pulse-ring bg-taka-red/20"></div>
+                <div className="absolute -inset-3 rounded-2xl animate-pulse-ring bg-taka-red/40 ring-4 ring-taka-red/50"></div>
                 <Image
                   src="/images/madeinbeninradio-logo.png"
                   alt="Made In Bénin Radio"
@@ -124,7 +124,7 @@ export default async function HomePage() {
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href="/radio"
+                    href="/projets/made-in-benin-radio"
                     className="relative overflow-hidden inline-flex items-center gap-2 bg-taka-black text-white px-5 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all animate-glow"
                   >
                     <span className="absolute inset-0 animate-shimmer pointer-events-none"></span>

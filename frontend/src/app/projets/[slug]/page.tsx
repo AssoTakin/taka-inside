@@ -123,6 +123,33 @@ export default async function ProjetPage({ params }: Props) {
             </div>
 
             <div className="space-y-8">
+              {slug === "made-in-benin-radio" && (
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="https://www.madeinbeninradio.bj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-taka-red text-white px-5 py-3 rounded-xl font-semibold hover:bg-red-700 transition-all"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Écouter la radio
+                  </a>
+                  <a
+                    href="https://bit.ly/4uvR1sY"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 border-2 border-taka-black text-taka-black px-5 py-3 rounded-xl font-semibold hover:bg-taka-black hover:text-white transition-all"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.303 2.303-8.633-8.635z"/>
+                    </svg>
+                    Télécharger l'appli
+                  </a>
+                </div>
+              )}
               {description && (
                 <div>
                   <h2 className="font-display text-xl font-bold mb-3">Description</h2>
@@ -135,7 +162,7 @@ export default async function ProjetPage({ params }: Props) {
                   <div className="text-taka-gray leading-relaxed whitespace-pre-line">{objectifs}</div>
                 </div>
               )}
-              {partenaires && (
+              {partenaires && slug !== "made-in-benin-radio" && (
                 <div>
                   <h2 className="font-display text-xl font-bold mb-3">Partenaires</h2>
                   <p className="text-taka-gray">{partenaires}</p>
