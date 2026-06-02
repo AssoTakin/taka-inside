@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import SiteLayout from "@/components/layout/SiteLayout";
 import { useCart } from "@/contexts/CartContext";
 
@@ -84,27 +85,36 @@ export default function BoutiquePage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all">
-                  <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
-                    {product.image ? (
-                      <img 
-                        src={product.image} 
-                        alt={product.nom}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <span className="text-taka-gray">{product.type === "personnalisable" ? "Personnalisable" : "Image produit"}</span>
-                    )}
-                    {product.type === "digital" && (
-                      <span className="absolute top-3 left-3 bg-taka-red text-white text-xs font-bold px-2 py-1 rounded-lg">
-                        ALBUM DIGITAL
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-display font-semibold text-sm mb-1">{product.nom}</h3>
+                <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all flex flex-col">
+                  <Link href={`/boutique/${product.slug}`} className="block relative">
+                    <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.nom}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <span className="text-taka-gray">{product.type === "personnalisable" ? "Personnalisable" : "Image produit"}</span>
+                      )}
+                      {product.type === "digital" && (
+                        <span className="absolute top-3 left-3 bg-taka-red text-white text-xs font-bold px-2 py-1 rounded-lg">
+                          ALBUM DIGITAL
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="p-4 flex flex-col flex-1">
+                    <Link href={`/boutique/${product.slug}`} className="block hover:text-taka-red transition-colors">
+                      <h3 className="font-display font-semibold text-sm mb-1">{product.nom}</h3>
+                    </Link>
                     {product.description && (
-                      <p className="text-taka-gray text-xs line-clamp-2 mb-2">{product.description}</p>
+                      <div className="mb-2">
+                        <p className="text-taka-gray text-xs line-clamp-2">{product.description}</p>
+                        <Link href={`/boutique/${product.slug}`} className="text-xs text-taka-red font-medium hover:underline mt-0.5 inline-block">
+                          En savoir plus →
+                        </Link>
+                      </div>
                     )}
 
                     {product.type === "personnalisable" && (
@@ -117,10 +127,10 @@ export default function BoutiquePage() {
                       />
                     )}
 
-                    <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center justify-between mt-auto pt-3">
                       <span className="font-bold">{product.prix.toLocaleString('fr-FR')} FCFA</span>
                       <button
-                        onClick={() => handleAdd(product)}
+                        onClick={(e) => { e.stopPropagation(); handleAdd(product); }}
                         className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"
                       >
                         Ajouter
