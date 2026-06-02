@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import { formatPrice } from "@/lib/price";
 
 interface Product {
   id: number;
@@ -46,7 +47,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           : "bg-taka-black text-white hover:bg-taka-yellow hover:text-taka-black"
       }`}
     >
-      {added ? "✓ Ajouté !" : `Ajouter au panier — ${product.prix.toLocaleString("fr-FR")} FCFA`}
+      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPrice(product.prix)}`}
     </button>
   );
 }

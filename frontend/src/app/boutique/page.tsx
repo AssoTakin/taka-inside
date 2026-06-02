@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteLayout from "@/components/layout/SiteLayout";
 import { useCart } from "@/contexts/CartContext";
+import { formatPrice } from "@/lib/price";
 
 interface Product {
   id: number;
@@ -128,7 +129,7 @@ export default function BoutiquePage() {
                     )}
 
                     <div className="flex items-center justify-between mt-auto pt-3">
-                      <span className="font-bold">{product.prix.toLocaleString('fr-FR')} FCFA</span>
+                      <span className="font-bold">{formatPrice(product.prix)}</span>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleAdd(product); }}
                         className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"

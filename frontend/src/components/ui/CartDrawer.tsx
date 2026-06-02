@@ -3,6 +3,7 @@
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
+import { formatPrice } from "@/lib/price";
 
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, total, itemCount, isOpen, setIsOpen } = useCart();
@@ -64,7 +65,7 @@ export default function CartDrawer() {
                   {item.customization && (
                     <p className="text-xs text-taka-gray mt-1">Personnalisation : {item.customization}</p>
                   )}
-                  <p className="font-bold mt-1">{item.price.toLocaleString('fr-FR')} FCFA</p>
+                  <p className="font-bold mt-1">{formatPrice(item.price)}</p>
 
                   <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center border border-taka-gray-light rounded-lg overflow-hidden">

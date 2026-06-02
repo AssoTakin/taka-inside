@@ -34,12 +34,20 @@ export async function GET(_req: NextRequest) {
     id: Number(p.id) || i + 1,
     documentId: String(p.documentId || `prod-${i}`),
     nom: String(p.titre || p.nom || "Produit"),
-    prix: Math.max(Number(p.prix || 0), 500),
+    prix: Number(p.prix || 0),
     type: (String(p.type || "fixe") as "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket"),
     image: resolveImageUrl(p.image),
     slug: String(p.slug || ""),
     description: String(p.description || ""),
-  })).filter(p => p.prix >= 500);
+  }));
+
+  // Fallback image KIKOKO si absente
+  const KIKOKO_IMAGE = "https://pub-9c330323a1895c9f923862371ec9acfe.r2.dev/images/produits/kikoko-cover.jpg";
+  produits.forEach((p) => {
+    if (p.slug === "kikoko" && !p.image) {
+      p.image = KIKOKO_IMAGE;
+    }
+  });
 
   return NextResponse.json({ produits });
 }
