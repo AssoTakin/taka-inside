@@ -41,10 +41,10 @@ export async function GET(_req: NextRequest) {
     description: String(p.description || ""),
   }));
 
-  // Fallback image KIKOKO si absente
+  // Forcer l'image KIKOKO depuis R2 (Strapi local est éphémère sur Railway)
   const KIKOKO_IMAGE = "https://pub-9c330323a1895c9f923862371ec9acfe.r2.dev/images/produits/kikoko-cover.jpg";
   produits.forEach((p) => {
-    if (p.slug === "kikoko" && !p.image) {
+    if (p.slug === "kikoko") {
       p.image = KIKOKO_IMAGE;
     }
   });

@@ -33,7 +33,7 @@ async function getProduct(slug: string): Promise<Product | null> {
   const p = data[0];
   let image = resolveImageUrl(p.image);
   const slugStr = String(p.slug || "");
-  if (!image && slugStr === "kikoko") {
+  if (slugStr === "kikoko") {
     image = KIKOKO_FALLBACK_IMAGE;
   }
   return {
