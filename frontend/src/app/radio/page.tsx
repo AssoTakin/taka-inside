@@ -69,16 +69,22 @@ export default function RadioPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-taka-red/10 via-transparent to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Logo */}
-            <div className="mb-8 flex justify-center">
-              <Image
-                src="/images/madeinbeninradio-logo.png"
-                alt="Made In Bénin Radio"
-                width={140}
-                height={140}
-                className="w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-lg"
-                priority
-              />
+            {/* Logo avec halo et rotation */}
+            <div className="mb-8 flex justify-center relative">
+              {/* Halo pulsant derrière le logo */}
+              <div className="absolute w-36 h-36 md:w-44 md:h-44 rounded-full bg-taka-yellow/20 animate-pulse-ring" />
+              <div className="absolute w-36 h-36 md:w-44 md:h-44 rounded-full bg-taka-red/10 animate-pulse-ring" style={{ animationDelay: '1s' }} />
+              
+              <div className="relative group">
+                <Image
+                  src="/images/madeinbeninradio-logo.png"
+                  alt="Made In Bénin Radio"
+                  width={140}
+                  height={140}
+                  className="w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-lg transition-transform duration-700 group-hover:animate-spin-slow"
+                  priority
+                />
+              </div>
             </div>
 
             {/* Badges */}
@@ -146,13 +152,28 @@ export default function RadioPage() {
                   href="https://www.madeinbeninradio.bj"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-taka-yellow text-taka-black px-6 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 whitespace-nowrap"
+                  className="group relative bg-taka-yellow text-taka-black px-6 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 whitespace-nowrap animate-glow overflow-hidden"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {/* Shimmer overlay */}
+                  <span className="absolute inset-0 animate-shimmer pointer-events-none" />
+                  
+                  {/* Égaliseur animé */}
+                  <div className="flex items-end gap-[2px] h-4 mr-1">
+                    <span className="w-[3px] bg-taka-black/70 rounded-full animate-equalizer" style={{ animationDelay: '0s' }} />
+                    <span className="w-[3px] bg-taka-black/70 rounded-full animate-equalizer" style={{ animationDelay: '0.1s' }} />
+                    <span className="w-[3px] bg-taka-black/70 rounded-full animate-equalizer" style={{ animationDelay: '0.2s' }} />
+                    <span className="w-[3px] bg-taka-black/70 rounded-full animate-equalizer" style={{ animationDelay: '0.3s' }} />
+                  </div>
+                  
+                  <svg className="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Écouter en direct
+                  <span className="relative z-10">Écouter en direct</span>
+                  
+                  {/* Notes de musique flottantes */}
+                  <span className="absolute -top-2 -right-2 text-xs animate-float-note" style={{ animationDelay: '0.5s' }}>🎵</span>
+                  <span className="absolute -top-1 -right-4 text-[10px] animate-float-note" style={{ animationDelay: '1.2s' }}>🎶</span>
                 </a>
               </div>
             </div>
