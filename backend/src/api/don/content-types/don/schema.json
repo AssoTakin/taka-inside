@@ -23,6 +23,11 @@
       "type": "decimal",
       "required": true
     },
+    "devise": {
+      "type": "enumeration",
+      "enum": ["EUR", "FCFA"],
+      "default": "FCFA"
+    },
     "message": {
       "type": "text"
     },

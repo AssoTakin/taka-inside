@@ -25,6 +25,7 @@
       "required": true
     },
     "cout_livraison": { "type": "decimal", "default": 0, "min": 0 },
+    "devise_commande": { "type": "enumeration", "enum": ["EUR", "FCFA"], "default": "EUR" },
     "produits": { "type": "json" },
     "total": { "type": "decimal" },
     "montant_paye": { "type": "decimal", "min": 0 },
