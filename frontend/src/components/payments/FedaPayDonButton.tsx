@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatPrice } from "@/lib/price";
 
 export default function FedaPayDonButton({ amount, onSuccess }: { amount: number | string; onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function FedaPayDonButton({ amount, onSuccess }: { amount: number
     try {
       const payload = {
         amount: numericAmount,
-        description: `Don Taka Inside — ${numericAmount.toLocaleString('fr-FR')} FCFA`,
+        description: `Don Taka Inside — ${formatPrice(numericAmount)}`,
       };
       console.log("[FedaPay] Sending payload:", payload);
 

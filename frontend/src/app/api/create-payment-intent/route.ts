@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { toEURCents } from "@/lib/price";
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -29,11 +30,12 @@ export async function POST(req: NextRequest) {
       hasDigital,
     } = await req.json();
 
-    // Stripe exige un minimum de 50 cents (~300 FCFA au taux actuel)
-    const minAmount = currency === 'xof' ? 300 : 50;
-    if (!amount || amount < minAmount) {
+    // Conversion FCFA → centimes EUR pour Stripe
+    const eurCents = toEURCents(amount);
+    const minCents = 50; // Stripe minimum 50 cents EUR
+    if (!amount || eurCents < minCents) {
       return NextResponse.json(
-        { error: `Montant minimum: ${minAmount} ${currency.toUpperCase()}` },
+        { error: `Montant minimum: ${minCents} centimes EUR (~${Math.ceil(minCents * 655.957)} FCFA)` },
         { status: 400 }
       );
     }
@@ -55,8 +57,8 @@ export async function POST(req: NextRequest) {
     };
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
+      amount: eurCents,
+      currency: "eur",
       automatic_payment_methods: { enabled: true },
       metadata: enrichedMetadata,
     });

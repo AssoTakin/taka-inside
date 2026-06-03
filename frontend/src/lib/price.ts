@@ -24,6 +24,10 @@ export function formatPrice(amount: number, options?: { showCurrency?: boolean }
   return options?.showCurrency === false ? formatted : `${formatted} €`;
 }
 
+export function toEURCents(amount: number): number {
+  return Math.round(toEUR(amount) * 100);
+}
+
 export function formatPriceRawFCFA(amount: number): string {
   // Pour les dons / livraisons qui restent en FCFA
   return `${amount.toLocaleString("fr-FR")} FCFA`;

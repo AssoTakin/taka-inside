@@ -5,6 +5,7 @@ import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { useCart } from '@/contexts/CartContext';
+import { formatPrice } from '@/lib/price';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 
@@ -64,7 +65,7 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
         disabled={!stripe || isLoading}
         className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Traitement en cours…' : `Payer ${total.toLocaleString('fr-FR')} FCFA`}
+        {isLoading ? 'Traitement en cours…' : `Payer ${formatPrice(total)}`}
       </button>
     </form>
   );
@@ -283,18 +284,18 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} x{item.quantity}</span>
-                      <span className="font-semibold">{(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span>
+                      <span className='font-semibold'>{formatPrice(item.price * item.quantity)}</span>
                     </div>
                   ))}
                   <div className="border-t border-taka-gray-light pt-3 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Sous-total</span>
-                      <span className="font-medium">{subtotal.toLocaleString('fr-FR')} FCFA</span>
+                      <span className='font-medium'>{formatPrice(subtotal)}</span>
                     </div>
                     {!isDigitalOnly && deliveryInfo && (
                       <div className="flex justify-between text-sm">
                         <span>Livraison ({formData.type_livraison})</span>
-                        <span className="font-medium">{shippingCost.toLocaleString('fr-FR')} FCFA <small className="text-taka-gray">(~{deliveryInfo.delai} j)</small></span>
+                        <span className='font-medium'>{formatPrice(shippingCost)} <small className='text-taka-gray'>(~{deliveryInfo.delai} j)</small></span>
                       </div>
                     )}
                     {!isDigitalOnly && !deliveryInfo && step >= 2 && (
@@ -305,7 +306,7 @@ export default function CheckoutPage() {
                     )}
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-taka-gray-light">
                       <span>Total</span>
-                      <span>{total.toLocaleString('fr-FR')} FCFA</span>
+                      <span>{formatPrice(total)}</span>
                     </div>
                   </div>
                 </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { formatPrice } from '@/lib/price';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -48,7 +49,7 @@ function DonForm({ amount, frequency }: { amount: number; frequency: 'one-time' 
         disabled={!stripe || isLoading}
         className="w-full bg-taka-green text-white py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50"
       >
-        {isLoading ? 'Traitement...' : `Donner ${amount.toLocaleString('fr-FR')} FCFA ${frequency === 'monthly' ? '/mois' : ''}`}
+        {isLoading ? 'Traitement...' : `Donner ${formatPrice(amount)} ${frequency === 'monthly' ? '/mois' : ''}`}
       </button>
     </form>
   );

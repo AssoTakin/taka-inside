@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import SiteLayout from '@/components/layout/SiteLayout';
+import { formatPrice } from '@/lib/price';
 
 interface OrderPageProps {
   params: Promise<{ commandeId: string }>;
@@ -100,12 +101,12 @@ export default async function OrderPage({ params }: OrderPageProps) {
               <div className="mt-6 space-y-2">
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>{Number(attrs.total || 0).toLocaleString('fr-FR')} FCFA</span>
+                  <span>{formatPrice(Number(attrs.total || 0))}</span>
                 </div>
                 {attrs.cout_livraison > 0 && (
                   <div className="flex justify-between text-sm text-taka-gray">
                     <span>Dont livraison</span>
-                    <span>{Number(attrs.cout_livraison).toLocaleString('fr-FR')} FCFA</span>
+                    <span>{formatPrice(Number(attrs.cout_livraison))}</span>
                   </div>
                 )}
               </div>

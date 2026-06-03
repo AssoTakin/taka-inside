@@ -2,6 +2,7 @@
 
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { useState } from "react";
+import { formatPrice } from "@/lib/price";
 
 interface PayPalDonFormProps {
   amount: number;
@@ -18,7 +19,7 @@ export default function PayPalDonForm({ amount, frequency = "one-time", onSucces
       {success ? (
         <div className="bg-taka-green/15 text-taka-green p-4 rounded-xl text-center">
           <p className="font-semibold">✅ Paiement PayPal confirmé !</p>
-          <p className="text-sm">Merci pour votre don de {amount.toLocaleString('fr-FR')} FCFA.</p>
+          <p className='text-sm'>Merci pour votre don de {formatPrice(amount)}.</p>
         </div>
       ) : (
         <>

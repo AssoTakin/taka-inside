@@ -97,7 +97,7 @@ export default function CartDrawer() {
           <div className="border-t border-taka-gray-light p-6 space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-taka-gray">Sous-total</span>
-              <span className="font-bold text-lg">{total.toLocaleString('fr-FR')} FCFA</span>
+              <span className='font-bold text-lg'>{formatPrice(total)}</span>
             </div>
             <p className="text-xs text-taka-gray">Frais de livraison calculés à l'étape suivante.</p>
             <Link
