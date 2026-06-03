@@ -22,7 +22,7 @@ type FormErrors = Partial<Record<string, string>>;
 function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
-  const { total } = useCart();
+  const { totalEUR } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -65,7 +65,7 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
         disabled={!stripe || isLoading}
         className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Traitement en cours…' : `Payer ${formatPrice(total)}`}
+        {isLoading ? 'Traitement en cours…' : `Payer ${formatPrice(totalEUR)}`}
       </button>
     </form>
   );
@@ -75,7 +75,7 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
 // Composant principal du checkout
 // ===========================================
 export default function CheckoutPage() {
-  const { items, total, subtotal, shippingCost, setShippingCost, removeItem } = useCart();
+  const { items, total, subtotal, shippingCost, shippingEUR, totalEUR, subtotalEUR, setShippingCost, removeItem } = useCart();
   const [clientSecret, setClientSecret] = useState('');
   const [stripeReady, setStripeReady] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -180,8 +180,8 @@ export default function CheckoutPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: total, // total inclut livraison via shippingCost dans CartContext
-        currency: 'xof',
+        amount: totalEUR, // total en EUR (sera converti en centimes côté API)
+        currency: 'eur',
         metadata: { order_type: 'shop', items_count: items.length },
         nomClient: formData.nom,
         email: formData.email,
@@ -196,6 +196,7 @@ export default function CheckoutPage() {
           id: item.id,
           name: item.name,
           price: item.price,
+          currency: item.currency,
           quantity: item.quantity,
           productType: item.productType,
         })),
@@ -284,18 +285,18 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} x{item.quantity}</span>
-                      <span className='font-semibold'>{formatPrice(item.price * item.quantity)}</span>
+                      <span className='font-semibold'>{formatPrice(item.price * item.quantity, item.currency)}</span>
                     </div>
                   ))}
                   <div className="border-t border-taka-gray-light pt-3 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Sous-total</span>
-                      <span className='font-medium'>{formatPrice(subtotal)}</span>
+                      <span className='font-medium'>{formatPrice(subtotalEUR)}</span>
                     </div>
                     {!isDigitalOnly && deliveryInfo && (
                       <div className="flex justify-between text-sm">
                         <span>Livraison ({formData.type_livraison})</span>
-                        <span className='font-medium'>{formatPrice(shippingCost)} <small className='text-taka-gray'>(~{deliveryInfo.delai} j)</small></span>
+                        <span className='font-medium'>{formatPrice(shippingEUR)} <small className='text-taka-gray'>(~{deliveryInfo.delai} j)</small></span>
                       </div>
                     )}
                     {!isDigitalOnly && !deliveryInfo && step >= 2 && (
@@ -306,7 +307,7 @@ export default function CheckoutPage() {
                     )}
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-taka-gray-light">
                       <span>Total</span>
-                      <span>{formatPrice(total)}</span>
+                      <span>{formatPrice(totalEUR)}</span>
                     </div>
                   </div>
                 </div>

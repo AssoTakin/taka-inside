@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { toEURCents } from "@/lib/price";
+import { toStripeCents } from "@/lib/price";
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const {
       amount,
-      currency = "xof",
+      currency = "eur",
       metadata = {},
       nomClient,
       email,
@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
       hasDigital,
     } = await req.json();
 
-    // Conversion FCFA → centimes EUR pour Stripe
-    const eurCents = toEURCents(amount);
+    // Stripe reçoit montant en EUR (centimes)
+    const eurCents = toStripeCents(amount, "EUR");
     const minCents = 50; // Stripe minimum 50 cents EUR
     if (!amount || eurCents < minCents) {
       return NextResponse.json(

@@ -9,6 +9,7 @@ interface Product {
   documentId: string;
   nom: string;
   prix: number;
+  devise: "EUR" | "FCFA";
   type: string;
   image: string | null;
   slug: string;
@@ -25,6 +26,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
       documentId: product.documentId,
       name: product.nom,
       price: product.prix,
+      currency: product.devise,
       quantity: 1,
       slug: product.slug || product.documentId,
       type: product.type as "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket",
@@ -47,7 +49,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           : "bg-taka-black text-white hover:bg-taka-yellow hover:text-taka-black"
       }`}
     >
-      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPrice(product.prix)}`}
+      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPrice(product.prix, product.devise)}`}
     </button>
   );
 }
