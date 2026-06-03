@@ -1,54 +1,50 @@
-# 🏳️ STATUS — Taka Inside (production backend + GitHub workflows branch mismatch + zero tests)
+# 🏳️ STATUS — Taka Inside
 
-## 📅 Session: 2026-05-31
+## 📅 Session: 2026-06-04
 ## 👤 Agent: Hermes (conversation avec Sam)
-## 🎯 Action: Audit complet + création STATUS.md + correction CI/CD + mise en place tests
+## 🎯 Action: Conversion universelle EUR + déploiement production
 
 ---
 
-## 1. ✅ INFRASTRUCTURE DÉPLOIÉE (Confirmé 2026-05-31)
+## 1. ✅ INFRASTRUCTURE DÉPLOIÉE
 
 | Service | Plateforme | URL | Statut |
 |---------|-----------|-----|--------|
-| **Frontend** | Vercel | https://taka-inside.vercel.app | ✅ En ligne |
-| **Backend API** | Railway | https://taka-inside-production.up.railway.app | ✅ **Opérationnel** (tous endpoints 200) |
+| **Frontend** | Vercel | `https://frontend-rgnbnot1u-sam-takas-projects.vercel.app` | ✅ En ligne |
+| **Backend API** | Railway | `https://taka-inside-production.up.railway.app` | ✅ Opérationnel |
 | **Base de données** | PostgreSQL (Railway) | Interne | ✅ Connectée |
+| **Stockage fichiers** | Cloudflare R2 | `taka-inside-digital` | ✅ Privé (streaming serveur) |
 | **Domaine** | takainside.org | Vers Vercel | ✅ Actif |
-
-### 🔍 Test API Backend (2026-05-31 22:30 UTC)
-
-| Endpoint | Code HTTP | Données |
-|----------|-----------|---------|
-| `GET /api/projets` | 200 | ✅ **4 projets réels** |
-| `GET /api/artistes` | 200 | ✅ **2 artistes** (DJ Kenza, MC Takin) |
-| `GET /api/produits` | 200 | ✅ **2 produits** |
-| `GET /api/categorie-produits` | 200 | ✅ Exposé |
-| `GET /api/dons` | 200 | ⚪ 0 item |
-| `GET /api/commandes` | 200 | ⚪ 0 item |
-| `GET /api/benevoles` | 200 | ⚪ 0 item |
-| `GET /api/page-contents` | 200 | ⚪ 0 item |
-| `GET /api/config-menus` | 200 | ⚪ 0 item |
-
-### 📊 Données réelles en base
-
-**Projets (4)**
-- Made In Bénin Radio (`en_cours`)
-- MIB Talents À Suivre (`en_cours`)
-- Atelier Jeunesse Taka (`a_venir`)
-- Festival Taka (`a_venir`)
-
-**Artistes (2)**
-- DJ Kenza — Electro-Orientale
-- MC Takin — Hip-Hop / Rap
-
-**Produits (2)**
-- 2 items seedés (prix en FCFA)
 
 ---
 
-## 2. ✅ FRONTEND (Next.js 16.2.6 + Tailwind v4)
+## 2. 💶 SYSTÈME DE DEVISE (EUR)
 
-### Pages statiques (17 routes)
+### Helper `frontend/src/lib/price.ts`
+
+| Fonction | Rôle | Heuristique |
+|----------|------|-------------|
+| `toEUR(amount)` | Conversion FCFA → EUR | `amount > 100` = FCFA (÷ 655.957), sinon EUR brut |
+| `formatPrice(amount)` | Affichage `fr-FR` avec `€` | 2 décimales si < 1€, sinon 0 |
+| `toEURCents(amount)` | Conversion → centimes EUR pour Stripe | `Math.round(toEUR(amount) * 100)` |
+| `formatPriceRawFCFA(amount)` | Affichage FCFA brut | Dons/livraisons (non utilisé actuellement) |
+
+**Taux fixe :** `1 EUR = 655.957 FCFA` (taux CFAO)
+
+### Prix affichés actuellement
+
+| Produit | Prix brut Strapi | Affichage EUR |
+|---------|-----------------|---------------|
+| T-Shirt Taka Inside | 25 | **25 €** |
+| Ticket Festival Taka 2025 | 15 | **15 €** |
+| KIKOKO (Album digital) | 2500 | **3,81 €** |
+
+---
+
+## 3. ✅ FRONTEND (Next.js 16.2.6 + Tailwind v4)
+
+### Pages (22 routes)
+
 | Route | Type | API |
 |-------|------|-----|
 | `/` | SSR + SSG | `projets`, `artistes` |
@@ -57,136 +53,80 @@
 | `/label-musical` | SSR | `artistes` |
 | `/label-musical/[slug]` | SSG dynamique | `artistes/${slug}` |
 | `/boutique` | SSR + API Route | `produits` via `/api/produits` |
+| `/boutique/[slug]` | SSG dynamique | fiche produit |
 | `/checkout` | Statique | Panier client-side |
+| `/commande/[commandeId]` | SSR | `commandes` |
+| `/faire-un-don` | Statique | Stripe, FedaPay |
+| `/paiement/confirmation` | Statique | — |
 | `/association` | Statique | — |
 | `/radio` | Statique | — |
-| `/contact` | Statique + API Route | POST `/api/contact` |
+| `/contact` | Statique + API | POST `/api/contact` |
 | `/devenir-benevole` | Statique | — |
-| `/faire-un-don` | Statique + paiements | Stripe, PayPal, FedaPay |
-| `/paiement/confirmation` | Statique | — |
+| `/conditions-generales-vente` | Statique | — |
 | `/mentions-legales` | Statique | — |
 | `/politique-confidentialite` | Statique | — |
-| `/conditions-generales-vente` | Statique | — |
-| `404 NotFound` | Statique | — |
 
-### Routes API internes (6)
+### Routes API internes (11)
+
 | Route | Méthode | Fonction |
 |-------|---------|----------|
-| `/api/contact` | POST | Envoi formulaire → Strapi `benevole` |
-| `/api/produits` | GET | Proxy + fallback mock |
-| `/api/create-payment-intent` | POST | Stripe payment intent |
-| `/api/fedapay/create-transaction` | POST | FedaPay transaction |
-| `/api/paypal/create-order` | POST | PayPal order |
+| `/api/produits` | GET | Proxy Strapi + fallback mock + résolution image absolue |
+| `/api/create-payment-intent` | POST | Stripe payment intent (centimes EUR, currency=eur) |
+| `/api/fedapay/create-transaction` | POST | FedaPay transaction (XOF) |
+| `/api/paypal/create-order` | POST | PayPal order (USD) |
 | `/api/paypal/capture-order` | POST | PayPal capture |
-
-### SEO
-| Élément | Statut | Fichier |
-|---------|--------|---------|
-| OG Image dynamique | ✅ | `opengraph-image.tsx` |
-| Sitemap.xml | ✅ | `sitemap.ts` |
-| Robots.txt | ✅ | `robots.ts` |
-| Favicon | ✅ | `icon.png`, `apple-icon.png` |
+| `/api/webhooks/stripe` | POST | Webhook Stripe (création commande) |
+| `/api/commandes` | POST | Création commande Strapi |
+| `/api/livraison/calcul` | GET | Calcul frais livraison |
+| `/api/telecharger/[token]` | GET | Streaming R2 direct (AWS SDK v3) |
+| `/api/contact` | POST | Envoi formulaire |
+| `/api/email/send` | POST | Envoi email (Resend) |
 
 ---
 
-## 3. ✅ BACKEND (Strapi v5.47.0)
+## 4. ✅ BACKEND (Strapi v5.47.0)
 
 ### Content-types (9)
-| Content-type | Description | Données prod |
-|--------------|-------------|-------------|
-| `projet` | Projets de l'association | ✅ 4 items |
-| `artiste` | Artistes du label | ✅ 2 items |
-| `produit` | Produits boutique | ✅ 2 items |
-| `categorie-produit` | Catégories produit | ⚪ 0 item (mais exposé) |
-| `benevole` | Formulaires bénévoles/contact | ⚪ 0 item |
-| `don` | Dons enregistrés | ⚪ 0 item |
-| `commande` | Commandes boutique | ⚪ 0 item |
-| `page-content` | Contenus CMS pages | ⚪ 0 item |
-| `config-menu` | Configuration menus | ⚪ 0 item |
 
-### Composants
-- `evenement.concert` — Concerts liés aux artistes
-- `musique.album` — Discographie artistes
+| Content-type | Items | Description |
+|--------------|-------|-------------|
+| `projet` | 4 | Projets de l'association |
+| `artiste` | 2 | DJ Kenza, MC Takin |
+| `produit` | 3 | T-Shirt, Ticket, KIKOKO |
+| `commande` | 0 | Commandes boutique |
+| `categorie-produit` | 0 | Catégories |
+| `benevole` | 0 | Formulaires bénévoles |
+| `don` | 0 | Dons enregistrés |
+| `page-content` | 0 | Contenus CMS |
+| `config-menu` | 0 | Menus |
 
----
+### Champs produit
 
-## 4. ✅ PAIEMENTS
-
-| Provider | Statut | Compte |
-|----------|--------|--------|
-| **Stripe** | ✅ Compte LIVE validé | `kwabo@takainside.org` |
-| **PayPal** | 🔲 Structure présente | À configurer |
-| **FedaPay** | 🔲 Structure présente | À configurer |
-
-Stripe capabilities activées : `card_payments`, `bancontact, blik, eps, giropay, klarna, link, p24, sofort`
+- `titre`, `prix`, `description`, `type` (`merch`/`ticket`/`digital`)
+- `image` (média upload Strapi — ⚠️ URLs relatives `/uploads/...` éphémères)
+- `url_telechargement` (lien fichier digital)
+- `slug` (URL SEO)
 
 ---
 
-## 5. 🚧 PROBLÈMES IDENTIFIÉS (à corriger)
+## 5. 💳 PAIEMENTS
 
-### 🔴 P0 — CRITIQUE
-
-| # | Problème | Impact | Solution |
-|---|----------|--------|----------|
-| 1 | **CI/CD ne se déclenche pas** | Aucun déploiement auto | Branch `master` mais workflow sur `main/develop` |
-| 2 | **Zero tests** | Régression invisible | Mettre en place Jest + Playwright |
-
-**Détail problème 1 :**
-Les workflows GitHub Actions surveillent les push sur `main` ou `develop` :
-```yaml
-on:
-  push:
-    branches: [main, develop]
-```
-Mais le repo utilise la branche **`master`** (pas `main`).
-Résultat : les workflows ne se lancent **JAMAIS**.
-
-Correction nécessaire :
-- Option A : Renommer `master` → `main` sur GitHub
-- Option B : Modifier les workflows pour aussi écouter `master`
+| Provider | Statut | Devise API | Remarque |
+|----------|--------|-----------|----------|
+| **Stripe** | ✅ LIVE | `eur` (centimes) | Compte `kwabo@takainside.org` |
+| **FedaPay** | ✅ Configuré | `xof` (FCFA) | Mobile Money — API opérationnelle |
+| **PayPal** | 🔲 Non activé | `usd` | Structure présente, clés manquantes |
 
 ---
 
-### 🟡 P1 — MOYEN
+## 6. 🖼️ STOCKAGE & MÉDIAS
 
-| # | Problème | Impact |
-|---|----------|--------|
-| 3 | Backend incompletment seedé | `page-contents`, `config-menus`, `dons` vides |
-| 4 | Pas d'images uploadées dans Strapi | Artistes/projets sans visuels |
-| 5 | `benevole` endpoint répond mais les formulaires contact vont dedans | Devrait être `contacts` séparé |
-| 6 | React 18 (backend) vs React 19 (frontend) | Possible conflit si build commun |
-
----
-
-## 6. 🗂️ STRUCTURE DU REPO
-
-```
-taka-inside/
-├── .github/
-│   └── workflows/
-│       ├── backend.yml    # Railway deploy (broken: master≠main)
-│       └── frontend.yml   # Vercel deploy (broken: master≠main)
-├── backend/
-│   ├── src/api/           # 9 content-types Strapi
-│   ├── src/components/    # evenement.concert, musique.album
-│   ├── Dockerfile.dev
-│   └── nixpacks.toml
-├── frontend/
-│   ├── src/app/           # 17+ routes Next.js
-│   ├── src/components/    # Layout, Payments, UI
-│   ├── src/lib/           # api.ts, seo.ts
-│   ├── src/contexts/      # CartContext
-│   └── src/hooks/         # useStrapi
-├── scripts/
-│   ├── seed-strapi.js     # Seed data initial
-│   ├── setup-dev.sh       # Setup local Docker
-│   └── setup-github.sh    # Setup GitHub CLI
-├── docker-compose.yml     # Stack local complet
-├── .env.example           # Variables d'environnement
-├── POINT_ARRET.md         # Point d'arrêt 30 Mai 2026
-├── README.md              # Guide démarrage rapide
-└── STATUS.md              # Ce fichier ←
-```
+| Ressource | Solution | Statut |
+|-----------|----------|--------|
+| Images Strapi | Railway filesystem local | ⚠️ Éphémère (disparaît au redémarrage) |
+| Image KIKOKO | `frontend/public/images/kikoko-cover.jpg` | ✅ Asset statique Vercel |
+| Fichiers digitaux | Cloudflare R2 (`taka-inside-digital`) | ✅ Privé, streaming serveur |
+| Uploads futurs | R2 via API Strapi (S3 provider) | 🔲 À configurer |
 
 ---
 
@@ -199,28 +139,26 @@ taka-inside/
 | Frontend | Tailwind CSS | v4 |
 | Frontend | TypeScript | ^5 |
 | Backend | Strapi | 5.47.0 |
-| Backend | React | ^18.0.0 |
-| Backend | PostgreSQL | 15 |
-| Node local | Node.js | 22.22.3 |
+| Backend | Node.js | 22.22.3 |
+| Base de données | PostgreSQL | 15 |
 | Paiements | Stripe | ^22.2.0 |
-| Paiements | PayPal SDK | ^9.2.0 |
+| Paiements | FedaPay | API v1 |
+| Stockage | Cloudflare R2 | AWS SDK v3 |
 
 ---
 
-## 8. 📋 SUITE LOGIQUE (méthodo BMAD : Before / Make / After / Document)
+## 8. 📋 TODO RESTANT
 
-### En cours (cette session)
-1. ✅ **Before** : Audit complet (fait)
-2. 📝 **Make** : Créer STATUS.md (en cours)
-3. 🔧 **Make** : Corriger workflows CI/CD (branch `master`)
-4. 🧪 **Make** : Mettre en place tests Jest + Playwright
-
-### Prochaines sessions
-5. 🔧 Corriger branch mismatch (renommer `master`→`main` OU modifier workflows)
-6. 📤 Uploader images réelles pour artistes et projets
-7. 🌱 Seed complémentaire (`page-contents`, `config-menus`)
-8. 🔍 Audit accessibilité (RGAA / WCAG)
-9. 🚀 Tester paiements en sandbox
+| # | Priorité | Tâche | Blocage |
+|---|----------|-------|---------|
+| 1 | 🟡 P1 | Configurer provider S3/R2 côté Strapi pour uploads persistants | — |
+| 2 | 🟡 P1 | Ajouter images pour T-Shirt et Ticket (actuellement `null`) | — |
+| 3 | 🟡 P1 | Tester flux d'achat digital complet (paiement → token → téléchargement) | — |
+| 4 | 🟢 P2 | Activer PayPal (besoin `PAYPAL_CLIENT_ID` + `PAYPAL_SECRET`) | Sam |
+| 5 | 🟢 P2 | Ajouter champ `url_telechargement` au produit KIKOKO dans Strapi | — |
+| 6 | 🟢 P2 | Seed données `page-contents` et `config-menus` | — |
+| 7 | 🟢 P2 | Mettre en place Jest + Playwright tests | — |
+| 8 | 🔵 P3 | Renommer branche `master` → `main` (alignement convention) | — |
 
 ---
 
@@ -228,16 +166,31 @@ taka-inside/
 
 | Secret | Localisation | Statut |
 |--------|-------------|--------|
-| `STRIPE_SECRET_KEY` | GitHub Secrets + .env | ✅ Configuré |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | GitHub Secrets + .env | ✅ Configuré |
+| `STRIPE_SECRET_KEY` | Vercel env + local `.env` | ✅ Configuré |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Vercel env | ✅ Configuré |
+| `FEDAPAY_SECRET_KEY` | Vercel env | ✅ Configuré |
+| `R2_ACCESS_KEY_ID` | Vercel env | ✅ Configuré |
+| `R2_SECRET_ACCESS_KEY` | Vercel env | ✅ Configuré |
+| `R2_ENDPOINT` | Vercel env | ✅ Configuré |
 | `RAILWAY_TOKEN` | GitHub Secrets | ✅ Configuré |
-| `VERCEL_TOKEN` | GitHub Secrets | ✅ Configuré |
-| `VERCEL_ORG_ID` | GitHub Secrets | ✅ Configuré |
-| `VERCEL_PROJECT_ID` | GitHub Secrets | ✅ Configuré |
-| `NEXT_PUBLIC_STRAPI_API_URL` | GitHub Secrets + .env | ✅ `https://taka-inside-production.up.railway.app` |
-| `NEXT_PUBLIC_SITE_URL` | GitHub Secrets | ✅ `https://taka-inside.vercel.app` |
+| `VERCEL_TOKEN` | `/tmp/vercel_token.txt` | ✅ Configuré |
+| `PAYPAL_CLIENT_ID` | — | 🔲 Manquant |
+| `PAYPAL_SECRET` | — | 🔲 Manquant |
 
 ---
 
-*Dernière MAJ : 2026-05-31 22:45 UTC*
-*Prochaine review : après correction CI/CD et tests*
+## 10. 📝 HISTORIQUE RÉCENT
+
+| Date | Commit | Description |
+|------|--------|-------------|
+| 2026-06-04 | `42b28d4` | Conversion universelle EUR — boutique, panier, checkout, commande, dons, CGV, API Stripe en centimes EUR |
+| 2026-06-04 | `23d6769` | Image KIKOKO hébergée localement dans `public/images/` |
+| 2026-06-04 | `e44a174` | Fiche produit SSG + liens "En savoir plus" |
+| 2026-06-04 | `dad50ed` | Images fixes + formatPrice EUR sur cartes produits |
+| 2026-06-03 | (multiples) | Streaming R2, variables d'env Vercel, fix build |
+
+---
+
+*Dernière MAJ : 2026-06-04*
+*URL production : https://frontend-rgnbnot1u-sam-takas-projects.vercel.app*
+*Commit actuel : `42b28d4`*
