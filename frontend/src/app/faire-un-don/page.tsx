@@ -92,7 +92,7 @@ export default function DonPage() {
                         : 'border-taka-gray-light hover:border-taka-green hover:text-taka-green'
                     }`}
                   >
-                    {formatPrice(val)}
+                    {formatPrice(val, "FCFA")}
                   </button>
                 ))}
                 <button
@@ -123,7 +123,7 @@ export default function DonPage() {
 
               <div className="bg-taka-gray-light rounded-xl p-4 mb-6">
                 <p className="text-sm text-taka-gray">Montant sélectionné :</p>
-                <p className='font-display text-2xl font-bold'>{formatPrice(finalAmount)}</p>
+                <p className='font-display text-2xl font-bold'>{formatPrice(finalAmount, "FCFA")}</p>
               </div>
 
               {/* Méthodes de paiement */}
