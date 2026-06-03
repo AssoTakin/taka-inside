@@ -12,7 +12,7 @@ function resolveImageUrl(image: unknown): string | null {
 }
 
 export async function GET(_req: NextRequest) {
-  const data = await fetchStrapiList("produits?populate=*");
+  const data = await fetchStrapiList("produits?populate=*", { revalidate: 0 });
 
   if (!data || data.length === 0) {
     // Mock fallback
