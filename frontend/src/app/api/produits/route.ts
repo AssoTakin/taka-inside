@@ -50,5 +50,8 @@ export async function GET(_req: NextRequest) {
     }
   });
 
-  return NextResponse.json({ produits });
+  return NextResponse.json(
+    { produits },
+    { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+  );
 }
