@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import Link from 'next/link';
@@ -110,51 +110,46 @@ export default function CheckoutPage() {
     [items]
   );
 
-  // Synchroniser pays si digital-only
-  useEffect(() => {
-    if (isDigitalOnly) {
-      setFormData((prev) => (prev.pays !== 'Autre' ? { ...prev, pays: 'Autre' } : prev));
-    }
-  }, [isDigitalOnly]);
+  // Valeurs dérivées pour le cas digital-only (pas de setState dans un effet)
+  const effectivePays = useMemo(() => (isDigitalOnly ? 'Autre' : formData.pays), [isDigitalOnly, formData.pays]);
+  const effectiveTypeLivraison = useMemo(() => (isDigitalOnly ? 'numerique' : formData.type_livraison), [isDigitalOnly, formData.type_livraison]);
 
-  // Calculer frais livraison quand pays/type change
-  useEffect(() => {
+  // Calcul frais livraison — fonction explicite appelée sur événement utilisateur
+  const fetchShippingCosts = useCallback(async () => {
     if (isDigitalOnly) {
-      if (shippingCost !== 0) setShippingCost(0);
+      setShippingCost(0);
       setDeliveryInfo(null);
       return;
     }
-    if (step !== 2 && step !== 3) return; // pas encore à l'étape livraison
-
-    const fetchShipping = async () => {
-      try {
-        const res = await fetch(
-          `/api/livraison/calcul?pays=${encodeURIComponent(formData.pays)}&type_livraison=${formData.type_livraison}&poids=1`
-        );
-        if (!res.ok) throw new Error('Erreur calcul livraison');
-        const data = await res.json();
-        setShippingCost(data.frais_livraison || 0);
-        setDeliveryInfo({
-          frais: data.frais_livraison,
-          delai: data.delai_estime_jours,
-          source: data.source,
-        });
-      } catch {
-        // Fallback silencieux
-        const fallbackMap: Record<string, number> = {
-          standard: 1000, express: 2000, economique: 500,
-        };
-        setShippingCost(fallbackMap[formData.type_livraison] || 1000);
-      }
-    };
-
-    fetchShipping();
-  }, [formData.pays, formData.type_livraison, step, isDigitalOnly, setShippingCost]);
+    try {
+      const res = await fetch(
+        `/api/livraison/calcul?pays=${encodeURIComponent(effectivePays)}&type_livraison=${effectiveTypeLivraison}&poids=1`
+      );
+      if (!res.ok) throw new Error('Erreur calcul livraison');
+      const data = await res.json();
+      setShippingCost(data.frais_livraison || 0);
+      setDeliveryInfo({
+        frais: data.frais_livraison,
+        delai: data.delai_estime_jours,
+        source: data.source,
+      });
+    } catch {
+      const fallbackMap: Record<string, number> = {
+        standard: 1000, express: 2000, economique: 500,
+      };
+      setShippingCost(fallbackMap[effectiveTypeLivraison] || 1000);
+      setDeliveryInfo(null);
+    }
+  }, [isDigitalOnly, effectivePays, effectiveTypeLivraison, setShippingCost, setDeliveryInfo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
+    // Recalcul frais livraison si on est à l'étape livraison
+    if ((name === 'pays' || name === 'type_livraison') && step >= 2) {
+      fetchShippingCosts();
+    }
   };
 
   const validateStep1 = (): boolean => {
@@ -218,10 +213,10 @@ export default function CheckoutPage() {
     if (step === 1 && validateStep1()) {
       if (isDigitalOnly) {
         setStep(3);
-        // Si digital only → étape paiement sans adresse
         if (!clientSecret) createPaymentIntent();
       } else {
         setStep(2);
+        fetchShippingCosts(); // calcul frais quand on arrive à l'étape livraison
       }
     } else if (step === 2 && validateStep2()) {
       setStep(3);
