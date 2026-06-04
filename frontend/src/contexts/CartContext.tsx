@@ -38,19 +38,15 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [shippingCost, setShippingCost] = useState(0);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
+  const [items, setItems] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem('taka-cart');
-      if (saved) {
-        setItems(JSON.parse(saved));
-      }
+      if (saved) return JSON.parse(saved);
     } catch { /* ignore */ }
-  }, []);
+    return [];
+  });
+  const [isOpen, setIsOpen] = useState(false);
+  const [shippingCost, setShippingCost] = useState(0);
 
   // Persist cart
   useEffect(() => {

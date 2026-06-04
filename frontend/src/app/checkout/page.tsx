@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import Link from 'next/link';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { useCart } from '@/contexts/CartContext';
 import { formatPrice } from '@/lib/price';
@@ -82,7 +83,6 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [isDigitalOnly, setIsDigitalOnly] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [deliveryInfo, setDeliveryInfo] = useState<{ frais: number; delai: number; source: string } | null>(null);
 
@@ -102,19 +102,25 @@ export default function CheckoutPage() {
     stripePromise.then(() => setStripeReady(true)).catch((err) => console.error('Stripe load error:', err));
   }, []);
 
-  // Détecter si tous les produits sont digitaux
-  useEffect(() => {
-    const allDigital = items.every((item) =>
+  // Détecter si tous les produits sont digitaux — useMemo pour pureté
+  const isDigitalOnly = useMemo(() =>
+    items.every((item) =>
       item.productType === 'digital' || item.productType === 'album' || item.productType === 'single'
-    );
-    setIsDigitalOnly(allDigital);
-    if (allDigital) setFormData((prev) => ({ ...prev, pays: 'Autre' }));
-  }, [items]);
+    ),
+    [items]
+  );
+
+  // Synchroniser pays si digital-only
+  useEffect(() => {
+    if (isDigitalOnly) {
+      setFormData((prev) => (prev.pays !== 'Autre' ? { ...prev, pays: 'Autre' } : prev));
+    }
+  }, [isDigitalOnly]);
 
   // Calculer frais livraison quand pays/type change
   useEffect(() => {
     if (isDigitalOnly) {
-      setShippingCost(0);
+      if (shippingCost !== 0) setShippingCost(0);
       setDeliveryInfo(null);
       return;
     }
@@ -240,7 +246,7 @@ export default function CheckoutPage() {
       <div className="min-h-[50vh] flex items-center justify-center bg-taka-cream">
         <div className="text-center">
           <h1 className="font-display text-2xl font-bold mb-4">Votre panier est vide</h1>
-          <a href="/boutique" className="text-taka-green font-semibold hover:underline">Retourner à la boutique →</a>
+          <Link href="/boutique" className="text-taka-green font-semibold hover:underline">Retourner à la boutique →</Link>
         </div>
       </div>
     </SiteLayout>
@@ -257,7 +263,7 @@ export default function CheckoutPage() {
           </div>
           <h1 className="font-display text-2xl font-bold mb-4">Paiement confirmé !</h1>
           <p className="text-taka-gray mb-6">Merci pour votre commande. Vous recevrez un email de confirmation sous peu.</p>
-          <a href="/" className="inline-block bg-taka-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">Retour à l'accueil</a>
+          <Link href="/" className="inline-block bg-taka-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">Retour à l'accueil</Link>
         </div>
       </div>
     </SiteLayout>

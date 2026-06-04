@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const {
       amount,
-      currency = "eur",
+
       metadata = {},
       nomClient,
       email,

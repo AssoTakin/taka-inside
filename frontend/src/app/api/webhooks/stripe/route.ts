@@ -4,7 +4,7 @@ import Stripe from "stripe";
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY manquante");
-  return new Stripe(key, { apiVersion: "2024-06-20" as any });
+  return new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
 }
 
 function getEndpointSecret(): string {
@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
 
   try {
     event = getStripe().webhooks.constructEvent(payload, signature, getEndpointSecret());
-  } catch (err: any) {
-    console.error("[Stripe Webhook] Signature invalide:", err.message);
+  } catch (err: unknown) {
+    console.error("[Stripe Webhook] Signature invalide:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 

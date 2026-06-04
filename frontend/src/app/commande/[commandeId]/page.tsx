@@ -58,7 +58,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
               <div>
                 <h1 className="font-display text-2xl font-bold">Commande #{String(commandeId).slice(-6).toUpperCase()}</h1>
                 <p className="text-sm text-taka-gray mt-1">
-                  Passée le {new Date(attrs.createdAt || Date.now()).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  Passée le {attrs.createdAt ? new Date(attrs.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date inconnue'}
                 </p>
               </div>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${status.color}`}>{status.label}</span>
