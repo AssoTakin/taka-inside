@@ -48,6 +48,6 @@ jobs:
 
       - name: Deploy to Railway
         working-directory: ./backend
-        run: railway up --service strapi-backend
+        run: railway up --project 8ac9a38c-3984-4df0-abdb-e9fc52082777 --service taka-inside --environment production --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
