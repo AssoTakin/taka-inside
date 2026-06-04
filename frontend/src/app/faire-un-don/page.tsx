@@ -109,7 +109,7 @@ export default function DonPage() {
 
               {(customAmount || amount === 0) && (
                 <div className="mb-6">
-                  <label className='block text-sm font-semibold mb-1'>Montant personnalisé (EUR)</label>
+                  <label className='block text-sm font-semibold mb-1'>Montant personnalisé (sera converti en EUR)</label>
                   <input
                     type="number"
                     value={customAmount}
@@ -172,7 +172,10 @@ export default function DonPage() {
               {showPayment && finalAmount > 0 ? (
                 <>
                   {paymentMethod === 'stripe' && (
-                    <DonStripeForm amount={finalAmount} frequency={frequency} />
+                    <>
+                      <DonStripeForm amount={toEUR(finalAmount)} frequency={frequency} />
+                      <p className="text-xs text-taka-gray mt-2">Le montant sera converti en EUR pour le traitement sécurisé.</p>
+                    </>
                   )}
 
                   {paymentMethod === 'paypal' && (
