@@ -478,7 +478,7 @@ export default function CheckoutPage() {
                       )
                     )}
 
-                    {paymentMethod === 'paypal' && <PayPalDonForm amount={total} onSuccess={handleSuccess} />}
+                    {paymentMethod === 'paypal' && <PayPalDonForm amount={totalEUR} onSuccess={handleSuccess} />}
 
                     {paymentMethod === 'fedapay' && <FedaPayDonButton amountEUR={totalEUR} onSuccess={handleSuccess} />}
 
