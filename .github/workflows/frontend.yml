@@ -50,9 +50,6 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: lint-and-test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -60,21 +57,17 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Configure Vercel Project
-        working-directory: ./frontend
         run: |
-          mkdir -p .vercel
-          echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
+          mkdir -p frontend/.vercel
+          echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > frontend/.vercel/project.json
 
       - name: Pull Vercel Environment
-        working-directory: ./frontend
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Preview
-        working-directory: ./frontend
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Preview
-        working-directory: ./frontend
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
   deploy-production:
@@ -82,9 +75,6 @@ jobs:
     if: contains(fromJson('["refs/heads/main", "refs/heads/master"]'), github.ref)
     needs: lint-and-test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -92,19 +82,15 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Configure Vercel Project
-        working-directory: ./frontend
         run: |
-          mkdir -p .vercel
-          echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
+          mkdir -p frontend/.vercel
+          echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > frontend/.vercel/project.json
 
       - name: Pull Vercel Environment
-        working-directory: ./frontend
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Production
-        working-directory: ./frontend
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Production
-        working-directory: ./frontend
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
