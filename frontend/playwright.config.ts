@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://frontend-mu-one-82-8fcjmyf15-sam-takas-projects.vercel.app',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://frontend-ezpy8pqmk-sam-takas-projects.vercel.app',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
