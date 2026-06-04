@@ -4,7 +4,7 @@ import { useState } from 'react';
 import SiteLayout from "@/components/layout/SiteLayout";
 import DonStripeForm from '@/components/payments/DonStripeForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
-import { formatPrice } from '@/lib/price';
+import { formatPrice, formatPriceEUR, toEUR } from '@/lib/price';
 
 type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
 type Frequency = 'one-time' | 'monthly';
@@ -92,7 +92,7 @@ export default function DonPage() {
                         : 'border-taka-gray-light hover:border-taka-green hover:text-taka-green'
                     }`}
                   >
-                    {formatPrice(val, "FCFA")}
+                    {formatPriceEUR(val, "FCFA")}
                   </button>
                 ))}
                 <button
@@ -123,7 +123,7 @@ export default function DonPage() {
 
               <div className="bg-taka-gray-light rounded-xl p-4 mb-6">
                 <p className="text-sm text-taka-gray">Montant sélectionné :</p>
-                <p className='font-display text-2xl font-bold'>{formatPrice(finalAmount, "FCFA")}</p>
+                <p className='font-display text-2xl font-bold'>{formatPriceEUR(finalAmount, "FCFA")}</p>
               </div>
 
               {/* Méthodes de paiement */}
@@ -183,7 +183,7 @@ export default function DonPage() {
                   )}
 
                   {paymentMethod === 'fedapay' && (
-                    <FedaPayDonButton amount={finalAmount} />
+                    <FedaPayDonButton amountEUR={toEUR(finalAmount)} />
                   )}
                 </>
               ) : (

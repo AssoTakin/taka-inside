@@ -17,7 +17,11 @@ export function toEUR(fcfaAmount: number): number {
   return Math.round((fcfaAmount / EUR_FCFA_RATE) * 100) / 100;
 }
 
-/** Formatage affichage utilisateur : "3,81 €" ou "2 500 FCFA" */
+/** Formatage affichage en EUR (converti depuis FCFA si nécessaire) */
+export function formatPriceEUR(amount: number, sourceCurrency: "EUR" | "FCFA" = "EUR"): string {
+  const eur = sourceCurrency === "FCFA" ? toEUR(amount) : amount;
+  return formatPrice(eur, "EUR");
+}
 export function formatPrice(
   amount: number,
   currency: "EUR" | "FCFA" = "EUR"

@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { formatPrice } from "@/lib/price";
+import { toFCFA } from "@/lib/price";
 
-export default function FedaPayDonButton({ amount, onSuccess }: { amount: number | string; onSuccess?: () => void }) {
+interface FedaPayDonButtonProps {
+  /** Montant en EUR (ex: 12.50 pour 12,50 €) */
+  amountEUR: number;
+  onSuccess?: () => void;
+  description?: string;
+}
+
+export default function FedaPayDonButton({ amountEUR, onSuccess, description }: FedaPayDonButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -11,15 +18,10 @@ export default function FedaPayDonButton({ amount, onSuccess }: { amount: number
     setLoading(true);
     setError("");
 
-    // === DEBUG ===
-    console.log("[FedaPay] Raw amount prop:", amount, "type:", typeof amount);
+    // Convertir EUR → FCFA pour l'API FedaPay (qui attend un montant entier en XOF)
+    const fcfaAmount = Math.round(toFCFA(amountEUR));
 
-    // Robustesse: convertir en nombre entier
-    const numericAmount = typeof amount === 'string' ? parseInt(amount, 10) || 0 : Math.round(Number(amount) || 0);
-
-    console.log("[FedaPay] Parsed amount:", numericAmount);
-
-    if (numericAmount <= 0 || Number.isNaN(numericAmount)) {
+    if (fcfaAmount <= 0 || Number.isNaN(fcfaAmount)) {
       setError("Veuillez sélectionner un montant valide");
       setLoading(false);
       return;
@@ -27,18 +29,15 @@ export default function FedaPayDonButton({ amount, onSuccess }: { amount: number
 
     try {
       const payload = {
-        amount: numericAmount,
-        description: `Don Taka Inside — ${formatPrice(numericAmount)}`,
+        amount: fcfaAmount,
+        description: description || `Paiement Taka Inside — ${amountEUR.toFixed(2)} €`,
       };
-      console.log("[FedaPay] Sending payload:", payload);
 
       const res = await fetch("/api/fedapay/create-transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
-      console.log("[FedaPay] Response status:", res.status);
 
       let data: { url?: string; error?: string } = {};
       try {
@@ -47,25 +46,19 @@ export default function FedaPayDonButton({ amount, onSuccess }: { amount: number
         console.error("[FedaPay] Invalid JSON response");
       }
 
-      console.log("[FedaPay] Response data:", data);
-
       if (!res.ok || data.error) {
-        console.error("[FedaPay] Server error:", res.status, data.error);
         setError("Paiement indisponible — réessayez plus tard");
         setLoading(false);
         return;
       }
 
       if (typeof data.url === "string" && data.url) {
-        console.log("[FedaPay] Redirecting to:", data.url);
         window.location.href = data.url;
       } else {
-        console.error("[FedaPay] Missing URL in response");
         setError("Paiement indisponible — réessayez plus tard");
         setLoading(false);
       }
     } catch (err) {
-      console.error("[FedaPay] Network error:", err);
       setError("Connexion instable — vérifiez votre réseau");
       setLoading(false);
     }

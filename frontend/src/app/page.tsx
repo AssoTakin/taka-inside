@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchStrapi, getImageUrl } from '@/lib/api';
-import { formatPrice } from '@/lib/price';
+import { formatPrice, formatPriceEUR } from '@/lib/price';
 
 function statutLabel(s: string) {
   switch (s) {
@@ -330,7 +330,7 @@ export default async function HomePage() {
               <p className="text-taka-gray mb-8">Votre soutien permet de financer nos projets culturels, d&apos;accompagner les artistes et de promouvoir le Bénin.</p>
               <div className="flex flex-wrap gap-3 mb-8">
                 {[5000, 10000, 25000, 50000].map((amount) => (
-                  <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount, "FCFA")}</span>
+                  <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPriceEUR(amount, "FCFA")}</span>
                 ))}
               </div>
               <Link href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>

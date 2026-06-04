@@ -6,7 +6,7 @@ import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-
 import Link from 'next/link';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { useCart } from '@/contexts/CartContext';
-import { formatPrice } from '@/lib/price';
+import { formatPrice, formatPriceEUR } from '@/lib/price';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 
@@ -286,7 +286,7 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} x{item.quantity}</span>
-                      <span className='font-semibold'>{formatPrice(item.price * item.quantity, item.currency)}</span>
+                      <span className='font-semibold'>{formatPriceEUR(item.price * item.quantity, item.currency)}</span>
                     </div>
                   ))}
                   <div className="border-t border-taka-gray-light pt-3 space-y-2">
@@ -480,7 +480,7 @@ export default function CheckoutPage() {
 
                     {paymentMethod === 'paypal' && <PayPalDonForm amount={total} onSuccess={handleSuccess} />}
 
-                    {paymentMethod === 'fedapay' && <FedaPayDonButton amount={total} onSuccess={handleSuccess} />}
+                    {paymentMethod === 'fedapay' && <FedaPayDonButton amountEUR={totalEUR} onSuccess={handleSuccess} />}
 
                     <button onClick={prevStep} className="w-full bg-taka-gray-light text-taka-black py-3 rounded-xl font-medium hover:bg-opacity-90 transition-all">
                       ← Modifier mes informations

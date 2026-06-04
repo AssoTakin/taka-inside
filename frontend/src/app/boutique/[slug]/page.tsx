@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchStrapiList } from "@/lib/api";
-import { formatPrice } from "@/lib/price";
+import { formatPrice, formatPriceEUR } from "@/lib/price";
 import AddToCartButton from "./AddToCartButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!product) return { title: "Produit non trouvé — Taka Inside" };
   return {
     title: `${product.nom} — Boutique Taka Inside`,
-    description: product.description || `Achetez ${product.nom} à ${formatPrice(product.prix, product.devise)}`,
+    description: product.description || `Achetez ${product.nom} à ${formatPriceEUR(product.prix, product.devise)}`,
   };
 }
 
@@ -100,7 +100,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <h1 className="font-display text-3xl md:text-4xl font-bold mb-3">{product.nom}</h1>
               
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-2xl font-bold text-taka-red">{formatPrice(product.prix, product.devise)}</span>
+                <span className="text-2xl font-bold text-taka-red">{formatPriceEUR(product.prix, product.devise)}</span>
                 {isDigital && (
                   <span className="text-sm text-taka-gray bg-taka-gray-light px-2 py-1 rounded">Téléchargement digital</span>
                 )}
