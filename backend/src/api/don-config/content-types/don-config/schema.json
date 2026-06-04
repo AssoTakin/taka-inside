@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "don_configs",
+  "info": {
+    "singularName": "don-config",
+    "pluralName": "don-configs",
+    "displayName": "Configuration des dons",
+    "description": "Montants pré-définis pour les dons ponctuels et mensuels"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "montant": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "frequence": {
+      "type": "enumeration",
+      "enum": ["one-time", "monthly"],
+      "required": true
+    },
+    "actif": {
+      "type": "boolean",
+      "default": true
+    },
+    "ordre": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

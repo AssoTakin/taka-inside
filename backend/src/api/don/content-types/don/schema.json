@@ -26,7 +26,7 @@
     "devise": {
       "type": "enumeration",
       "enum": ["EUR", "FCFA"],
-      "default": "FCFA"
+      "default": "EUR"
     },
     "message": {
       "type": "text"

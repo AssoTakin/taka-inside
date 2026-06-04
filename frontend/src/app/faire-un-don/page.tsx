@@ -1,25 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SiteLayout from "@/components/layout/SiteLayout";
 import DonStripeForm from '@/components/payments/DonStripeForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
-import { formatPrice, formatPriceEUR, toEUR } from '@/lib/price';
+import { formatPrice } from '@/lib/price';
 
 type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
 type Frequency = 'one-time' | 'monthly';
 
-const AMOUNTS_ONE_TIME = [5000, 10000, 25000, 50000, 100000];
-const AMOUNTS_MONTHLY = [5000, 10000, 25000, 50000];
+interface DonConfig {
+  montant: number;
+  frequence: Frequency;
+  ordre: number;
+}
 
 export default function DonPage() {
-  const [amount, setAmount] = useState(10000);
+  const [amount, setAmount] = useState(15);
   const [customAmount, setCustomAmount] = useState('');
   const [frequency, setFrequency] = useState<Frequency>('one-time');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [showPayment, setShowPayment] = useState(false);
+  const [configs, setConfigs] = useState<DonConfig[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const amounts = frequency === 'one-time' ? AMOUNTS_ONE_TIME : AMOUNTS_MONTHLY;
+  // Charger les montants depuis Strapi
+  useEffect(() => {
+    fetch('/api/don-configs')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          setConfigs(data);
+          // Sélectionner le premier montant actif de la fréquence par défaut
+          const first = data.find((c: DonConfig) => c.frequence === 'one-time');
+          if (first) setAmount(first.montant);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fallback hardcodé en EUR
+        setConfigs([
+          { montant: 10, frequence: 'one-time', ordre: 1 },
+          { montant: 15, frequence: 'one-time', ordre: 2 },
+          { montant: 25, frequence: 'one-time', ordre: 3 },
+          { montant: 50, frequence: 'one-time', ordre: 4 },
+          { montant: 100, frequence: 'one-time', ordre: 5 },
+          { montant: 10, frequence: 'monthly', ordre: 1 },
+          { montant: 15, frequence: 'monthly', ordre: 2 },
+          { montant: 25, frequence: 'monthly', ordre: 3 },
+          { montant: 50, frequence: 'monthly', ordre: 4 },
+        ]);
+        setLoading(false);
+      });
+  }, []);
+
+  const amounts = configs
+    .filter((c) => c.frequence === frequency)
+    .sort((a, b) => a.ordre - b.ordre)
+    .map((c) => c.montant);
+
+  // Fallback si Strapi vide
+  const displayAmounts = amounts.length > 0 ? amounts : 
+    (frequency === 'one-time' ? [10, 15, 25, 50, 100] : [10, 15, 25, 50]);
 
   const handleAmountSelect = (val: number) => {
     setAmount(val);
@@ -29,11 +71,11 @@ export default function DonPage() {
 
   const handleCustomAmount = (val: string) => {
     setCustomAmount(val);
-    setAmount(parseInt(val) || 0);
+    setAmount(parseFloat(val) || 0);
     setShowPayment(false);
   };
 
-  const finalAmount = customAmount ? parseInt(customAmount) || 0 : amount;
+  const finalAmount = customAmount ? parseFloat(customAmount) || 0 : amount;
 
   return (
     <SiteLayout>
@@ -82,7 +124,7 @@ export default function DonPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {amounts.map((val) => (
+                {displayAmounts.map((val) => (
                   <button
                     key={val}
                     onClick={() => handleAmountSelect(val)}
@@ -92,7 +134,7 @@ export default function DonPage() {
                         : 'border-taka-gray-light hover:border-taka-green hover:text-taka-green'
                     }`}
                   >
-                    {formatPriceEUR(val, "FCFA")}
+                    {formatPrice(val)}
                   </button>
                 ))}
                 <button
@@ -109,21 +151,22 @@ export default function DonPage() {
 
               {(customAmount || amount === 0) && (
                 <div className="mb-6">
-                  <label className='block text-sm font-semibold mb-1'>Montant personnalisé (sera converti en EUR)</label>
+                  <label className='block text-sm font-semibold mb-1'>Montant personnalisé (EUR)</label>
                   <input
                     type="number"
                     value={customAmount}
                     onChange={(e) => handleCustomAmount(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-green focus:ring-2 focus:ring-taka-green/20 outline-none transition-all"
                     placeholder="Entrez un montant"
-                    min={500}
+                    min={1}
+                    step={0.01}
                   />
                 </div>
               )}
 
               <div className="bg-taka-gray-light rounded-xl p-4 mb-6">
                 <p className="text-sm text-taka-gray">Montant sélectionné :</p>
-                <p className='font-display text-2xl font-bold'>{formatPriceEUR(finalAmount, "FCFA")}</p>
+                <p className='font-display text-2xl font-bold'>{formatPrice(finalAmount)}</p>
               </div>
 
               {/* Méthodes de paiement */}
@@ -173,8 +216,8 @@ export default function DonPage() {
                 <>
                   {paymentMethod === 'stripe' && (
                     <>
-                      <DonStripeForm amount={toEUR(finalAmount)} frequency={frequency} />
-                      <p className="text-xs text-taka-gray mt-2">Le montant sera converti en EUR pour le traitement sécurisé.</p>
+                      <DonStripeForm amount={finalAmount} frequency={frequency} />
+                      <p className="text-xs text-taka-gray mt-2">Paiement sécurisé via Stripe en EUR.</p>
                     </>
                   )}
 
@@ -186,7 +229,7 @@ export default function DonPage() {
                   )}
 
                   {paymentMethod === 'fedapay' && (
-                    <FedaPayDonButton amountEUR={toEUR(finalAmount)} />
+                    <FedaPayDonButton amountEUR={finalAmount} />
                   )}
                 </>
               ) : (

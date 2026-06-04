@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
-import { formatPrice, formatPriceEUR } from "@/lib/price";
+import { formatPrice } from "@/lib/price";
 
 interface Product {
   id: number;
   documentId: string;
   nom: string;
   prix: number;
-  devise: "EUR" | "FCFA";
   type: string;
   image: string | null;
   slug: string;
@@ -26,7 +25,6 @@ export default function AddToCartButton({ product }: { product: Product }) {
       documentId: product.documentId,
       name: product.nom,
       price: product.prix,
-      currency: product.devise,
       quantity: 1,
       slug: product.slug || product.documentId,
       type: product.type as "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket",
@@ -49,7 +47,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           : "bg-taka-black text-white hover:bg-taka-yellow hover:text-taka-black"
       }`}
     >
-      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPriceEUR(product.prix, product.devise)}`}
+      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPrice(product.prix)}`}
     </button>
   );
 }

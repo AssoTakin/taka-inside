@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     } = await req.json();
 
     // Stripe reçoit montant en EUR (centimes)
-    const eurCents = toStripeCents(amount, "EUR");
+    const eurCents = toStripeCents(amount);
     const minCents = 50; // Stripe minimum 50 cents EUR
     if (!amount || eurCents < minCents) {
       return NextResponse.json(

@@ -3,10 +3,10 @@
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice, formatPriceEUR } from "@/lib/price";
+import { formatPrice } from "@/lib/price";
 
 export default function CartDrawer() {
-  const { items, removeItem, updateQuantity, totalEUR, itemCount, isOpen, setIsOpen } = useCart();
+  const { items, removeItem, updateQuantity, total, itemCount, isOpen, setIsOpen } = useCart();
 
   if (!isOpen) return null;
 
@@ -65,7 +65,7 @@ export default function CartDrawer() {
                   {item.customization && (
                     <p className="text-xs text-taka-gray mt-1">Personnalisation : {item.customization}</p>
                   )}
-                  <p className="font-bold mt-1">{formatPriceEUR(item.price, item.currency)}</p>
+                  <p className="font-bold mt-1">{formatPrice(item.price)}</p>
 
                   <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center border border-taka-gray-light rounded-lg overflow-hidden">
@@ -97,7 +97,7 @@ export default function CartDrawer() {
           <div className="border-t border-taka-gray-light p-6 space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-taka-gray">Sous-total</span>
-              <span className="font-bold text-lg">{formatPrice(totalEUR)}</span>
+              <span className="font-bold text-lg">{formatPrice(total)}</span>
             </div>
             <p className="text-xs text-taka-gray">Frais de livraison calculés à l'étape suivante.</p>
             <Link

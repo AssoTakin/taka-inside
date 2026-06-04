@@ -1,14 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { toEUR } from '@/lib/price';
 
 export interface CartItem {
   id: number;
   documentId: string;
   name: string;
-  price: number;       // montant brut tel que dans Strapi
-  currency: "EUR" | "FCFA";  // devise du produit
+  price: number;       // montant en EUR
   quantity: number;
   image?: string;
   slug: string;
@@ -23,12 +21,9 @@ interface CartContextType {
   removeItem: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
-  total: number;        // montant brut (FCFA ou EUR selon produits)
-  subtotal: number;     // montant brut
-  totalEUR: number;      // total converti en EUR pour affichage
-  subtotalEUR: number;   // sous-total en EUR
-  shippingCost: number;
-  shippingEUR: number;
+  total: number;        // total en EUR
+  subtotal: number;     // sous-total en EUR
+  shippingCost: number; // frais livraison en EUR
   setShippingCost: (cost: number) => void;
   itemCount: number;
   isOpen: boolean;
@@ -87,13 +82,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + shippingCost;
-  // Totaux en EUR pour affichage (conversion FCFA → EUR si nécessaire)
-  const subtotalEUR = items.reduce((sum, item) => {
-    const unitEUR = item.currency === 'FCFA' ? toEUR(item.price) : item.price;
-    return sum + unitEUR * item.quantity;
-  }, 0);
-  const shippingEUR = shippingCost > 0 ? toEUR(shippingCost) : 0;
-  const totalEUR = subtotalEUR + shippingEUR;
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -106,10 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         total,
         subtotal,
-        totalEUR,
-        subtotalEUR,
         shippingCost,
-        shippingEUR,
         setShippingCost,
         itemCount,
         isOpen,
