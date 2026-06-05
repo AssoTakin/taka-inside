@@ -8,6 +8,7 @@ import { useCart } from '@/contexts/CartContext';
 import { formatPrice } from '@/lib/price';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
+import Link from 'next/link';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -240,7 +241,7 @@ export default function CheckoutPage() {
       <div className="min-h-[50vh] flex items-center justify-center bg-taka-cream">
         <div className="text-center">
           <h1 className="font-display text-2xl font-bold mb-4">Votre panier est vide</h1>
-          <a href="/boutique" className="text-taka-green font-semibold hover:underline">Retourner à la boutique →</a>
+          <Link href="/boutique" className="text-taka-green font-semibold hover:underline">Retourner à la boutique →</Link>
         </div>
       </div>
     </SiteLayout>
@@ -257,7 +258,7 @@ export default function CheckoutPage() {
           </div>
           <h1 className="font-display text-2xl font-bold mb-4">Paiement confirmé !</h1>
           <p className="text-taka-gray mb-6">Merci pour votre commande. Vous recevrez un email de confirmation sous peu.</p>
-          <a href="/" className="inline-block bg-taka-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">Retour à l'accueil</a>
+          <Link href="/" className="inline-block bg-taka-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">Retour à l'accueil</Link>
         </div>
       </div>
     </SiteLayout>

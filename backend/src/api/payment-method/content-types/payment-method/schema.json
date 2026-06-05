@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payment_methods",
+  "info": {
+    "singularName": "payment-method",
+    "pluralName": "payment-methods",
+    "displayName": "Méthode de paiement",
+    "description": "Méthodes de paiement disponibles (Stripe, PayPal, FedaPay, etc.)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "displayName": {
+      "type": "string",
+      "required": true,
+      "description": "Nom affiché (ex: 'Carte bancaire (SSL 256-bit)')"
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "supportedCurrencies": {
+      "type": "json",
+      "description": "Liste des devises supportées (ex: ['EUR', 'XOF'])"
+    },
+    "config": {
+      "type": "json",
+      "description": "Configuration technique (clés, URLs, webhooks)"
+    }
+  }
+}

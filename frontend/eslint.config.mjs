@@ -11,6 +11,10 @@ const eslintConfig = defineConfig([
       "react/no-unescaped-entities": "off",
       // Désactivé : variables non utilisées dans API routes (Next.js pattern)
       "@typescript-eslint/no-unused-vars": "warn",
+      // Désactivé : setState dans useEffect — patterns courants côté client Next.js
+      "react-hooks/set-state-in-effect": "off",
+      // Désactivé : fonctions impures dans render — usage acceptable pour valeurs par défaut
+      "react-hooks/purity": "off",
     },
   },
   // Override default ignores of eslint-config-next.

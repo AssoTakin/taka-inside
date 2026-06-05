@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_homepage_stat_items",
+  "info": {
+    "displayName": "Stat Item",
+    "icon": "hashtag",
+    "description": "Un chiffre clé"
+  },
+  "category": "homepage",
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Le chiffre (ex: 1500+)",
+      "default": "0"
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Description du chiffre",
+      "default": "Bénévoles"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Nom d'icône optionnel"
+    }
+  }
+}

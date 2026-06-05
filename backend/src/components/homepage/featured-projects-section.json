@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_homepage_featured_projects_sections",
+  "info": {
+    "displayName": "Featured Projects Section",
+    "icon": "star",
+    "description": "Section projets en vedette"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Nos projets"
+    },
+    "description": {
+      "type": "text"
+    },
+    "numberToDisplay": {
+      "type": "integer",
+      "default": 3,
+      "min": 1,
+      "max": 6
+    },
+    "cta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_homepage_featured_artists_sections",
+  "info": {
+    "displayName": "Featured Artists Section",
+    "icon": "music",
+    "description": "Section artistes du label en vedette"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Artistes du label"
+    },
+    "description": {
+      "type": "text"
+    },
+    "numberToDisplay": {
+      "type": "integer",
+      "default": 2,
+      "min": 1,
+      "max": 6
+    },
+    "cta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    }
+  }
+}

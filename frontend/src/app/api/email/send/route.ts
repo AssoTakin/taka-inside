@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, id: data?.id });
-  } catch (err: any) {
+  } catch (err) {
     console.error('[Email] Error:', err);
     return NextResponse.json(
-      { error: err.message || 'Erreur serveur' },
+      { error: (err as Error).message || 'Erreur serveur' },
       { status: 500 }
     );
   }

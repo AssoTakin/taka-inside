@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_homepage_about_sections",
+  "info": {
+    "displayName": "About Section",
+    "icon": "information",
+    "description": "Section À propos sur la homepage"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "À Propos"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "cta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    }
+  }
+}

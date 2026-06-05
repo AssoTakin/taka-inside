@@ -79,7 +79,7 @@ export async function GET(
     // 5. Identifier le produit digital
     const produits = attrs.produits || [];
     const digitalProduct = produits.find(
-      (p: any) =>
+      (p: { type?: string; type_produit?: string; categorie?: string }) =>
         p.type === "digital" ||
         p.type_produit === "album" ||
         p.categorie === "album"

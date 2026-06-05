@@ -1,0 +1,72 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_configs",
+  "info": {
+    "singularName": "site-config",
+    "pluralName": "site-configs",
+    "displayName": "Configuration du site",
+    "description": "Configuration globale du site (logo, contact, réseaux sociaux, SEO)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "required": true,
+      "default": "Taka Inside"
+    },
+    "tagline": {
+      "type": "string",
+      "required": true,
+      "default": "L'Art au Service de l'Humain"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "favicon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Image par défaut pour les partages sociaux"
+    },
+    "defaultSeo": {
+      "type": "component",
+      "component": "shared.seo",
+      "required": true
+    },
+    "contactEmail": {
+      "type": "email",
+      "required": true
+    },
+    "contactPhone": {
+      "type": "string"
+    },
+    "contactAddress": {
+      "type": "string"
+    },
+    "whatsappNumber": {
+      "type": "string",
+      "description": "Numéro pour le bouton WhatsApp (format international)"
+    },
+    "copyrightText": {
+      "type": "string",
+      "required": true,
+      "default": "Taka Inside. Tous droits réservés."
+    },
+    "socialLinks": {
+      "type": "component",
+      "component": "shared.social-link",
+      "repeatable": true
+    }
+  }
+}

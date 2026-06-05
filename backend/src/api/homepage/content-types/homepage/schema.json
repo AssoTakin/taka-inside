@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "homepages",
+  "info": {
+    "singularName": "homepage",
+    "pluralName": "homepages",
+    "displayName": "Page d'accueil",
+    "description": "Contenu éditorial de la page d'accueil"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "component": "homepage.hero-section",
+      "required": true
+    },
+    "sections": {
+      "type": "dynamiczone",
+      "components": [
+        "homepage.radio-section",
+        "homepage.about-section",
+        "homepage.featured-projects-section",
+        "homepage.featured-artists-section",
+        "homepage.stats-section",
+        "homepage.newsletter-section"
+      ]
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo"
+    }
+  }
+}

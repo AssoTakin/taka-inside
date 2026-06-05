@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_homepage_stats_sections",
+  "info": {
+    "displayName": "Stats Section",
+    "icon": "chart-bar",
+    "description": "Section chiffres clés"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "stats": {
+      "type": "component",
+      "component": "homepage.stat-item",
+      "repeatable": true,
+      "required": true,
+      "min": 1
+    }
+  }
+}

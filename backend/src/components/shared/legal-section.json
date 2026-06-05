@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_legal_sections",
+  "info": {
+    "displayName": "Legal Section",
+    "icon": "file",
+    "description": "Section de page légale"
+  },
+  "category": "shared",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}

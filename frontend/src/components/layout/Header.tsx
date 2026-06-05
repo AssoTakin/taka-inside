@@ -1,21 +1,16 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCart } from '@/contexts/CartContext';
+import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
+import { CartButton, MobileMenu } from './HeaderClient';
 
-const navLinks = [
-  { href: '/', label: 'Accueil' },
-  { href: '/projets', label: 'Nos Projets' },
-  { href: '/label-musical', label: 'Label Musical' },
-  { href: '/boutique', label: 'Boutique' },
-  { href: '/devenir-benevole', label: 'Devenir Bénévole' },
-];
+export default async function Header() {
+  const configRaw = await fetchSiteConfig();
+  const config = extractData(configRaw);
+  const menuItemsRaw = await fetchMenuItems('header');
+  const menuItems = (menuItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
-export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { itemCount, setIsOpen } = useCart();
+  const logo = config ? extractImage(config.logo) : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  const siteName = (config?.siteName as string) || 'Taka Inside';
 
   return (
     <header className="sticky top-0 z-50 bg-taka-black text-white">
@@ -24,101 +19,61 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/images/logo-taka-inside.jpg" alt="Taka Inside" width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
-            <span className="font-display font-bold text-xl tracking-tight">Taka Inside</span>
+            {logo.url ? (
+              <Image src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
+                {siteName.charAt(0)}
+              </div>
+            )}
+            <span className="font-display font-bold text-xl tracking-tight">{siteName}</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav — from Strapi */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
+            {menuItems.map((item) => (
               <Link
-                key={link.href}
-                href={link.href}
+                key={item.id as string}
+                href={(item.link as string) || '/'}
+                target={item.isExternal ? '_blank' : undefined}
+                rel={item.isExternal ? 'noopener noreferrer' : undefined}
                 className="text-sm font-medium text-taka-gray hover:text-white transition-colors"
               >
-                {link.label}
+                {(item.label as string) || 'Lien'}
               </Link>
             ))}
-            <Link
-              href="/faire-un-don"
-              className="text-sm font-medium bg-taka-yellow text-taka-black px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all"
-            >
-              Faire un Don
-            </Link>
-            <button
-              onClick={() => setIsOpen(true)}
-              className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label={`Panier (${itemCount} articles)`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-taka-red text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </button>
+
+            {/* Don CTA — server rendered, simple link */}
+            <DonCta />
+
+            {/* Cart — client island */}
+            <CartButton />
           </nav>
 
-          {/* Mobile: cart + hamburger */}
+          {/* Mobile controls */}
           <div className="flex items-center gap-2 lg:hidden">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label={`Panier (${itemCount} articles)`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-taka-red text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Menu"
-              aria-expanded={mobileOpen}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+            <CartButton />
+            <MobileMenu menuItems={menuItems} siteName={siteName} />
           </div>
         </div>
       </div>
-
-      {/* Mobile Nav */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-taka-black border-t border-white/10">
-          <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block text-sm font-medium text-taka-gray hover:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/faire-un-don"
-              onClick={() => setMobileOpen(false)}
-              className="block text-sm font-medium bg-taka-yellow text-taka-black px-4 py-3 rounded-lg text-center mt-4"
-            >
-              Faire un Don
-            </Link>
-          </div>
-        </div>
-      )}
     </header>
+  );
+}
+
+/* Don CTA — fetched server-side from global-cta */
+async function DonCta() {
+  const { fetchGlobalCta, extractData } = await import('@/lib/api');
+  const ctaRaw = await fetchGlobalCta('header-don');
+  const cta = extractData(ctaRaw);
+  if (!cta || cta.isVisible === false) return null;
+
+  return (
+    <Link
+      href={(cta.link as string) || '/faire-un-don'}
+      className="text-sm font-medium bg-taka-yellow text-taka-black px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all"
+    >
+      {(cta.label as string) || 'Faire un Don'}
+    </Link>
   );
 }

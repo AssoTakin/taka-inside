@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_homepage_radio_sections",
+  "info": {
+    "displayName": "Radio Section",
+    "icon": "volume",
+    "description": "Section promotion de Made in Benin Radio"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "LA Radio des Béninois"
+    },
+    "subtitle": {
+      "type": "string",
+      "default": "Radio"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "listenCta": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "required": true
+    },
+    "projectLink": {
+      "type": "string",
+      "description": "Lien vers la page projet (ex: /projets/made-in-benin-radio)"
+    }
+  }
+}

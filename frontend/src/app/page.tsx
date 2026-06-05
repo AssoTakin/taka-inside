@@ -123,7 +123,7 @@ export default async function HomePage() {
                   <span className="font-semibold text-taka-black">LA Radio des Béninois</span> — 100% culture béninoise, 24H/24 et 7J/7. Écoutez, partout, tout le temps.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <a
+                  <Link
                     href="/projets/made-in-benin-radio"
                     className="relative overflow-hidden inline-flex items-center gap-2 bg-taka-black text-white px-5 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all animate-glow"
                   >
@@ -133,7 +133,7 @@ export default async function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span className="relative z-10">Écouter la radio</span>
-                  </a>
+                  </Link>
                   <a
                     href="https://bit.ly/4uvR1sY"
                     target="_blank"

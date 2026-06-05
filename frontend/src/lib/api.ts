@@ -73,3 +73,73 @@ export function getImageUrl(image: { url: string } | null | undefined): string |
   if (image.url.startsWith('http')) return image.url;
   return `${API_BASE}${image.url}`;
 }
+
+/** ————————————————————————
+ *  Content-Types Éditoriaux (CMS)
+ *  ———————————————————————— */
+
+/** Fetch site config (Single Type) */
+export async function fetchSiteConfig(): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle('site-config?populate=*');
+}
+
+/** Fetch menu items (header / footer / both) */
+export async function fetchMenuItems(position?: 'header' | 'footer' | 'both'): Promise<Record<string, unknown>[] | null> {
+  const filter = position ? `&filters[position][$eq]=${position}` : '';
+  return fetchStrapiList(`menu-items?populate=*&sort=order${filter}`);
+}
+
+/** Fetch homepage (Single Type) */
+export async function fetchHomepage(): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle('homepage?populate[hero][populate]=*&populate[sections][populate]=*');
+}
+
+/** Fetch a page content by slug */
+export async function fetchPageContent(slug: string): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle(`page-contents?filters[slug][$eq]=${slug}&populate=*`);
+}
+
+/** Fetch a legal page by slug */
+export async function fetchLegalPage(slug: string): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle(`legal-pages?filters[slug][$eq]=${slug}&populate=*`);
+}
+
+/** Fetch payment methods */
+export async function fetchPaymentMethods(): Promise<Record<string, unknown>[] | null> {
+  return fetchStrapiList('payment-methods?populate=*&sort=displayOrder&filters[isActive][$eq]=true');
+}
+
+/** Fetch a global CTA by its key */
+export async function fetchGlobalCta(key: string): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle(`global-ctas?filters[key][$eq]=${key}&populate=*`);
+}
+
+/** Extract nested Strapi data (handles both v4 data.attributes and v5 formats) */
+export function extractData(obj: unknown): Record<string, unknown> | null {
+  if (!obj || typeof obj !== 'object') return null;
+  const o = obj as Record<string, unknown>;
+  if (o.data && typeof o.data === 'object') {
+    const d = o.data as Record<string, unknown>;
+    if (d.attributes && typeof d.attributes === 'object') return d.attributes as Record<string, unknown>;
+    return d;
+  }
+  return o;
+}
+
+/** Extract image from Strapi media field */
+export function extractImage(media: unknown): { url: string | null; alt?: string } {
+  const data = extractData(media);
+  if (!data) return { url: null };
+  const url = (data.url as string) || null;
+  const alt = (data.alternativeText as string) || (data.name as string) || '';
+  return { url: url ? (url.startsWith('http') ? url : `${API_BASE}${url}`) : null, alt };
+}
+
+/** Extract repeatable components */
+export function extractRepeatable(items: unknown): Record<string, unknown>[] {
+  if (!items) return [];
+  if (Array.isArray(items)) return items.map(extractData).filter(Boolean) as Record<string, unknown>[];
+  const data = extractData(items);
+  if (Array.isArray(data)) return data.map(extractData).filter(Boolean) as Record<string, unknown>[];
+  return [];
+}

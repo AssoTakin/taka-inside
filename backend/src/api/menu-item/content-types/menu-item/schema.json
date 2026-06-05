@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menu_items",
+  "info": {
+    "singularName": "menu-item",
+    "pluralName": "menu-items",
+    "displayName": "Menu Item",
+    "description": "Éléments de navigation header et footer"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true
+    },
+    "position": {
+      "type": "enumeration",
+      "enum": ["header", "footer", "both"],
+      "default": "header",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "parent": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::menu-item.menu-item"
+    },
+    "isExternal": {
+      "type": "boolean",
+      "default": false
+    },
+    "icon": {
+      "type": "string"
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

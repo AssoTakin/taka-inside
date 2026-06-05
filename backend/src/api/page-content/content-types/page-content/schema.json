@@ -5,38 +5,46 @@
     "singularName": "page-content",
     "pluralName": "page-contents",
     "displayName": "Page Content",
-    "description": "Contenu des pages CMS"
+    "description": "Contenu éditorial des pages statiques"
   },
   "options": {
     "draftAndPublish": true
   },
+  "pluginOptions": {},
   "attributes": {
-    "titre": {
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "title": {
       "type": "string",
       "required": true
     },
-    "slug": {
-      "type": "uid",
-      "targetField": "titre"
+    "subtitle": {
+      "type": "string"
     },
-    "contenu": {
-      "type": "richtext"
+    "content": {
+      "type": "blocks",
+      "required": true
     },
-    "meta_description": {
-      "type": "text"
-    },
-    "hero_image": {
+    "heroImage": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
     },
-    "ordre": {
-      "type": "integer",
-      "default": 0
+    "seo": {
+      "type": "component",
+      "component": "shared.seo"
     },
-    "actif": {
-      "type": "boolean",
-      "default": true
+    "ctas": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "repeatable": true
+    },
+    "formConfig": {
+      "type": "json",
+      "description": "Configuration spécifique formulaire (champs, validation, etc.)"
     }
   }
 }

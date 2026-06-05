@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_homepage_newsletter_sections",
+  "info": {
+    "displayName": "Newsletter Section",
+    "icon": "envelope",
+    "description": "Section inscription newsletter"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Restez informés"
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "placeholderText": {
+      "type": "string",
+      "default": "Votre email"
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "S'inscrire"
+    },
+    "successMessage": {
+      "type": "string",
+      "default": "Merci pour votre inscription !"
+    }
+  }
+}

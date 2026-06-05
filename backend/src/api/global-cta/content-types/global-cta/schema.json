@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "global_ctas",
+  "info": {
+    "singularName": "global-cta",
+    "pluralName": "global-ctas",
+    "displayName": "CTA Global",
+    "description": "Call-to-Actions réutilisables dans tout le site"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "key": {
+      "type": "uid",
+      "targetField": "label",
+      "required": true,
+      "description": "Identifiant unique (ex: hero-primary, don-stripe, footer-don)"
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary", "outline"],
+      "default": "primary"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

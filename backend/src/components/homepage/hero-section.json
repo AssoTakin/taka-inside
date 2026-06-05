@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_homepage_hero_sections",
+  "info": {
+    "displayName": "Hero Section",
+    "icon": "picture",
+    "description": "Section hero de la page d'accueil"
+  },
+  "category": "homepage",
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "required": true,
+      "default": "Association culturelle · Label musical · Bénin"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "L'Art au Service de"
+    },
+    "highlightedWord": {
+      "type": "string",
+      "required": true,
+      "default": "l'Humain"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "primaryCta": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "required": true
+    },
+    "secondaryCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

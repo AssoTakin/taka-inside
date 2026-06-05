@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_shared_cta_buttons",
+  "info": {
+    "displayName": "CTA Button",
+    "icon": "cursor",
+    "description": "Bouton d'action réutilisable"
+  },
+  "category": "shared",
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary", "outline"],
+      "default": "primary",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "description": "Nom d'icône (optionnel)"
+    },
+    "isExternal": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

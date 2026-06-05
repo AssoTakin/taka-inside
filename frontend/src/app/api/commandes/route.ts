@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     // Générer token téléchargement si commande numérique
     let token_telechargement = null;
     let date_expiration_telechargement = null;
-    const hasDigital = produits.some((p: any) => p.productType === 'digital' || p.productType === 'album' || p.productType === 'single');
+    const hasDigital = produits.some((p: { productType?: string }) => p.productType === 'digital' || p.productType === 'album' || p.productType === 'single');
     
     if (hasDigital) {
       token_telechargement = crypto.randomUUID();
@@ -93,10 +93,10 @@ export async function POST(req: NextRequest) {
       date_expiration_telechargement,
     });
 
-  } catch (err: any) {
+  } catch (err) {
     console.error('[Commande] Error:', err);
     return NextResponse.json(
-      { error: err.message || 'Erreur serveur' },
+      { error: (err as Error).message || 'Erreur serveur' },
       { status: 500 }
     );
   }
