@@ -1,30 +1,20 @@
 /**
- * Helpers de formatage des prix — conversion EUR ↔ FCFA
+ * Helpers de formatage des prix — TOUT EN EUR
  * Taux fixe : 1 EUR = 655.957 FCFA (taux CFAO)
- * Strapi stocke le prix brut + la devise dans le champ `devise` (EUR | FCFA)
- * Le frontend affiche tel quel : le contrôle total est au niveau CMS
+ * 
+ * Règle d'or : tout est EUR dans Strapi, l'UI, Stripe, PayPal.
+ * Seule FedaPay (Mobile Money) reçoit EUR converti en FCFA côté client.
  */
 
 const EUR_FCFA_RATE = 655.957;
 
-/** Conversion EUR → FCFA */
+/** Conversion EUR → FCFA (pour FedaPay uniquement) */
 export function toFCFA(eurAmount: number): number {
   return Math.round(eurAmount * EUR_FCFA_RATE);
 }
 
-/** Conversion FCFA → EUR */
-export function toEUR(fcfaAmount: number): number {
-  return Math.round((fcfaAmount / EUR_FCFA_RATE) * 100) / 100;
-}
-
-/** Formatage affichage utilisateur : "3,81 €" ou "2 500 FCFA" */
-export function formatPrice(
-  amount: number,
-  currency: "EUR" | "FCFA" = "EUR"
-): string {
-  if (currency === "FCFA") {
-    return `${amount.toLocaleString("fr-FR")} FCFA`;
-  }
+/** Formatage affichage en EUR */
+export function formatPrice(amount: number): string {
   const formatted = new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: amount < 1 ? 2 : 0,
     maximumFractionDigits: 2,
@@ -32,31 +22,20 @@ export function formatPrice(
   return `${formatted} €`;
 }
 
-/** Stripe : centimes EUR toujours */
-export function toStripeCents(
-  amount: number,
-  currency: "EUR" | "FCFA" = "EUR"
-): number {
-  const eur = currency === "FCFA" ? toEUR(amount) : amount;
-  return Math.round(eur * 100);
+/** Stripe : centimes EUR */
+export function toStripeCents(eurAmount: number): number {
+  return Math.round(eurAmount * 100);
 }
 
-/** FedaPay : montant FCFA toujours */
-export function toFedaPayAmount(
-  amount: number,
-  currency: "EUR" | "FCFA" = "FCFA"
-): number {
-  return currency === "EUR" ? toFCFA(amount) : Math.round(amount);
+/** FedaPay : montant EUR converti en FCFA */
+export function toFedaPayAmount(eurAmount: number): number {
+  return toFCFA(eurAmount);
 }
 
-/** PayPal : montant EUR (PayPal gère les devises mais EUR est le plus simple) */
-export function toPayPalAmount(
-  amount: number,
-  currency: "EUR" | "FCFA" = "EUR"
-): { value: string; currencyCode: string } {
-  const eur = currency === "FCFA" ? toEUR(amount) : amount;
+/** PayPal : montant EUR */
+export function toPayPalAmount(eurAmount: number): { value: string; currencyCode: string } {
   return {
-    value: eur.toFixed(2),
+    value: eurAmount.toFixed(2),
     currencyCode: "EUR",
   };
 }

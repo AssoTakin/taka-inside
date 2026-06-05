@@ -19,6 +19,9 @@ export function useStrapi<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const populate = options?.populate;
+  const sort = options?.sort;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,8 +29,8 @@ export function useStrapi<T>(
         setError(null);
 
         const params = new URLSearchParams();
-        if (options?.populate) params.append('populate', options.populate);
-        if (options?.sort) params.append('sort', options.sort);
+        if (populate) params.append('populate', populate);
+        if (sort) params.append('sort', sort);
 
         const query = params.toString() ? `?${params.toString()}` : '';
         const res = await fetch(`${API_BASE}/api/${endpoint}${query}`);
@@ -43,7 +46,7 @@ export function useStrapi<T>(
     };
 
     fetchData();
-  }, [endpoint, JSON.stringify(options)]);
+  }, [endpoint, populate, sort]);
 
   return { data, loading, error };
 }
@@ -57,6 +60,8 @@ export function useStrapiSingle<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const populate = options?.populate;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +69,7 @@ export function useStrapiSingle<T>(
         setError(null);
 
         const params = new URLSearchParams();
-        if (options?.populate) params.append('populate', options.populate);
+        if (populate) params.append('populate', populate);
 
         const query = params.toString() ? `?${params.toString()}` : '';
         const res = await fetch(`${API_BASE}/api/${endpoint}/${identifier}${query}`);
@@ -80,7 +85,7 @@ export function useStrapiSingle<T>(
     };
 
     fetchData();
-  }, [endpoint, identifier, JSON.stringify(options)]);
+  }, [endpoint, identifier, populate]);
 
   return { data, loading, error };
 }

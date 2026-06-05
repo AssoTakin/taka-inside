@@ -31,7 +31,7 @@ export default function PayPalDonForm({ amount, frequency = "one-time", onSucces
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   amount,
-                  currency: "USD", // PayPal ne supporte pas directement XOF
+                  currency: "EUR", // PayPal gère l'EUR directement
                   description: `Don Taka Inside - ${frequency === "monthly" ? "Mensuel" : "Ponctuel"}`,
                 }),
               });

@@ -11,7 +11,6 @@ interface Product {
   documentId: string;
   nom: string;
   prix: number;
-  devise: "EUR" | "FCFA";
   type: "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket";
   image: string | null;
   slug: string;
@@ -40,7 +39,6 @@ export default function BoutiquePage() {
       documentId: product.documentId,
       name: product.nom,
       price: product.prix,
-      currency: product.devise,
       quantity: 1,
       slug: product.slug || product.documentId,
       type: product.type,
@@ -131,7 +129,7 @@ export default function BoutiquePage() {
                     )}
 
                     <div className="flex items-center justify-between mt-auto pt-3">
-                      <span className="font-bold">{formatPrice(product.prix, product.devise)}</span>
+                      <span className="font-bold">{formatPrice(product.prix)}</span>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleAdd(product); }}
                         className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"

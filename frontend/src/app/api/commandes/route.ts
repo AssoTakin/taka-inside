@@ -93,10 +93,10 @@ export async function POST(req: NextRequest) {
       date_expiration_telechargement,
     });
 
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[Commande] Error:', err);
     return NextResponse.json(
-      { error: (err as Error).message || 'Erreur serveur' },
+      { error: (err instanceof Error ? err.message : 'Erreur serveur') },
       { status: 500 }
     );
   }

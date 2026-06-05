@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       source: 'strapi',
     });
 
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('[Livraison] Error:', err);
     return getFallbackCost('Benin', 'standard', 1);
   }

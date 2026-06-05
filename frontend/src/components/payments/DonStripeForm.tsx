@@ -71,8 +71,8 @@ export default function DonStripeForm({ amount, frequency }: { amount: number; f
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount,
-          currency: 'xof',
+          amount,               // ← montant en EUR
+          currency: 'eur',     // ← API Stripe attend EUR
           metadata: {
             order_type: 'don',
             frequency,

@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
 
   try {
     event = getStripe().webhooks.constructEvent(payload, signature, getEndpointSecret());
-  } catch (err) {
-    console.error("[Stripe Webhook] Signature invalide:", (err as Error).message);
+  } catch (err: unknown) {
+    console.error("[Stripe Webhook] Signature invalide:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 

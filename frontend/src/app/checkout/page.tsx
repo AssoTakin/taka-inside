@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import Link from 'next/link';
 import SiteLayout from '@/components/layout/SiteLayout';
 import { useCart } from '@/contexts/CartContext';
 import { formatPrice } from '@/lib/price';
 import PayPalDonForm from '@/components/payments/PayPalDonForm';
 import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
-import Link from 'next/link';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -23,7 +23,7 @@ type FormErrors = Partial<Record<string, string>>;
 function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
-  const { totalEUR } = useCart();
+  const { total } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -66,7 +66,7 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
         disabled={!stripe || isLoading}
         className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Traitement en cours…' : `Payer ${formatPrice(totalEUR)}`}
+        {isLoading ? 'Traitement en cours…' : `Payer ${formatPrice(total)}`}
       </button>
     </form>
   );
@@ -76,14 +76,13 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
 // Composant principal du checkout
 // ===========================================
 export default function CheckoutPage() {
-  const { items, total, subtotal, shippingCost, shippingEUR, totalEUR, subtotalEUR, setShippingCost, removeItem } = useCart();
+  const { items, total, subtotal, shippingCost, setShippingCost, removeItem } = useCart();
   const [clientSecret, setClientSecret] = useState('');
   const [stripeReady, setStripeReady] = useState(false);
   const [apiError, setApiError] = useState('');
   const [step, setStep] = useState<Step>(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [isDigitalOnly, setIsDigitalOnly] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [deliveryInfo, setDeliveryInfo] = useState<{ frais: number; delai: number; source: string } | null>(null);
 
@@ -103,53 +102,54 @@ export default function CheckoutPage() {
     stripePromise.then(() => setStripeReady(true)).catch((err) => console.error('Stripe load error:', err));
   }, []);
 
-  // Détecter si tous les produits sont digitaux
-  useEffect(() => {
-    const allDigital = items.every((item) =>
+  // Détecter si tous les produits sont digitaux — useMemo pour pureté
+  const isDigitalOnly = useMemo(() =>
+    items.every((item) =>
       item.productType === 'digital' || item.productType === 'album' || item.productType === 'single'
-    );
-    setIsDigitalOnly(allDigital);
-    if (allDigital) setFormData((prev) => ({ ...prev, pays: 'Autre' }));
-  }, [items]);
+    ),
+    [items]
+  );
 
-  // Calculer frais livraison quand pays/type change
-  useEffect(() => {
+  // Valeurs dérivées pour le cas digital-only (pas de setState dans un effet)
+  const effectivePays = useMemo(() => (isDigitalOnly ? 'Autre' : formData.pays), [isDigitalOnly, formData.pays]);
+  const effectiveTypeLivraison = useMemo(() => (isDigitalOnly ? 'numerique' : formData.type_livraison), [isDigitalOnly, formData.type_livraison]);
+
+  // Calcul frais livraison — fonction explicite appelée sur événement utilisateur
+  const fetchShippingCosts = useCallback(async () => {
     if (isDigitalOnly) {
       setShippingCost(0);
       setDeliveryInfo(null);
       return;
     }
-    if (step !== 2 && step !== 3) return; // pas encore à l'étape livraison
-
-    const fetchShipping = async () => {
-      try {
-        const res = await fetch(
-          `/api/livraison/calcul?pays=${encodeURIComponent(formData.pays)}&type_livraison=${formData.type_livraison}&poids=1`
-        );
-        if (!res.ok) throw new Error('Erreur calcul livraison');
-        const data = await res.json();
-        setShippingCost(data.frais_livraison || 0);
-        setDeliveryInfo({
-          frais: data.frais_livraison,
-          delai: data.delai_estime_jours,
-          source: data.source,
-        });
-      } catch {
-        // Fallback silencieux
-        const fallbackMap: Record<string, number> = {
-          standard: 1000, express: 2000, economique: 500,
-        };
-        setShippingCost(fallbackMap[formData.type_livraison] || 1000);
-      }
-    };
-
-    fetchShipping();
-  }, [formData.pays, formData.type_livraison, step, isDigitalOnly, setShippingCost]);
+    try {
+      const res = await fetch(
+        `/api/livraison/calcul?pays=${encodeURIComponent(effectivePays)}&type_livraison=${effectiveTypeLivraison}&poids=1`
+      );
+      if (!res.ok) throw new Error('Erreur calcul livraison');
+      const data = await res.json();
+      setShippingCost(data.frais_livraison || 0);
+      setDeliveryInfo({
+        frais: data.frais_livraison,
+        delai: data.delai_estime_jours,
+        source: data.source,
+      });
+    } catch {
+      const fallbackMap: Record<string, number> = {
+        standard: 1000, express: 2000, economique: 500,
+      };
+      setShippingCost(fallbackMap[effectiveTypeLivraison] || 1000);
+      setDeliveryInfo(null);
+    }
+  }, [isDigitalOnly, effectivePays, effectiveTypeLivraison, setShippingCost, setDeliveryInfo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
+    // Recalcul frais livraison si on est à l'étape livraison
+    if ((name === 'pays' || name === 'type_livraison') && step >= 2) {
+      fetchShippingCosts();
+    }
   };
 
   const validateStep1 = (): boolean => {
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: totalEUR, // total en EUR (sera converti en centimes côté API)
+        amount: total, // total en EUR (sera converti en centimes côté API)
         currency: 'eur',
         metadata: { order_type: 'shop', items_count: items.length },
         nomClient: formData.nom,
@@ -197,7 +197,6 @@ export default function CheckoutPage() {
           id: item.id,
           name: item.name,
           price: item.price,
-          currency: item.currency,
           quantity: item.quantity,
           productType: item.productType,
         })),
@@ -213,10 +212,10 @@ export default function CheckoutPage() {
     if (step === 1 && validateStep1()) {
       if (isDigitalOnly) {
         setStep(3);
-        // Si digital only → étape paiement sans adresse
         if (!clientSecret) createPaymentIntent();
       } else {
         setStep(2);
+        fetchShippingCosts(); // calcul frais quand on arrive à l'étape livraison
       }
     } else if (step === 2 && validateStep2()) {
       setStep(3);
@@ -286,18 +285,18 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} x{item.quantity}</span>
-                      <span className='font-semibold'>{formatPrice(item.price * item.quantity, item.currency)}</span>
+                      <span className='font-semibold'>{formatPrice(item.price * item.quantity)}</span>
                     </div>
                   ))}
                   <div className="border-t border-taka-gray-light pt-3 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Sous-total</span>
-                      <span className='font-medium'>{formatPrice(subtotalEUR)}</span>
+                      <span className='font-medium'>{formatPrice(subtotal)}</span>
                     </div>
                     {!isDigitalOnly && deliveryInfo && (
                       <div className="flex justify-between text-sm">
                         <span>Livraison ({formData.type_livraison})</span>
-                        <span className='font-medium'>{formatPrice(shippingEUR)} <small className='text-taka-gray'>(~{deliveryInfo.delai} j)</small></span>
+                        <span className='font-medium'>{formatPrice(shippingCost)} <small className='text-taka-gray'>(~{deliveryInfo.delai} j)</small></span>
                       </div>
                     )}
                     {!isDigitalOnly && !deliveryInfo && step >= 2 && (
@@ -308,7 +307,7 @@ export default function CheckoutPage() {
                     )}
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-taka-gray-light">
                       <span>Total</span>
-                      <span>{formatPrice(totalEUR)}</span>
+                      <span>{formatPrice(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -480,7 +479,7 @@ export default function CheckoutPage() {
 
                     {paymentMethod === 'paypal' && <PayPalDonForm amount={total} onSuccess={handleSuccess} />}
 
-                    {paymentMethod === 'fedapay' && <FedaPayDonButton amount={total} onSuccess={handleSuccess} />}
+                    {paymentMethod === 'fedapay' && <FedaPayDonButton amountEUR={total} onSuccess={handleSuccess} />}
 
                     <button onClick={prevStep} className="w-full bg-taka-gray-light text-taka-black py-3 rounded-xl font-medium hover:bg-opacity-90 transition-all">
                       ← Modifier mes informations
