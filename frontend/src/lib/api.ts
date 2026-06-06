@@ -51,9 +51,16 @@ async function _fetchStrapiRaw(
     const query = params.toString() ? `?${params.toString()}` : '';
     const url = `${API_BASE}/api/${endpoint}${query}`;
 
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    // Utiliser le token API pour les requêtes serveur (SSG/SSR)
+    const apiToken = process.env.STRAPI_API_TOKEN || process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+    if (apiToken) {
+      headers['Authorization'] = `Bearer ${apiToken}`;
+    }
+
     const res = await fetch(url, {
       next: { revalidate: options?.revalidate ?? 60 },
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     });
 
     if (!res.ok) {
