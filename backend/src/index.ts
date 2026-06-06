@@ -20,3 +20,4 @@ export default {
     console.log('[Taka Inside] Strapi bootstrap complete');
   },
 };
+// force rebuild Sat Jun  6 21:12:13 UTC 2026
