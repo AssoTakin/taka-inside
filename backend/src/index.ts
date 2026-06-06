@@ -12,12 +12,79 @@ export default {
   /**
    * An asynchronous bootstrap function that runs before
    * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
    */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {
+  bootstrap({ strapi }: { strapi: any }) {
     console.log('[Taka Inside] Strapi bootstrap complete');
+    
+    // Auto-configure public permissions for new content-types
+    const configurePublicPermissions = async () => {
+      try {
+        const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
+          where: { type: 'public' },
+          populate: { permissions: true }
+        });
+        
+        if (!publicRole) return;
+        
+        const ctsToEnable = [
+          'api::site-config.site-config',
+          'api::homepage.homepage', 
+          'api::menu-item.menu-item',
+          'api::page-content.page-content',
+          'api::legal-page.legal-page',
+          'api::payment-method.payment-method',
+          'api::global-cta.global-cta'
+        ];
+        
+        for (const ctUid of ctsToEnable) {
+          try {
+            const ctrlName = ctUid.split('.')[1];
+            
+            // Désactiver l'action fantôme
+            await strapi.db.query('plugin::users-permissions.permission').updateMany({
+              where: {
+                role: { id: publicRole.id },
+                action: `${ctUid}.${ctrlName}`
+              },
+              data: { enabled: false }
+            });
+            
+            // Activer find et findOne
+            for (const action of ['find', 'findOne']) {
+              const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({
+                where: {
+                  role: { id: publicRole.id },
+                  action: `${ctUid}.${action}`
+                }
+              });
+              
+              if (existing) {
+                await strapi.db.query('plugin::users-permissions.permission').update({
+                  where: { id: existing.id },
+                  data: { enabled: true }
+                });
+              } else {
+                await strapi.db.query('plugin::users-permissions.permission').create({
+                  data: {
+                    action: `${ctUid}.${action}`,
+                    enabled: true,
+                    role: publicRole.id
+                  }
+                });
+              }
+            }
+            
+            console.log(`[Taka Inside] Fixed permissions for ${ctUid}`);
+          } catch (e) {
+            console.warn(`[Taka Inside] Failed for ${ctUid}:`, e);
+          }
+        }
+      } catch (e) {
+        console.warn('[Taka Inside] Bootstrap error:', e);
+      }
+    };
+    
+    configurePublicPermissions();
   },
 };
 // force rebuild Sat Jun  6 21:12:13 UTC 2026
