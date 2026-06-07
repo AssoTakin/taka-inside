@@ -11,7 +11,9 @@
     "test:watch": "jest --watchAll",
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test e2e-tests/",
-    "test:e2e:ui": "playwright test e2e-tests/ --ui"
+    "test:e2e:ui": "playwright test e2e-tests/ --ui",
+    "deploy:safe": "python3 scripts/safe-deploy.py && vercel deploy",
+    "deploy:prod": "python3 scripts/safe-deploy.py && vercel deploy --prod"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1059.0",
