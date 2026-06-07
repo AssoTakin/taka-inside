@@ -53,7 +53,7 @@ export default async function ProjetPage({ params }: Props) {
 
   if (!projet) notFound();
 
-  const coverUrl = getImageUrl(projet.image_couverture as { url: string } | null);
+  const coverUrl = getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
   const description = String(projet.description || "");
   const objectifs = String(projet.objectifs || "");
   const titre = String(projet.titre || "");

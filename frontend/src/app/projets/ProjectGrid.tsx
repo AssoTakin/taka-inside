@@ -101,7 +101,7 @@ export default function ProjectGrid({ projets }: { projets: Projet[] }) {
               const statut = String(projet.statut || "");
               const categorie = String(projet.categorie || "");
               const description = String(projet.description || "");
-              const coverUrl = getImageUrl(projet.image_couverture || null);
+              const coverUrl = getImageUrl(projet.image_couverture || null) || "/images/logo-taka-inside.jpg";
               const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
               const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
 
