@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
 
 export default async function Footer() {
@@ -9,7 +8,8 @@ export default async function Footer() {
   const navItemsRaw = await fetchMenuItems('footer');
   const navItems = (navItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
-  const logo = config ? extractImage(config.logo) : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  const strapiLogo = config ? extractImage(config.logo) : null;
+  const logo = strapiLogo?.url ? strapiLogo : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
   const tagline = (config?.tagline as string) || "Carrefour culturel et label musical associatif. L'art au service de l'humain.";
   const copyright = (config?.copyrightText as string) || `${siteName}. Tous droits réservés.`;
@@ -38,7 +38,7 @@ export default async function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               {logo.url ? (
-                <Image src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+                <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">{siteName.charAt(0)}</div>
               )}
