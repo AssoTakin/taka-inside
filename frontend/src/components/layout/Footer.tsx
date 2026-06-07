@@ -13,7 +13,9 @@ export default async function Footer() {
   const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
   const tagline = (config?.tagline as string) || "Carrefour culturel et label musical associatif. L'art au service de l'humain.";
-  const copyright = (config?.copyrightText as string) || `${siteName}. Tous droits réservés.`;
+  // Nettoie le copyrightText pour retirer l'année déjà présente (évite le doublon 2026 2025)
+  const rawCopyright = (config?.copyrightText as string) || `${siteName}. Tous droits réservés.`;
+  const copyright = rawCopyright.replace(/^\d{4}\s*/, '').trim();
   const address = (config?.contactAddress as string) || '';
   const email = (config?.contactEmail as string) || '';
   const phone = (config?.contactPhone as string) || '';
