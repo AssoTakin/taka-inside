@@ -18,16 +18,35 @@ export default async function Footer() {
   const phone = (config?.contactPhone as string) || '';
   const whatsapp = (config?.whatsappNumber as string) || '';
 
-  // Réseaux sociaux — depuis config OU menu-items footer avec isExternal
+  // Réseaux sociaux — depuis config.socialLinks (Strapi v5)
+  const rawSocials = config?.socialLinks as unknown[] | undefined;
   const socialLinks: Record<string, unknown>[] = [];
-  navItems.forEach((item) => {
-    if (item.isExternal && item.link) {
-      const platform = detectPlatform(item.link as string);
-      if (platform) {
-        socialLinks.push({ platform, url: item.link, label: item.label });
+  if (Array.isArray(rawSocials)) {
+    rawSocials.forEach((s) => {
+      if (s && typeof s === 'object') {
+        const item = s as Record<string, unknown>;
+        if (item.url && item.platform) {
+          socialLinks.push({
+            platform: item.platform,
+            url: item.url,
+            label: item.platform,
+          });
+        }
       }
-    }
-  });
+    });
+  }
+
+  // Fallback: si aucun socialLinks, chercher dans menu-items footer avec isExternal
+  if (socialLinks.length === 0) {
+    navItems.forEach((item) => {
+      if (item.isExternal && item.link) {
+        const platform = detectPlatform(item.link as string);
+        if (platform) {
+          socialLinks.push({ platform, url: item.link, label: item.label });
+        }
+      }
+    });
+  }
 
   return (
     <footer className="bg-taka-black text-white">
