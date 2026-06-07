@@ -9,8 +9,7 @@ export default async function Header() {
   const menuItems = (menuItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
   const strapiLogo = config ? extractImage(config.logo) : null;
-  // FORCER le logo local — l'URL Strapi est trop volatile
-  const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  const logo = strapiLogo?.url ? strapiLogo : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
 
   return (
@@ -21,7 +20,7 @@ export default async function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logo.url ? (
-              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="h-12 w-auto object-contain" />
+              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
             ) : (
               <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
                 {siteName.charAt(0)}
