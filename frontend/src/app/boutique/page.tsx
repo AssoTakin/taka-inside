@@ -1,9 +1,6 @@
-'use client';
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteLayout from "@/components/layout/SiteLayout";
-import { useCart } from "@/contexts/CartContext";
+import { fetchStrapiList } from "@/lib/api";
 import { formatPrice } from "@/lib/price";
 
 interface Product {
@@ -11,42 +8,44 @@ interface Product {
   documentId: string;
   nom: string;
   prix: number;
-  type: "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket";
+  type: string;
   image: string | null;
   slug: string;
   description: string;
 }
 
-export default function BoutiquePage() {
-  const { addItem, setIsOpen } = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [customTexts, setCustomTexts] = useState<Record<number, string>>({});
+const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
 
-  useEffect(() => {
-    fetch("/api/produits")
-      .then((r) => r.json())
-      .then((data) => {
-        setProducts(data.produits || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+function resolveImageUrl(image: unknown): string | null {
+  if (!image || typeof image !== "object") return null;
+  const url = (image as { url?: string }).url;
+  if (!url) return null;
+  if (url.startsWith("http")) return url;
+  return `${API_BASE}${url}`;
+}
 
-  const handleAdd = (product: Product) => {
-    addItem({
-      id: product.id,
-      documentId: product.documentId,
-      name: product.nom,
-      price: product.prix,
-      quantity: 1,
-      slug: product.slug || product.documentId,
-      type: product.type,
-      image: product.image || undefined,
-      productType: product.type === "digital" || product.type === "album" || product.type === "single" ? product.type : undefined,
-      customization: product.type === "personnalisable" ? customTexts[product.id] : undefined,
-    });
-  };
+async function getProducts(): Promise<Product[]> {
+  const data = await fetchStrapiList("produits?populate=*");
+  if (!data || !Array.isArray(data)) return [];
+  return data.map((p: Record<string, unknown>) => {
+    const slug = String(p.slug || p.documentId || "");
+    let image = resolveImageUrl(p.image);
+    if (slug === "kikoko") image = "/images/kikoko-cover.jpg";
+    return {
+      id: Number(p.id) || 0,
+      documentId: String(p.documentId || ""),
+      nom: String(p.titre || p.nom || "Produit"),
+      prix: Number(p.prix || 0),
+      type: String(p.type || "fixe"),
+      image,
+      slug,
+      description: String(p.description || ""),
+    };
+  });
+}
+
+export default async function BoutiquePage() {
+  const products = await getProducts();
 
   return (
     <SiteLayout>
@@ -54,12 +53,16 @@ export default function BoutiquePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-yellow/15 text-taka-yellow text-sm font-medium mb-4">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
               Boutique en ligne
             </div>
-            <h1 className="font-display text-3xl md:text-5xl font-bold">Notre <span className="text-taka-yellow">Boutique</span></h1>
+            <h1 className="font-display text-3xl md:text-5xl font-bold">
+              Notre <span className="text-taka-yellow">Boutique</span>
+            </h1>
             <p className="text-taka-gray mt-4 max-w-xl">
-              CDS, t-shirts, produits dérivés et artisanat béninois. Livraison via BeniExpress ou rétrait sur place à Cotonou.
+              CDs, t-shirts, produits dérivés et artisanat béninois. Livraison via BeniExpress ou retrait sur place à Cotonou.
             </p>
           </div>
         </div>
@@ -74,71 +77,41 @@ export default function BoutiquePage() {
             </div>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-2 border-taka-yellow border-t-transparent rounded-full animate-spin" />
-              <p className="text-taka-gray mt-4">Chargement des produits...</p>
-            </div>
-          ) : products.length === 0 ? (
+          {products.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-taka-gray">Aucun produit disponible pour le moment.</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-taka-gray-light group hover:shadow-lg transition-all flex flex-col">
-                  <Link href={`/boutique/${product.slug}`} className="block relative">
-                    <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
-                      {product.image ? (
-                        <img 
-                          src={product.image} 
-                          alt={product.nom}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <span className="text-taka-gray">{product.type === "personnalisable" ? "Personnalisable" : "Image produit"}</span>
-                      )}
-                      {product.type === "digital" && (
-                        <span className="absolute top-3 left-3 bg-taka-red text-white text-xs font-bold px-2 py-1 rounded-lg">
-                          ALBUM DIGITAL
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                  <div className="p-4 flex flex-col flex-1">
-                    <Link href={`/boutique/${product.slug}`} className="block hover:text-taka-red transition-colors">
-                      <h3 className="font-display font-semibold text-sm mb-1">{product.nom}</h3>
-                    </Link>
-                    {product.description && (
-                      <div className="mb-2">
-                        <p className="text-taka-gray text-xs line-clamp-2">{product.description}</p>
-                        <Link href={`/boutique/${product.slug}`} className="text-xs text-taka-red font-medium hover:underline mt-0.5 inline-block">
-                          En savoir plus →
-                        </Link>
-                      </div>
-                    )}
-
-                    {product.type === "personnalisable" && (
-                      <input
-                        type="text"
-                        placeholder="Texte personnalisé..."
-                        value={customTexts[product.id] || ""}
-                        onChange={(e) => setCustomTexts((prev) => ({ ...prev, [product.id]: e.target.value }))}
-                        className="w-full mt-2 px-3 py-1.5 rounded-lg border border-taka-gray-light text-sm focus:border-taka-yellow outline-none"
+                <Link
+                  key={product.id}
+                  href={`/boutique/${product.slug}`}
+                  className="block bg-white rounded-2xl overflow-hidden border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group"
+                >
+                  <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.nom}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
+                    ) : (
+                      <span className="text-taka-gray">Image produit</span>
                     )}
-
-                    <div className="flex items-center justify-between mt-auto pt-3">
-                      <span className="font-bold">{formatPrice(product.prix)}</span>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleAdd(product); }}
-                        className="bg-taka-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-taka-yellow hover:text-taka-black transition-colors"
-                      >
-                        Ajouter
-                      </button>
-                    </div>
+                    {product.type === "digital" && (
+                      <span className="absolute top-3 left-3 bg-taka-red text-white text-xs font-bold px-2 py-1 rounded-lg">
+                        ALBUM DIGITAL
+                      </span>
+                    )}
                   </div>
-                </div>
+                  <div className="p-4">
+                    <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-taka-red transition-colors">
+                      {product.nom}
+                    </h3>
+                    <p className="font-bold">{formatPrice(product.prix)}</p>
+                  </div>
+                </Link>
               ))}
             </div>
           )}
