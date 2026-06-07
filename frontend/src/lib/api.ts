@@ -93,7 +93,16 @@ export async function fetchSiteConfig(): Promise<Record<string, unknown> | null>
 /** Fetch menu items (header / footer / both) */
 export async function fetchMenuItems(position?: 'header' | 'footer' | 'both'): Promise<Record<string, unknown>[] | null> {
   const filter = position ? `&filters[position][$eq]=${position}` : '';
-  return fetchStrapiList(`menu-items?populate=*&sort=order${filter}`);
+  const items = await fetchStrapiList(`menu-items?populate=*&sort=order${filter}`);
+  if (!items) return null;
+  // Dédupliquer par label (garder le premier)
+  const seen = new Set<string>();
+  return items.filter((item: Record<string, unknown>) => {
+    const label = item.label as string;
+    if (!label || seen.has(label)) return false;
+    seen.add(label);
+    return true;
+  });
 }
 
 /** Fetch homepage (Single Type) */
