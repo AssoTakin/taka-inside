@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         description: description || "Don Taka Inside",
-        amount: amount,
+        amount: Math.round(amount * 100), // FedaPay attend les centimes
         currency: { iso: currency.toUpperCase() },
         callback_url:
           callback_url ||
@@ -36,7 +36,8 @@ export async function POST(req: NextRequest) {
     });
 
     const txData = await response.json();
-    const tx = txData["v1/transaction"];
+    console.log("[FedaPay] Response:", JSON.stringify(txData).slice(0, 1000));
+    const tx = txData["v1/transaction"] || txData["transaction"] || txData;
 
     if (!response.ok || !tx?.id) {
       console.error("[FedaPay] Create error:", JSON.stringify(txData).slice(0, 500));
