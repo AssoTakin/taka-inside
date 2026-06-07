@@ -9,7 +9,8 @@ export default async function Footer() {
   const navItems = (navItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
   const strapiLogo = config ? extractImage(config.logo) : null;
-  const logo = strapiLogo?.url ? strapiLogo : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  // FORCER le logo local — l'URL Strapi est trop volatile
+  const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
   const tagline = (config?.tagline as string) || "Carrefour culturel et label musical associatif. L'art au service de l'humain.";
   const copyright = (config?.copyrightText as string) || `${siteName}. Tous droits réservés.`;

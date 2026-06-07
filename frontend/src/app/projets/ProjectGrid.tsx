@@ -130,9 +130,9 @@ export default function ProjectGrid({ projets }: { projets: Projet[] }) {
                         En savoir plus →
                       </Link>
                       {ctaDon && (
-                        <Link href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
+                        <a href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
                           Soutenir 💛
-                        </Link>
+                        </a>
                       )}
                       {ctaBenevole && (
                         <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">

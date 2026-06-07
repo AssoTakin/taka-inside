@@ -110,9 +110,9 @@ export default async function ProjetPage({ params }: Props) {
 
               <div className="mt-8 grid gap-4">
                 {ctaDon && (
-                  <Link href="/faire-un-don" className="bg-taka-yellow text-taka-black px-6 py-3 rounded-xl font-semibold text-center hover:bg-opacity-90 transition-all">
+                  <a href="/faire-un-don" className="bg-taka-yellow text-taka-black px-6 py-3 rounded-xl font-semibold text-center hover:bg-opacity-90 transition-all">
                     Soutenir ce projet
-                  </Link>
+                  </a>
                 )}
                 {ctaBenevole && (
                   <Link href="/devenir-benevole" className="border-2 border-taka-black text-taka-black px-6 py-3 rounded-xl font-semibold text-center hover:bg-taka-black hover:text-white transition-all">

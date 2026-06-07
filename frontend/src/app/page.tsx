@@ -90,9 +90,9 @@ export default async function HomePage() {
                 Découvrir nos projets
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               </Link>
-              <Link href="/faire-un-don" className="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition-all">
+              <a href="/faire-un-don" className="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition-all">
                 Soutenir notre action
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -276,9 +276,9 @@ export default async function HomePage() {
                         En savoir plus →
                       </Link>
                       {ctaDon && (
-                        <Link href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
+                        <a href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
                           Soutenir 💛
-                        </Link>
+                        </a>
                       )}
                       {ctaBenevole && (
                         <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">
@@ -346,7 +346,7 @@ export default async function HomePage() {
                   <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
                 ))}
               </div>
-              <Link href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>
+              <a href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</a>
             </div>
 
             <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">

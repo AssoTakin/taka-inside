@@ -9,7 +9,8 @@ export default async function Header() {
   const menuItems = (menuItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
   const strapiLogo = config ? extractImage(config.logo) : null;
-  const logo = strapiLogo?.url ? strapiLogo : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  // FORCER le logo local — l'URL Strapi est trop volatile
+  const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
 
   return (
