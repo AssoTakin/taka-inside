@@ -51,10 +51,22 @@ export async function fetchStrapiSingle(
     return cached.data as Record<string, unknown> | null;
   }
 
+  // Essayer d'abord comme liste (collection), sinon comme single type
   const list = await fetchStrapiList(endpoint, options);
-  const result = list?.[0] ?? null;
-  serverCache.set(cacheKey, { data: result, ts: Date.now() });
-  return result;
+  if (list && list.length > 0) {
+    serverCache.set(cacheKey, { data: list[0], ts: Date.now() });
+    return list[0];
+  }
+
+  // Single type: data est un objet, pas un tableau
+  const json = await _fetchStrapiRaw(endpoint, options);
+  if (!json || typeof json !== 'object') return null;
+  const data = (json as Record<string, unknown>).data;
+  if (data && typeof data === 'object' && !Array.isArray(data)) {
+    serverCache.set(cacheKey, { data: data as Record<string, unknown>, ts: Date.now() });
+    return data as Record<string, unknown>;
+  }
+  return null;
 }
 
 async function _fetchStrapiRaw(
