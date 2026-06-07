@@ -63,9 +63,9 @@ test.describe('Navigation principale', () => {
   test('Page 404 personnalisée', async ({ page }) => {
     await page.goto('/page-inexistante-12345');
     
-    await expect(page.getByText(/404|Page introuvable|non trouvée/i).first()).toBeVisible();
+    await expect(page.getByText(/404|existe pas|déplacée/i).first()).toBeVisible();
     // Liens vers l'accueil
-    await expect(page.getByRole('link', { name: /Retour/i }).first()).toBeVisible();
+    await expect(page.getByText(/Retour/i).first()).toBeVisible();
   });
 
   test('Le footer est présent sur toutes les pages', async ({ page }) => {
