@@ -20,7 +20,7 @@ export default async function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logo.url ? (
-              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="h-12 w-auto object-contain" />
             ) : (
               <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
                 {siteName.charAt(0)}
