@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
 import { CartButton, MobileMenu } from './HeaderClient';
 
@@ -9,7 +8,8 @@ export default async function Header() {
   const menuItemsRaw = await fetchMenuItems('header');
   const menuItems = (menuItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
-  const logo = config ? extractImage(config.logo) : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  const strapiLogo = config ? extractImage(config.logo) : null;
+  const logo = strapiLogo?.url ? strapiLogo : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
 
   return (
@@ -20,7 +20,7 @@ export default async function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logo.url ? (
-              <Image src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
+              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
             ) : (
               <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
                 {siteName.charAt(0)}
