@@ -19,7 +19,7 @@ export async function fetchStrapi(
 
 // Cache simple pour SSR (évite les re-fetch en boucle)
 const serverCache = new Map<string, { data: unknown; ts: number }>();
-const SSR_CACHE_MS = 30_000; // 30 secondes
+const SSR_CACHE_MS = 10_000; // 10 secondes
 
 /** Fetch a list from Strapi */
 export async function fetchStrapiList(
