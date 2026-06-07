@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.strapiapp.com" },
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "**.vercel.app" },
+      { protocol: "https", hostname: "**.railway.app" },
     ],
   },
   env: {
@@ -14,3 +15,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+// Force rebuild 1780940000
