@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import SiteLayout from "@/components/layout/SiteLayout";
-import DonStripeForm from '@/components/payments/DonStripeForm';
-import FedaPayDonButton from '@/components/payments/FedaPayDonButton';
 import { formatPrice } from '@/lib/price';
+
+// Chargement dynamique côté client uniquement pour éviter l'hydratation
+const DonStripeForm = dynamic(() => import('@/components/payments/DonStripeForm'), { ssr: false });
+const FedaPayDonButton = dynamic(() => import('@/components/payments/FedaPayDonButton'), { ssr: false });
 
 type PaymentMethod = 'stripe' | 'paypal' | 'fedapay';
 type Frequency = 'one-time' | 'monthly';
