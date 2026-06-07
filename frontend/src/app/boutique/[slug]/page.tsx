@@ -21,10 +21,34 @@ interface Product {
 
 function resolveImageUrl(image: unknown): string | null {
   if (!image || typeof image !== "object") return null;
-  const url = (image as { url?: string }).url;
-  if (!url) return null;
-  if (url.startsWith("http")) return url;
-  return `${API_BASE}${url}`;
+  
+  const img = image as Record<string, unknown>;
+  
+  // Strapi v5 direct: image.url
+  if (typeof img.url === "string") {
+    const url = img.url;
+    if (url.startsWith("http")) return url;
+    return `${API_BASE}${url}`;
+  }
+  
+  // Strapi v4: image.data.attributes.url
+  const data = img.data;
+  if (data && typeof data === "object") {
+    const dataObj = data as Record<string, unknown>;
+    const firstItem = Array.isArray(dataObj) ? dataObj[0] : dataObj;
+    if (firstItem && typeof firstItem === "object") {
+      const attrs = (firstItem as Record<string, unknown>).attributes || firstItem;
+      if (attrs && typeof attrs === "object") {
+        const url = (attrs as Record<string, unknown>).url;
+        if (typeof url === "string") {
+          if (url.startsWith("http")) return url;
+          return `${API_BASE}${url}`;
+        }
+      }
+    }
+  }
+  
+  return null;
 }
 
 async function getProduct(slug: string): Promise<Product | null> {

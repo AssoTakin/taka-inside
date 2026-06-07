@@ -109,9 +109,33 @@ async function _fetchStrapiRaw(
 }
 
 export function getImageUrl(image: { url: string } | null | undefined): string | null {
-  if (!image?.url) return null;
-  if (image.url.startsWith('http')) return image.url;
-  return `${API_BASE}${image.url}`;
+  if (!image) return null;
+  
+  // Strapi v5 direct: { url: "..." }
+  if (typeof (image as Record<string, unknown>).url === 'string') {
+    const url = (image as Record<string, unknown>).url as string;
+    if (url.startsWith('http')) return url;
+    return `${API_BASE}${url}`;
+  }
+  
+  // Strapi v4: { data: { attributes: { url: "..." } } }
+  const data = (image as Record<string, unknown>).data;
+  if (data && typeof data === 'object') {
+    const dataObj = data as Record<string, unknown>;
+    const firstItem = Array.isArray(dataObj) ? dataObj[0] : dataObj;
+    if (firstItem && typeof firstItem === 'object') {
+      const attrs = (firstItem as Record<string, unknown>).attributes || firstItem;
+      if (attrs && typeof attrs === 'object') {
+        const url = (attrs as Record<string, unknown>).url;
+        if (typeof url === 'string') {
+          if (url.startsWith('http')) return url;
+          return `${API_BASE}${url}`;
+        }
+      }
+    }
+  }
+  
+  return null;
 }
 
 /** ————————————————————————
