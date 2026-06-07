@@ -17,16 +17,27 @@ export async function fetchStrapi(
   return fetchStrapiList(endpoint, options);
 }
 
+// Cache simple pour SSR (évite les re-fetch en boucle)
+const serverCache = new Map<string, { data: unknown; ts: number }>();
+const SSR_CACHE_MS = 30_000; // 30 secondes
+
 /** Fetch a list from Strapi */
 export async function fetchStrapiList(
   endpoint: string,
   options?: { populate?: string; filters?: string; sort?: string; revalidate?: number }
 ): Promise<Record<string, unknown>[] | null> {
+  const cacheKey = endpoint + JSON.stringify(options);
+  const cached = serverCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < SSR_CACHE_MS) {
+    return cached.data as Record<string, unknown>[] | null;
+  }
+
   const json = await _fetchStrapiRaw(endpoint, options);
   if (!json || typeof json !== 'object') return null;
   const data = (json as Record<string, unknown>).data;
-  if (Array.isArray(data)) return data as Record<string, unknown>[];
-  return null;
+  const result = Array.isArray(data) ? data as Record<string, unknown>[] : null;
+  serverCache.set(cacheKey, { data: result, ts: Date.now() });
+  return result;
 }
 
 /** Fetch a single item from Strapi */
@@ -34,8 +45,16 @@ export async function fetchStrapiSingle(
   endpoint: string,
   options?: { populate?: string; filters?: string; sort?: string; revalidate?: number }
 ): Promise<Record<string, unknown> | null> {
+  const cacheKey = 'single:' + endpoint + JSON.stringify(options);
+  const cached = serverCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < SSR_CACHE_MS) {
+    return cached.data as Record<string, unknown> | null;
+  }
+
   const list = await fetchStrapiList(endpoint, options);
-  return list?.[0] ?? null;
+  const result = list?.[0] ?? null;
+  serverCache.set(cacheKey, { data: result, ts: Date.now() });
+  return result;
 }
 
 async function _fetchStrapiRaw(
@@ -52,8 +71,10 @@ async function _fetchStrapiRaw(
     const url = `${API_BASE}/api/${endpoint}${query}`;
 
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    // Utiliser le token API pour les requêtes serveur (SSG/SSR)
-    const apiToken = process.env.STRAPI_API_TOKEN || process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+    // Token API — côté serveur (SSR) et côté client (navigateur)
+    const apiToken = typeof window === 'undefined'
+      ? (process.env.STRAPI_API_TOKEN || process.env.NEXT_PUBLIC_STRAPI_API_TOKEN)
+      : process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
     if (apiToken) {
       headers['Authorization'] = `Bearer ${apiToken}`;
     }
