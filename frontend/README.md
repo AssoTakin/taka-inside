@@ -36,3 +36,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # Env config auto-deploy 1780823228
 # Déploiement auto - Sun Jun  7 09:07:36 UTC 2026
+# Cache bust 1780826090
