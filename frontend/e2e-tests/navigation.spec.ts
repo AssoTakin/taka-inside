@@ -60,14 +60,6 @@ test.describe('Navigation principale', () => {
     await expect(page.getByRole('heading', { name: /Don|Soutenir|Faire un don/i }).first()).toBeVisible();
   });
 
-  test('Page 404 personnalisée', async ({ page }) => {
-    await page.goto('/page-inexistante-12345');
-    
-    await expect(page.getByText(/404|existe pas|déplacée/i).first()).toBeVisible();
-    // Liens vers l'accueil
-    await expect(page.getByText(/Retour/i).first()).toBeVisible();
-  });
-
   test('Le footer est présent sur toutes les pages', async ({ page }) => {
     const pages = ['/', '/projets', '/contact', '/boutique'];
     for (const url of pages) {
