@@ -33,20 +33,26 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const saved = localStorage.getItem('taka-cart');
-      if (saved) return JSON.parse(saved);
-    } catch { /* ignore */ }
-    return [];
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [shippingCost, setShippingCost] = useState(0);
 
+  // Hydration safe: load from localStorage ONLY after mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('taka-cart');
+      if (saved) setItems(JSON.parse(saved));
+    } catch { /* ignore */ }
+    setIsHydrated(true);
+  }, []);
+
   // Persist cart
   useEffect(() => {
-    localStorage.setItem('taka-cart', JSON.stringify(items));
-  }, [items]);
+    if (isHydrated) {
+      localStorage.setItem('taka-cart', JSON.stringify(items));
+    }
+  }, [items, isHydrated]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {

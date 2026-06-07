@@ -48,3 +48,4 @@ backend/.strapi-updater.json
 backend/.strapi/client/
 frontend/test-results/
 .vercel/
+.vercel
