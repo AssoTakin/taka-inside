@@ -108,11 +108,19 @@ export function getImageUrl(image: { url: string } | null | undefined): string |
 
 /** Fetch site config (Single Type) */
 export async function fetchSiteConfig(): Promise<Record<string, unknown> | null> {
+  if (typeof window !== 'undefined') {
+    console.warn('[fetchSiteConfig] Appel côté client bloqué — Server Component uniquement');
+    return null;
+  }
   return fetchStrapiSingle('site-config?populate=*');
 }
 
 /** Fetch menu items (header / footer / both) */
 export async function fetchMenuItems(position?: 'header' | 'footer' | 'both'): Promise<Record<string, unknown>[] | null> {
+  if (typeof window !== 'undefined') {
+    console.warn('[fetchMenuItems] Appel côté client bloqué — Server Component uniquement');
+    return null;
+  }
   const filter = position ? `&filters[position][$eq]=${position}` : '';
   const items = await fetchStrapiList(`menu-items?populate=*&sort=order${filter}`);
   if (!items) return null;
