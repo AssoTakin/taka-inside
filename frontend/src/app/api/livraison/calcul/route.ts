@@ -4,11 +4,28 @@ const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 const strapiToken = process.env.STRAPI_API_TOKEN;
 
 export async function GET(req: NextRequest) {
+  return handleLivraison(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleLivraison(req);
+}
+
+async function handleLivraison(req: NextRequest) {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const pays = searchParams.get('pays') || 'Benin';
-    const type = searchParams.get('type_livraison') || 'standard';
-    const poidsKg = Number(searchParams.get('poids')) || 1;
+    let pays, type, poidsKg;
+    
+    if (req.method === 'POST') {
+      const body = await req.json().catch(() => ({}));
+      pays = body.pays || body.codePostal || 'Benin';
+      type = body.type_livraison || 'standard';
+      poidsKg = Number(body.poids) || 1;
+    } else {
+      const searchParams = req.nextUrl.searchParams;
+      pays = searchParams.get('pays') || 'Benin';
+      type = searchParams.get('type_livraison') || 'standard';
+      poidsKg = Number(searchParams.get('poids')) || 1;
+    }
 
     if (!pays || !type) {
       return NextResponse.json(

@@ -11,12 +11,22 @@ export async function POST(req: NextRequest) {
 
     const secretKey = process.env.FEDAPAY_SECRET_KEY;
     if (!secretKey) {
-      // Ne jamais exposer les détails de configuration côté client
       console.error("[FedaPay] FEDAPAY_SECRET_KEY manquante");
       return NextResponse.json(
         { error: "Service temporairement indisponible" },
         { status: 503 }
       );
+    }
+
+    // Conversion EUR → XOF (FedaPay ne supporte que XOF)
+    const inputCurrency = currency.toUpperCase();
+    let finalAmount = Math.round(amount * 100); // centimes
+    let finalCurrency = inputCurrency;
+    
+    if (inputCurrency === 'EUR') {
+      const EUR_TO_XOF = 655.957;
+      finalAmount = Math.round(amount * EUR_TO_XOF); // pas de centimes en XOF
+      finalCurrency = 'XOF';
     }
 
     const response = await fetch("https://api.fedapay.com/v1/transactions", {
@@ -27,8 +37,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         description: description || "Don Taka Inside",
-        amount: Math.round(amount * 100), // FedaPay attend les centimes
-        currency: { iso: currency.toUpperCase() },
+        amount: finalAmount,
+        currency: { iso: finalCurrency },
         callback_url:
           callback_url ||
           `${process.env.NEXT_PUBLIC_APP_URL || "https://frontend-mu-one-82.vercel.app"}/paiement/confirmation?method=fedapay`,
@@ -62,6 +72,10 @@ export async function POST(req: NextRequest) {
       token: tokenData.token,
       transactionId: tx.id,
       reference: tx.reference,
+      originalAmount: amount,
+      originalCurrency: inputCurrency,
+      convertedAmount: finalAmount,
+      convertedCurrency: finalCurrency,
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (err: unknown) {
     console.error("FedaPay error:", err);
