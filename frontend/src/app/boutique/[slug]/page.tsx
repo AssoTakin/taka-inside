@@ -57,9 +57,10 @@ async function getProduct(slug: string): Promise<Product | null> {
   const p = data[0];
   let image = resolveImageUrl(p.image);
   const slugStr = String(p.slug || "");
+  // Fallback forcé pour KIKOKO — l'image Strapi est invalide
+  if (slugStr === "kikoko") image = KIKOKO_FALLBACK_IMAGE;
   if (!image) {
-    if (slugStr === "kikoko") image = KIKOKO_FALLBACK_IMAGE;
-    else image = "/images/logo-taka-inside.jpg";
+    image = "/images/logo-taka-inside.jpg";
   }
   return {
     id: Number(p.id) || 0,
