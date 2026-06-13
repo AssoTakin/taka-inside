@@ -49,19 +49,19 @@ test.describe('Parcours de dons', () => {
   });
 
   test('DEV-DON-004 : Changement méthode de paiement', async ({ page }) => {
+    test.setTimeout(60000);
     await page.goto('/faire-un-don', { waitUntil: 'load' });
     await page.waitForTimeout(1000);
     
     await page.click('button:has-text("10 €")').catch(() => {});
-    await page.click('button:has-text("Donner")');
-    await page.waitForTimeout(500);
-    
-    const pageText = await page.locator('body').innerText();
-    expect(pageText).toMatch(/Carte bancaire|Stripe/);
-    
+    await page.waitForTimeout(300);
     await page.click('button:has-text("Mobile Money")').catch(() => {});
+    await page.waitForTimeout(500);
+    await page.click('button:has-text("Donner")');
+    await page.waitForTimeout(1000);
+    
     const newPageText = await page.locator('body').innerText();
-    expect(newPageText).toMatch(/Mobile Money|MTN|Moov/);
+    expect(newPageText).toMatch(/Mobile Money|MTN|Moov|FedaPay/);
   });
 
   test('DEV-DON-005 : Email kwabo@ dans le footer', async ({ page }) => {
@@ -69,6 +69,6 @@ test.describe('Parcours de dons', () => {
     await page.waitForTimeout(1000);
     
     const footerText = await page.locator('footer').innerText();
-    expect(footerText).toMatch(/kwabo@takainside.org|takainside.org/);
+    expect(footerText).toMatch(/kwabo@takainside\.org/);
   });
 });

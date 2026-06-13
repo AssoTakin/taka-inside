@@ -3,10 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { amount, description, callback_url, currency = "xof" } = body;
+    const { amount, description, callback_url, currency = "xof", customer, items, hasDigital, hasPhysical, shipping } = body;
 
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: "Montant invalide" }, { status: 400 });
+    }
+
+    // Validation minimale des données client
+    if (customer?.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(customer.email)) {
+      return NextResponse.json({ error: "Email invalide" }, { status: 400 });
     }
 
     const secretKey = process.env.FEDAPAY_SECRET_KEY;
@@ -42,6 +47,22 @@ export async function POST(req: NextRequest) {
         callback_url:
           callback_url ||
           `${process.env.NEXT_PUBLIC_APP_URL || "https://frontend-mu-one-82.vercel.app"}/paiement/confirmation?method=fedapay`,
+        metadata: {
+          source: "taka-inside",
+          customer_email: customer?.email || "",
+          customer_nom: customer?.nom || "",
+          customer_prenom: customer?.prenom || "",
+          customer_telephone: customer?.telephone || "",
+          customer_adresse: customer?.adresse || "",
+          customer_ville: customer?.ville || "",
+          customer_code_postal: customer?.codePostal || "",
+          customer_pays: customer?.pays || "",
+          hasDigital: hasDigital ? "true" : "false",
+          hasPhysical: hasPhysical ? "true" : "false",
+          produits: items ? JSON.stringify(items) : "[]",
+          shipping_type: shipping?.type || "standard",
+          shipping_cost: String(shipping?.cost || 0),
+        },
       }),
     });
 

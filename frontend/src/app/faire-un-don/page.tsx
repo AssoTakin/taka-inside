@@ -7,7 +7,9 @@ export default async function FaireUnDonPage() {
   const filePath = path.join(process.cwd(), 'public', 'faire-un-don.html');
   const html = fs.readFileSync(filePath, 'utf-8');
   
+  // On retourne le HTML vanilla en pleine page sans layout Next.js,
+  // pour éviter les erreurs d'hydratation sur les formulaires de paiement.
   return (
-    <div dangerouslySetInnerHTML={{ __html: html }} />
+    <div className="html-vanilla-page" dangerouslySetInnerHTML={{ __html: html }} />
   );
 }

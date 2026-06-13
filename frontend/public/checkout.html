@@ -48,6 +48,7 @@
     input, select { width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
     input:focus, select:focus { border-color: var(--green); }
     input.invalid { border-color: var(--red); background-color: #FEF2F2; }
+    input.valid { border-color: var(--green); background-color: #F0FDF4; }
     
     .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
     .method-btn { padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB; cursor: pointer; font-size: 0.875rem; font-weight: 500; background: white; transition: all 0.2s; }
@@ -76,11 +77,12 @@
     footer a:hover { color: var(--yellow); }
 
     .digital-badge { display: inline-block; background: var(--green); color: white; font-size: 0.625rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 4px; text-transform: uppercase; }
+    .physical-badge { display: inline-block; background: var(--yellow); color: var(--black); font-size: 0.625rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 4px; text-transform: uppercase; }
 
     .shipping-disabled { opacity: 0.5; pointer-events: none; }
     .shipping-disabled input, .shipping-disabled select { background: #F3F4F6; }
 
-    /* Toggle facturation digital */
+    /* Toggle facturation */
     .invoice-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 12px; }
     .invoice-toggle input { width: auto; }
     .invoice-toggle-label { font-size: 0.875rem; font-weight: 500; }
@@ -93,6 +95,34 @@
     .error-msg.visible { display: block; }
 
     .help-text { color: var(--gray); font-size: 0.75rem; margin-top: 4px; }
+    .success-text { color: var(--green); font-size: 0.75rem; margin-top: 4px; }
+
+    /* Badges panier */
+    .cart-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+    .cart-badge.digital-only { background: #DCFCE7; color: #166534; }
+    .cart-badge.physical-only { background: #FEF9C3; color: #854D0E; }
+    .cart-badge.mixed { background: #E0E7FF; color: #3730A3; }
+
+    /* Section livraison */
+    .shipping-options { display: grid; gap: 8px; margin-top: 12px; }
+    .shipping-option { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+    .shipping-option:hover { border-color: var(--green); }
+    .shipping-option.selected { border-color: var(--green); background: #E8F5E9; }
+    .shipping-option.disabled { opacity: 0.5; cursor: not-allowed; }
+    .shipping-option-info { flex: 1; }
+    .shipping-option-name { font-weight: 600; font-size: 0.875rem; }
+    .shipping-option-desc { font-size: 0.75rem; color: var(--gray); }
+    .shipping-option-price { font-weight: 700; }
+
+    /* Google Places dropdown */
+    .pac-container { border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 4px; }
+    .pac-item { padding: 8px 12px; }
+
+    /* Loader overlay */
+    .loader-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .loader-overlay.active { display: flex; }
+    .loader { width: 48px; height: 48px; border: 4px solid white; border-top-color: var(--green); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -120,14 +150,30 @@
       <div class="grid">
         <div class="card">
           <h2 id="form-title">Informations de livraison</h2>
+          
+          <!-- Badge type de commande -->
+          <div id="cart-type-badge" class="cart-badge" style="display:none;"></div>
+
+          <!-- Notice digital -->
           <p id="digital-notice" style="display:none; font-size:0.875rem; color:var(--green); margin-bottom:12px;">
             ✅ Livraison par email — pas besoin d'adresse postale
+          </p>
+
+          <!-- Notice mixte -->
+          <p id="mixed-notice" style="display:none; font-size:0.875rem; color:#3730A3; margin-bottom:12px; background:#E0E7FF; padding:8px 12px; border-radius:8px;">
+            📦 + 🎵 Commande mixte : les articles physiques seront livrés à l'adresse ci-dessous, les articles digitaux seront envoyés par email.
+          </p>
+
+          <!-- Notice physique -->
+          <p id="physical-notice" style="display:none; font-size:0.875rem; color:#854D0E; margin-bottom:12px; background:#FEF9C3; padding:8px 12px; border-radius:8px;">
+            📦 Livraison physique — adresse requise
           </p>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Prénom</label>
-              <input type="text" id="prenom" placeholder="Prénom">
+              <label>Prénom *</label>
+              <input type="text" id="prenom" placeholder="Prénom" required>
+              <span class="error-msg" id="prenom-error">Le prénom est obligatoire</span>
             </div>
             <div class="form-group">
               <label>Nom *</label>
@@ -140,13 +186,14 @@
             <label>Email *</label>
             <input type="email" id="email" placeholder="votre@email.com" required>
             <span class="error-msg" id="email-error">Veuillez entrer un email valide</span>
-            <span class="help-text">Le lien de téléchargement (si digital) sera envoyé à cette adresse</span>
+            <span class="help-text" id="email-help">Le lien de téléchargement (si digital) sera envoyé à cette adresse</span>
           </div>
 
           <div class="form-group">
-            <label>Téléphone</label>
-            <input type="tel" id="telephone" placeholder="+33 7 56 98 74 73">
-            <span class="error-msg" id="tel-error">Format invalide — ex: +33 7 56 98 74 73</span>
+            <label>Téléphone *</label>
+            <input type="tel" id="telephone" placeholder="+33 7 56 98 74 73" required>
+            <span class="error-msg" id="telephone-error">Format invalide — ex: +33 7 56 98 74 73</span>
+            <span class="help-text">Obligatoire pour la livraison et le suivi de commande</span>
           </div>
 
           <!-- Adresse de facturation (digital — optionnel) -->
@@ -161,26 +208,27 @@
           <div id="shipping-fields">
             <div class="form-group">
               <label id="adresse-label">Adresse</label>
-              <input type="text" id="adresse" placeholder="123 rue des Arts">
+              <input type="text" id="adresse" placeholder="123 rue des Arts" autocomplete="street-address">
               <span class="error-msg" id="adresse-error">L'adresse est requise pour la livraison</span>
+              <span class="help-text" id="adresse-help">Commencez à taper pour voir les suggestions d'adresse</span>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label id="cp-label">Code postal</label>
-                <input type="text" id="code-postal" placeholder="75001">
-                <span class="error-msg" id="cp-error">Code postal invalide</span>
+                <input type="text" id="code-postal" placeholder="75001" autocomplete="postal-code">
+                <span class="error-msg" id="code-postal-error">Code postal invalide</span>
               </div>
               <div class="form-group">
                 <label id="ville-label">Ville</label>
-                <input type="text" id="ville" placeholder="Paris">
+                <input type="text" id="ville" placeholder="Paris" autocomplete="address-level2">
                 <span class="error-msg" id="ville-error">La ville est requise pour la livraison</span>
               </div>
             </div>
 
             <div class="form-group">
               <label>Pays</label>
-              <select id="pays">
+              <select id="pays" autocomplete="country">
                 <option value="FR">France</option>
                 <option value="BE">Belgique</option>
                 <option value="CH">Suisse</option>
@@ -193,12 +241,24 @@
             </div>
           </div>
 
+          <!-- Options de livraison -->
+          <div id="shipping-options-container" style="display:none;">
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Mode de livraison</h3>
+            <div class="shipping-options" id="shipping-options">
+              <!-- Rempli dynamiquement -->
+            </div>
+          </div>
+
           <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Méthode de paiement</h3>
           <div class="method-grid">
             <button class="method-btn selected" onclick="setMethod('stripe')" id="method-stripe">💳 Stripe</button>
             <button class="method-btn" disabled>🅿️ PayPal</button>
             <button class="method-btn" onclick="setMethod('fedapay')" id="method-fedapay">📱 Mobile Money</button>
           </div>
+
+          <p class="help-text" style="margin-top: 12px;">
+            🔒 Vos données sont sécurisées. Nous ne stockons pas vos informations de paiement.
+          </p>
         </div>
 
         <div class="card">
@@ -224,6 +284,8 @@
           </div>
 
           <button class="pay-btn" id="pay-btn" onclick="handlePayment()">Payer 0,00 €</button>
+
+          <div id="payment-status" style="margin-top: 12px; font-size: 0.875rem; text-align: center;"></div>
         </div>
       </div>
     </div>
@@ -232,19 +294,89 @@
   <footer>
     <div class="footer-inner">
       <p>© 2026 Taka Inside. Tous droits réservés.</p>
-      <a href="/">Retour à l'accueil</a>
+      <a href="mailto:kwabo@takainside.org">Contact : kwabo@takainside.org</a>
     </div>
   </footer>
+
+  <div class="loader-overlay" id="loader-overlay">
+    <div class="loader"></div>
+  </div>
 
   <script>
     let state = {
       items: [],
       method: 'stripe',
-      loading: false
+      loading: false,
+      shipping: {
+        type: 'standard',
+        cost: 0,
+        options: []
+      }
     };
+
+    let googleMapsLoaded = false;
+    let addressAutocomplete = null;
+
+    // Chargement dynamique Google Places si une clé est configurée
+    function loadGooglePlacesScript() {
+      const existing = document.getElementById('google-places-script');
+      if (existing) return;
+      const key = window.GOOGLE_PLACES_API_KEY || '';
+      if (!key || key.includes('DUMMY')) return; // Ne pas charger si pas de vraie clé
+      const script = document.createElement('script');
+      script.id = 'google-places-script';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=places&callback=initGoogleMapsAutocomplete`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    function initGoogleMapsAutocomplete() {
+      googleMapsLoaded = true;
+      const adresseInput = document.getElementById('adresse');
+      if (!adresseInput || !window.google || !window.google.maps || !window.google.maps.places) return;
+
+      addressAutocomplete = new google.maps.places.Autocomplete(adresseInput, {
+        types: ['address'],
+        componentRestrictions: { country: [] }, // Tous pays
+        fields: ['address_components', 'formatted_address', 'geometry']
+      });
+
+      addressAutocomplete.addListener('place_changed', () => {
+        const place = addressAutocomplete.getPlace();
+        if (!place.address_components) return;
+
+        let streetNumber = '', route = '', city = '', postalCode = '', country = '';
+        place.address_components.forEach(comp => {
+          const type = comp.types[0];
+          if (type === 'street_number') streetNumber = comp.long_name;
+          if (type === 'route') route = comp.long_name;
+          if (type === 'locality' || type === 'postal_town') city = comp.long_name;
+          if (type === 'postal_code') postalCode = comp.long_name;
+          if (type === 'country') country = comp.short_name;
+        });
+
+        const fullAddress = [streetNumber, route].filter(Boolean).join(' ');
+        if (fullAddress) document.getElementById('adresse').value = fullAddress;
+        if (postalCode) document.getElementById('code-postal').value = postalCode;
+        if (city) document.getElementById('ville').value = city;
+        if (country) document.getElementById('pays').value = country;
+
+        validateField('adresse');
+        validateField('code-postal');
+        validateField('ville');
+
+        // Recalculer la livraison
+        if (hasPhysicalItems()) calculateShipping();
+      });
+    }
 
     function formatPrice(price) {
       return price.toFixed(2).replace('.', ',') + ' €';
+    }
+
+    function formatPriceXOF(price) {
+      return Math.round(price).toLocaleString('fr-FR') + ' FCFA';
     }
 
     function isDigital(item) {
@@ -259,6 +391,14 @@
       return state.items.some(item => !isDigital(item));
     }
 
+    function getCartType() {
+      const hasDigital = hasDigitalItems();
+      const hasPhysical = hasPhysicalItems();
+      if (hasDigital && hasPhysical) return 'mixed';
+      if (hasDigital) return 'digital';
+      return 'physical';
+    }
+
     function loadCart() {
       try {
         const stored = localStorage.getItem('taka-cart');
@@ -266,35 +406,81 @@
       } catch (e) { console.error('Erreur chargement panier:', e); }
       render();
       adaptFormForDigital();
+      calculateShipping();
+      setupRealTimeValidation();
+      loadGooglePlacesScript();
     }
 
     function adaptFormForDigital() {
       const shippingFields = document.getElementById('shipping-fields');
       const formTitle = document.getElementById('form-title');
       const digitalNotice = document.getElementById('digital-notice');
+      const mixedNotice = document.getElementById('mixed-notice');
+      const physicalNotice = document.getElementById('physical-notice');
       const adresseLabel = document.getElementById('adresse-label');
       const cpLabel = document.getElementById('cp-label');
       const villeLabel = document.getElementById('ville-label');
       const facturationToggle = document.getElementById('facturation-toggle');
+      const shippingOptionsContainer = document.getElementById('shipping-options-container');
+      const cartTypeBadge = document.getElementById('cart-type-badge');
+      const emailHelp = document.getElementById('email-help');
 
-      if (!hasPhysicalItems()) {
+      const cartType = getCartType();
+
+      // Badge
+      cartTypeBadge.style.display = 'inline-flex';
+      if (cartType === 'digital') {
+        cartTypeBadge.className = 'cart-badge digital-only';
+        cartTypeBadge.innerHTML = '🎵 Commande 100% digitale';
+      } else if (cartType === 'physical') {
+        cartTypeBadge.className = 'cart-badge physical-only';
+        cartTypeBadge.innerHTML = '📦 Commande physique';
+      } else {
+        cartTypeBadge.className = 'cart-badge mixed';
+        cartTypeBadge.innerHTML = '📦 + 🎵 Commande mixte';
+      }
+
+      if (cartType === 'digital') {
         // 100% digital
         shippingFields.classList.add('shipping-disabled');
         formTitle.textContent = 'Informations';
         digitalNotice.style.display = 'block';
+        mixedNotice.style.display = 'none';
+        physicalNotice.style.display = 'none';
         facturationToggle.style.display = 'block';
+        shippingOptionsContainer.style.display = 'none';
         adresseLabel.textContent = 'Adresse';
         cpLabel.textContent = 'Code postal';
         villeLabel.textContent = 'Ville';
-      } else {
-        // Produits physiques — livraison obligatoire
+        emailHelp.textContent = 'Le lien de téléchargement sera envoyé à cette adresse';
+      } else if (cartType === 'mixed') {
+        // Mixte
         shippingFields.classList.remove('shipping-disabled');
         formTitle.textContent = 'Informations de livraison';
         digitalNotice.style.display = 'none';
-        facturationToggle.style.display = 'none';
+        mixedNotice.style.display = 'block';
+        physicalNotice.style.display = 'none';
+        facturationToggle.style.display = 'block';
+        shippingOptionsContainer.style.display = 'block';
         adresseLabel.textContent = 'Adresse *';
         cpLabel.textContent = 'Code postal *';
         villeLabel.textContent = 'Ville *';
+        emailHelp.textContent = 'Les liens de téléchargement seront aussi envoyés à cette adresse';
+        document.getElementById('needs-invoice').checked = true;
+        document.getElementById('needs-invoice').disabled = true;
+      } else {
+        // 100% physique
+        shippingFields.classList.remove('shipping-disabled');
+        formTitle.textContent = 'Informations de livraison';
+        digitalNotice.style.display = 'none';
+        mixedNotice.style.display = 'none';
+        physicalNotice.style.display = 'block';
+        facturationToggle.style.display = 'none';
+        shippingOptionsContainer.style.display = 'block';
+        adresseLabel.textContent = 'Adresse *';
+        cpLabel.textContent = 'Code postal *';
+        villeLabel.textContent = 'Ville *';
+        emailHelp.textContent = 'Vous recevrez les informations de suivi à cette adresse';
       }
     }
 
@@ -303,6 +489,8 @@
       const adresseLabel = document.getElementById('adresse-label');
       const cpLabel = document.getElementById('cp-label');
       const villeLabel = document.getElementById('ville-label');
+
+      if (hasPhysicalItems()) return; // Toujours obligatoire si physique
 
       if (checked) {
         shippingFields.classList.remove('shipping-disabled');
@@ -314,7 +502,188 @@
         adresseLabel.textContent = 'Adresse';
         cpLabel.textContent = 'Code postal';
         villeLabel.textContent = 'Ville';
+        document.getElementById('adresse').value = '';
+        document.getElementById('code-postal').value = '';
+        document.getElementById('ville').value = '';
+        validateField('adresse');
+        validateField('code-postal');
+        validateField('ville');
       }
+    }
+
+    // ===== LIVRAISON =====
+    async function calculateShipping() {
+      if (!hasPhysicalItems()) {
+        state.shipping.cost = 0;
+        state.shipping.options = [];
+        render();
+        return;
+      }
+
+      const pays = document.getElementById('pays').value;
+      const codePostal = document.getElementById('code-postal').value.trim();
+
+      try {
+        const res = await fetch('/api/livraison/calcul', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pays: pays === 'OTHER' ? (codePostal || 'Autre') : pays,
+            type_livraison: 'standard',
+            poids: estimateWeight()
+          })
+        });
+
+        if (!res.ok) throw new Error('Erreur calcul livraison');
+        const data = await res.json();
+
+        // Options de livraison
+        state.shipping.options = [
+          { type: 'standard', name: 'Standard', price: data.frais_livraison, days: data.delai_estime_jours },
+          { type: 'express', name: 'Express', price: Math.round(data.frais_livraison * 1.8), days: Math.max(1, Math.round(data.delai_estime_jours / 2)) },
+        ];
+        state.shipping.cost = state.shipping.options[0].price;
+        state.shipping.type = 'standard';
+        renderShippingOptions();
+        render();
+      } catch (err) {
+        console.error('Erreur calcul livraison:', err);
+        state.shipping.options = [
+          { type: 'standard', name: 'Standard', price: 0, days: 7 },
+        ];
+        state.shipping.cost = 0;
+        renderShippingOptions();
+        render();
+      }
+    }
+
+    function estimateWeight() {
+      // Estimation : 0.3kg par article physique
+      const physicalCount = state.items.filter(item => !isDigital(item)).reduce((sum, item) => sum + item.quantity, 0);
+      return Math.max(0.3, physicalCount * 0.3);
+    }
+
+    function renderShippingOptions() {
+      const container = document.getElementById('shipping-options');
+      container.innerHTML = state.shipping.options.map(opt => `
+        <div class="shipping-option ${state.shipping.type === opt.type ? 'selected' : ''}" onclick="selectShipping('${opt.type}')">
+          <div class="shipping-option-info">
+            <div class="shipping-option-name">${opt.name}</div>
+            <div class="shipping-option-desc">Délai estimé : ${opt.days} jours ouvrés</div>
+          </div>
+          <div class="shipping-option-price">${opt.price > 0 ? formatPrice(opt.price) : 'Gratuit'}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectShipping(type) {
+      const option = state.shipping.options.find(o => o.type === type);
+      if (!option) return;
+      state.shipping.type = type;
+      state.shipping.cost = option.price;
+      renderShippingOptions();
+      render();
+    }
+
+    // ===== VALIDATIONS TEMPS RÉEL =====
+    function setupRealTimeValidation() {
+      const fields = ['prenom', 'nom', 'email', 'telephone', 'adresse', 'code-postal', 'ville'];
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('blur', () => validateField(id));
+        el.addEventListener('input', () => {
+          if (el.classList.contains('invalid')) validateField(id);
+        });
+      });
+
+      document.getElementById('pays').addEventListener('change', () => {
+        if (hasPhysicalItems()) calculateShipping();
+      });
+      document.getElementById('code-postal').addEventListener('blur', () => {
+        if (hasPhysicalItems()) calculateShipping();
+      });
+    }
+
+    function validateField(fieldId) {
+      const el = document.getElementById(fieldId);
+      const value = el.value.trim();
+      let isValid = true;
+
+      switch (fieldId) {
+        case 'prenom':
+        case 'nom':
+          isValid = value.length >= 2 && /^[\p{L}\s\-'’]+$/u.test(value);
+          break;
+        case 'email':
+          isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+          break;
+        case 'telephone':
+          isValid = /^[+]?[0-9\s\-\(\)\.]{8,20}$/.test(value) && value.replace(/[^0-9]/g, '').length >= 8;
+          break;
+        case 'adresse':
+          if (hasPhysicalItems() || document.getElementById('needs-invoice').checked) {
+            isValid = value.length >= 5;
+          } else {
+            isValid = value === '' || value.length >= 5;
+          }
+          break;
+        case 'code-postal':
+          if (hasPhysicalItems() || document.getElementById('needs-invoice').checked) {
+            isValid = /^[0-9A-Za-z\s\-]{3,10}$/.test(value);
+          } else {
+            isValid = value === '' || /^[0-9A-Za-z\s\-]{3,10}$/.test(value);
+          }
+          break;
+        case 'ville':
+          if (hasPhysicalItems() || document.getElementById('needs-invoice').checked) {
+            isValid = value.length >= 2 && /^[\p{L}\s\-'’]+$/u.test(value);
+          } else {
+            isValid = value === '' || (value.length >= 2 && /^[\p{L}\s\-'’]+$/u.test(value));
+          }
+          break;
+      }
+
+      showFieldValidation(fieldId, isValid);
+      return isValid;
+    }
+
+    function showFieldValidation(fieldId, isValid) {
+      const el = document.getElementById(fieldId);
+      const errorEl = document.getElementById(fieldId + '-error');
+      if (!el) return;
+
+      el.classList.remove('invalid', 'valid');
+      if (isValid && el.value.trim() !== '') {
+        el.classList.add('valid');
+      } else if (!isValid && el.value.trim() !== '') {
+        el.classList.add('invalid');
+      }
+      if (errorEl) errorEl.classList.toggle('visible', !isValid && el.value.trim() !== '');
+    }
+
+    function showError(fieldId, show) {
+      const el = document.getElementById(fieldId + '-error');
+      if (el) el.classList.toggle('visible', show);
+      const input = document.getElementById(fieldId);
+      if (input) input.classList.toggle('invalid', show);
+      if (input) input.classList.remove('valid');
+    }
+
+    function clearErrors() {
+      ['prenom', 'nom', 'email', 'telephone', 'adresse', 'code-postal', 'ville'].forEach(id => showError(id, false));
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    }
+
+    function isValidPhone(phone) {
+      return /^[+]?[0-9\s\-\(\)\.]{8,20}$/.test(phone.trim()) && phone.replace(/[^0-9]/g, '').length >= 8;
+    }
+
+    function isValidPostal(code) {
+      return /^[0-9A-Za-z\s\-]{3,10}$/.test(code.trim());
     }
 
     function render() {
@@ -334,7 +703,7 @@
           <div class="cart-item">
             ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
             <div class="cart-item-info">
-              <h4>${item.name} ${isDigital(item) ? '<span class="digital-badge">Digital</span>' : ''}</h4>
+              <h4>${item.name} ${isDigital(item) ? '<span class="digital-badge">Digital</span>' : '<span class="physical-badge">Physique</span>'}</h4>
               ${item.size ? `<p>Taille: ${item.size}</p>` : ''}
               <p class="price">${item.quantity} × ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}</p>
             </div>
@@ -342,11 +711,11 @@
         `).join('');
 
         const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const shipping = 0; // Sera calculé côté serveur
+        const shipping = state.shipping.cost || 0;
         const total = subtotal + shipping;
 
         document.getElementById('subtotal').textContent = formatPrice(subtotal);
-        document.getElementById('shipping').textContent = shipping > 0 ? formatPrice(shipping) : 'Calculée';
+        document.getElementById('shipping').textContent = hasPhysicalItems() ? (shipping > 0 ? formatPrice(shipping) : 'Gratuit') : 'Digital — gratuit';
         document.getElementById('total').textContent = formatPrice(total);
         document.getElementById('pay-btn').textContent = state.loading ? 'Redirection...' : `Payer ${formatPrice(total)}`;
         document.getElementById('pay-btn').disabled = state.loading;
@@ -362,30 +731,10 @@
       render();
     }
 
-    // ===== VALIDATIONS =====
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function isValidPhone(phone) {
-      if (!phone || phone.trim() === '') return true; // Optionnel
-      return /^[+]?[0-9\s\-\(\)]{8,}$/.test(phone.trim());
-    }
-
-    function isValidPostal(code) {
-      if (!code || code.trim() === '') return true;
-      return /^[0-9A-Za-z\s\-]{3,10}$/.test(code.trim());
-    }
-
-    function showError(fieldId, show) {
-      const el = document.getElementById(fieldId + '-error');
-      if (el) el.classList.toggle('visible', show);
-      const input = document.getElementById(fieldId);
-      if (input) input.classList.toggle('invalid', show);
-    }
-
-    function clearErrors() {
-      ['nom', 'email', 'telephone', 'adresse', 'code-postal', 'ville'].forEach(id => showError(id, false));
+    function setLoading(loading) {
+      state.loading = loading;
+      document.getElementById('loader-overlay').classList.toggle('active', loading);
+      render();
     }
 
     async function handlePayment() {
@@ -395,6 +744,7 @@
 
       const email = document.getElementById('email').value.trim();
       const nom = document.getElementById('nom').value.trim();
+      const prenom = document.getElementById('prenom').value.trim();
       const telephone = document.getElementById('telephone').value.trim();
       const adresse = document.getElementById('adresse').value.trim();
       const ville = document.getElementById('ville').value.trim();
@@ -404,77 +754,88 @@
       let hasError = false;
 
       // Validation email
-      if (!email) {
+      if (!email || !isValidEmail(email)) {
         showError('email', true);
-        hasError = true;
-      } else if (!isValidEmail(email)) {
-        showError('email', true);
-        document.getElementById('email-error').textContent = 'Email invalide — ex: contact@takainside.org';
+        document.getElementById('email-error').textContent = !email ? 'L\'email est obligatoire' : 'Email invalide — ex: contact@takainside.org';
         hasError = true;
       }
 
-      // Validation nom
-      if (!nom) {
+      // Validation prénom/nom
+      if (!prenom || prenom.length < 2) {
+        showError('prenom', true);
+        hasError = true;
+      }
+      if (!nom || nom.length < 2) {
         showError('nom', true);
         hasError = true;
       }
 
-      // Validation téléphone
-      if (telephone && !isValidPhone(telephone)) {
+      // Validation téléphone (obligatoire maintenant)
+      if (!telephone || !isValidPhone(telephone)) {
         showError('telephone', true);
+        document.getElementById('telephone-error').textContent = !telephone ? 'Le téléphone est obligatoire' : 'Format invalide — ex: +33 7 56 98 74 73';
         hasError = true;
       }
 
       // Validation livraison / facturation
+      const cartType = getCartType();
       const needsInvoice = document.getElementById('needs-invoice').checked;
-      const requireAddress = hasPhysicalItems() || needsInvoice;
+      const requireAddress = cartType === 'physical' || cartType === 'mixed' || needsInvoice;
 
       if (requireAddress) {
-        if (!adresse) {
+        if (!adresse || adresse.length < 5) {
           showError('adresse', true);
           document.getElementById('adresse-error').textContent = "L'adresse est requise";
           hasError = true;
         }
-        if (!ville) {
+        if (!ville || ville.length < 2) {
           showError('ville', true);
           document.getElementById('ville-error').textContent = 'La ville est requise';
           hasError = true;
         }
-        if (!codePostal) {
+        if (!codePostal || !isValidPostal(codePostal)) {
           showError('code-postal', true);
-          document.getElementById('cp-error').textContent = 'Code postal requis';
-          hasError = true;
-        } else if (!isValidPostal(codePostal)) {
-          showError('code-postal', true);
-          document.getElementById('cp-error').textContent = 'Code postal invalide';
+          document.getElementById('code-postal-error').textContent = !codePostal ? 'Code postal requis' : 'Code postal invalide';
           hasError = true;
         }
       }
 
       if (hasError) {
-        // Focus premier champ en erreur
         const firstInvalid = document.querySelector('.invalid');
         if (firstInvalid) firstInvalid.focus();
         return;
       }
 
-      state.loading = true;
-      render();
+      setLoading(true);
+      document.getElementById('payment-status').textContent = '';
 
       const customer = {
         email,
         nom,
-        prenom: document.getElementById('prenom').value.trim(),
+        prenom,
         telephone,
         adresse,
         ville,
         codePostal,
         pays,
-        needsInvoice: needsInvoice || hasPhysicalItems(),
+        needsInvoice: cartType === 'physical' || cartType === 'mixed' || needsInvoice,
       };
 
       const hasDigital = hasDigitalItems();
       const hasPhysical = hasPhysicalItems();
+
+      // Sauvegarder la commande en pending pour la page de confirmation
+      const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      localStorage.setItem('taka-pending-order', JSON.stringify({
+        items: state.items.map(i => ({ name: i.name, quantity: i.quantity })),
+        email,
+        total: subtotal + (state.shipping.cost || 0),
+        hasDigital,
+        hasPhysical,
+        needsInvoice: customer.needsInvoice,
+        token: null,
+        shipping: state.shipping
+      }));
 
       try {
         if (state.method === 'stripe') {
@@ -486,6 +847,7 @@
               customer,
               hasDigital,
               hasPhysical,
+              shipping: state.shipping,
               successUrl: window.location.origin + '/paiement/confirmation?status=success',
               cancelUrl: window.location.origin + '/checkout?status=cancelled',
             }),
@@ -510,7 +872,7 @@
             throw new Error('URL de paiement manquante');
           }
         } else if (state.method === 'fedapay') {
-          const total = state.items.reduce((s, i) => s + (i.price * i.quantity), 0);
+          const total = state.items.reduce((s, i) => s + (i.price * i.quantity), 0) + (state.shipping.cost || 0);
           
           const res = await fetch('/api/fedapay/create-transaction', {
             method: 'POST',
@@ -520,6 +882,11 @@
               description: 'Commande Taka Inside',
               currency: 'eur',
               callback_url: window.location.origin + '/paiement/confirmation?method=fedapay',
+              customer,
+              items: state.items,
+              hasDigital,
+              hasPhysical,
+              shipping: state.shipping,
             }),
           });
           
@@ -544,10 +911,10 @@
         }
       } catch (err) {
         console.error('Payment error:', err);
-        alert(err.message || 'Erreur de paiement — réessayez');
+        document.getElementById('payment-status').textContent = err.message || 'Erreur de paiement — réessayez';
+        document.getElementById('payment-status').style.color = 'var(--red)';
       } finally {
-        state.loading = false;
-        render();
+        setLoading(false);
       }
     }
 

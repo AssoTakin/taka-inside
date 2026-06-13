@@ -12,7 +12,9 @@ interface OrderInfo {
   needsInvoice?: boolean;
   email: string;
   total: number;
-  items: Array<{name: string; quantity: number}>;
+  items: Array<{name: string; quantity: number; type?: string}>;
+  shipping?: { type: string; cost: number };
+  methode?: string;
 }
 
 export default function ConfirmationPage() {
@@ -27,7 +29,8 @@ export default function ConfirmationPage() {
         const parsed = JSON.parse(pendingOrder);
         setOrder(parsed);
         setLoading(false);
-        localStorage.removeItem('taka-pending-order');
+        // On garde pending-order en backup pour rechargements
+        // localStorage.removeItem('taka-pending-order');
         localStorage.removeItem('taka-cart');
       } catch {
         setLoading(false);
@@ -50,6 +53,10 @@ export default function ConfirmationPage() {
     );
   }
 
+  const digitalItems = order?.items?.filter(i => i.type === 'digital') || [];
+  const physicalItems = order?.items?.filter(i => i.type !== 'digital') || [];
+  const isMixed = (order?.hasDigital && order?.hasPhysical) || (digitalItems.length > 0 && physicalItems.length > 0);
+
   return (
     <SiteLayout>
       <div className="min-h-[60vh] flex items-center justify-center bg-taka-cream py-16">
@@ -61,6 +68,15 @@ export default function ConfirmationPage() {
             </svg>
           </div>
           <h1 className="font-display text-3xl font-bold mb-4">Paiement confirmé !</h1>
+
+          {isMixed && (
+            <div className="bg-taka-blue/10 border border-taka-blue/30 rounded-xl p-6 mb-6">
+              <p className="text-sm font-semibold mb-2">📦 + 🎵 Commande mixte</p>
+              <p className="text-sm text-taka-gray">
+                Vos articles physiques seront expédiés, et vos contenus digitaux sont disponibles en téléchargement.
+              </p>
+            </div>
+          )}
 
           {/* Digital — téléchargement */}
           {order?.hasDigital && (
@@ -91,6 +107,11 @@ export default function ConfirmationPage() {
               <p className="text-sm text-taka-gray">
                 Vous recevrez un email de confirmation avec les détails de livraison à {order.email}.
               </p>
+              {order.shipping && order.shipping.cost > 0 && (
+                <p className="text-sm text-taka-gray mt-2">
+                  Mode : {order.shipping.type} — {order.shipping.cost.toFixed(2).replace('.', ',')} €
+                </p>
+              )}
             </div>
           )}
 
