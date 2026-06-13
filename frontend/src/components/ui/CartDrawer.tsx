@@ -62,8 +62,8 @@ export default function CartDrawer() {
 
                 <div className="flex-1">
                   <h3 className="font-display font-semibold text-sm">{item.name}</h3>
-                  {item.customization && (
-                    <p className="text-xs text-taka-gray mt-1">Personnalisation : {item.customization}</p>
+                  {item.size && (
+                    <p className="text-xs text-taka-gray mt-1">Taille : {item.size}</p>
                   )}
                   <p className="font-bold mt-1">{formatPrice(item.price)}</p>
 
@@ -100,13 +100,12 @@ export default function CartDrawer() {
               <span className="font-bold text-lg">{formatPrice(total)}</span>
             </div>
             <p className="text-xs text-taka-gray">Frais de livraison calculés à l'étape suivante.</p>
-            <Link
-              href="/checkout"
-              onClick={() => setIsOpen(false)}
+            <button
+              onClick={() => { setIsOpen(false); window.location.href = '/checkout'; }}
               className="block w-full bg-taka-black text-white text-center py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all"
             >
               Passer la commande
-            </Link>
+            </button>
           </div>
         )}
       </div>

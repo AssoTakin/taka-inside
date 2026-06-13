@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faire un Don — Taka Inside</title>
+  <link rel="icon" href="/icon.png">
+  <style>
+    :root {
+      --black: #0A0A0A;
+      --yellow: #E5B800;
+      --green: #1B8A3A;
+      --red: #C41E3A;
+      --gray: #8A8A8A;
+      --gray-light: #E8E6E2;
+      --cream: #F5F3EF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--cream); color: var(--black); line-height: 1.5; }
+    
+    /* Header */
+    header { background: var(--black); color: white; position: sticky; top: 0; z-index: 50; }
+    .rasta-line { height: 4px; background: linear-gradient(90deg, var(--green) 33%, var(--yellow) 33%, var(--yellow) 66%, var(--red) 66%); }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 80px; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: white; }
+    .logo img { height: 48px; width: auto; }
+    .logo span { font-weight: 700; font-size: 1.25rem; }
+    nav { display: flex; gap: 24px; align-items: center; }
+    nav a { color: #9CA3AF; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: white; }
+    .don-btn { background: var(--yellow); color: var(--black); padding: 8px 16px; border-radius: 8px; font-weight: 600; }
+    .don-btn:hover { opacity: 0.9; color: var(--black); }
+    
+    /* Hero */
+    .hero { background: var(--yellow); padding: 64px 16px; }
+    .hero-inner { max-width: 1200px; margin: 0 auto; }
+    .hero h1 { font-size: 2.5rem; font-weight: 700; }
+    .hero h1 span { color: var(--red); }
+    .hero p { margin-top: 16px; max-width: 500px; opacity: 0.8; }
+    
+    /* Main */
+    .main { padding: 64px 16px; }
+    .main-inner { max-width: 900px; margin: 0 auto; }
+    .tabs { display: flex; justify-content: center; margin-bottom: 32px; }
+    .tabs-inner { display: inline-flex; background: white; border-radius: 12px; padding: 4px; border: 1px solid #E5E7EB; }
+    .tab { padding: 8px 24px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.875rem; cursor: pointer; background: transparent; color: var(--gray); transition: all 0.2s; }
+    .tab.active { background: var(--black); color: white; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } nav { display: none; } }
+    
+    .card { background: white; border-radius: 16px; padding: 24px; border: 2px solid #E5E7EB; }
+    .card-dark { background: var(--black); color: white; border-radius: 16px; padding: 24px; }
+    .card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; }
+    
+    .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .amount-btn { padding: 12px; border-radius: 12px; border: 2px solid #E5E7EB; font-weight: 600; cursor: pointer; background: white; transition: all 0.2s; font-size: 0.875rem; }
+    .amount-btn:hover { border-color: var(--green); color: var(--green); }
+    .amount-btn.selected { background: #E8F5E9; border-color: var(--green); color: var(--green); }
+    
+    .info-box { background: var(--gray-light); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .info-box p:first-child { font-size: 0.875rem; color: var(--gray); }
+    .info-box p:last-child { font-size: 1.5rem; font-weight: 700; }
+    
+    .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .method-btn { padding: 8px; border-radius: 8px; border: 2px solid #E5E7EB; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; }
+    .method-btn:hover { border-color: var(--green); }
+    .method-btn.selected { background: #E8F5E9; border-color: var(--green); color: var(--green); }
+    .method-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .pay-btn { width: 100%; padding: 16px; background: var(--black); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; }
+    .pay-btn:hover { opacity: 0.9; }
+    .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .secure-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .secure-icon svg { width: 32px; height: 32px; color: var(--gray); }
+    .card-dark p { color: var(--gray); font-size: 0.875rem; }
+    
+    input { width: 100%; padding: 12px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 1rem; outline: none; }
+    input:focus { border-color: var(--green); }
+    
+    /* Footer */
+    footer { background: var(--black); color: white; padding: 32px 16px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    footer p { color: #9CA3AF; font-size: 0.875rem; }
+    footer a { color: #9CA3AF; text-decoration: none; font-size: 0.875rem; }
+    footer a:hover { color: var(--yellow); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="rasta-line"></div>
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <img src="/images/logo-taka-inside.jpg" alt="Taka Inside">
+        <span>Taka Inside</span>
+      </a>
+      <nav>
+        <a href="/">Accueil</a>
+        <a href="/boutique">Boutique</a>
+        <a href="/faire-un-don.html" class="don-btn">Faire un Don</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <h1>Soutenir <span>Taka Inside</span></h1>
+      <p>Votre soutien est essentiel pour financer nos projets culturels, accompagner les artistes et promouvoir le Bénin.</p>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="main-inner">
+      <div class="tabs">
+        <div class="tabs-inner">
+          <button class="tab active" onclick="setFrequency('one-time')" id="tab-one">Don ponctuel</button>
+          <button class="tab" onclick="setFrequency('monthly')" id="tab-monthly">Don mensuel</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3 id="don-title">Don ponctuel</h3>
+
+          <div class="amount-grid" id="amount-grid">
+            <!-- Generated by JS -->
+          </div>
+
+          <div id="custom-input" style="display:none; margin-bottom: 16px;">
+            <label style="display:block; font-size: 0.875rem; font-weight: 600; margin-bottom: 4px;">Montant personnalisé (EUR)</label>
+            <input type="number" id="custom-amount" placeholder="Entrez un montant" min="1" step="0.01" oninput="handleCustom(this.value)">
+          </div>
+
+          <div class="info-box">
+            <p>Montant sélectionné :</p>
+            <p id="amount-display">15,00 €</p>
+          </div>
+
+          <p style="font-size: 0.875rem; font-weight: 600; margin-bottom: 12px;">Méthode de paiement :</p>
+          <div class="method-grid">
+            <button class="method-btn selected" onclick="setMethod('stripe')" id="method-stripe">💳 Stripe</button>
+            <button class="method-btn" disabled>🅿️ PayPal</button>
+            <button class="method-btn" onclick="setMethod('fedapay')" id="method-fedapay">📱 Mobile Money</button>
+          </div>
+
+          <button class="pay-btn" id="pay-btn" onclick="handlePayment()">Donner 15,00 €</button>
+        </div>
+
+        <div class="card-dark">
+          <h3>Paiement sécurisé</h3>
+          <p id="method-desc" style="margin-bottom: 24px;">Vous allez être redirigé vers Stripe pour finaliser votre don en toute sécurité.</p>
+          <div style="text-align: center; padding: 32px 0;">
+            <div class="secure-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+            </div>
+            <p>Paiement sécurisé par <span id="provider-name">Stripe</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <p>© 2026 Taka Inside. Tous droits réservés.</p>
+      <a href="/">Retour à l'accueil</a>
+    </div>
+  </footer>
+
+  <script>
+    let state = {
+      amount: 15,
+      customAmount: '',
+      frequency: 'one-time',
+      method: 'stripe',
+      loading: false
+    };
+
+    const AMOUNTS = {
+      'one-time': [10, 15, 25, 50, 100],
+      'monthly': [10, 15, 25, 50]
+    };
+
+    function render() {
+      const amounts = AMOUNTS[state.frequency];
+      const grid = document.getElementById('amount-grid');
+      
+      // Render amount buttons
+      grid.innerHTML = amounts.map(val => `
+        <button class="amount-btn ${state.amount === val && !state.customAmount ? 'selected' : ''}" 
+                onclick="setAmount(${val})">${val} €</button>
+      `).join('') + `
+        <button class="amount-btn ${state.customAmount ? 'selected' : ''}" 
+                onclick="showCustom()">Autre</button>
+      `;
+
+      // Custom input
+      document.getElementById('custom-input').style.display = state.customAmount !== '' ? 'block' : 'none';
+      if (state.customAmount !== '') {
+        document.getElementById('custom-amount').value = state.customAmount;
+      }
+
+      // Amount display
+      const final = state.customAmount ? parseFloat(state.customAmount) || 0 : state.amount;
+      document.getElementById('amount-display').textContent = final.toFixed(2).replace('.', ',') + ' €';
+
+      // Pay button
+      document.getElementById('pay-btn').textContent = state.loading 
+        ? 'Redirection...' 
+        : `Donner ${final.toFixed(2).replace('.', ',')} €`;
+      document.getElementById('pay-btn').disabled = final <= 0 || state.loading;
+
+      // Method buttons
+      document.getElementById('method-stripe').className = 'method-btn ' + (state.method === 'stripe' ? 'selected' : '');
+      document.getElementById('method-fedapay').className = 'method-btn ' + (state.method === 'fedapay' ? 'selected' : '');
+
+      // Method description
+      const desc = state.method === 'stripe' 
+        ? 'Vous allez être redirigé vers Stripe pour finaliser votre don en toute sécurité.'
+        : 'Vous allez être redirigé vers FedaPay pour payer par Mobile Money.';
+      document.getElementById('method-desc').textContent = desc;
+      document.getElementById('provider-name').textContent = state.method === 'stripe' ? 'Stripe' : 'FedaPay';
+
+      // Tabs
+      document.getElementById('tab-one').className = 'tab ' + (state.frequency === 'one-time' ? 'active' : '');
+      document.getElementById('tab-monthly').className = 'tab ' + (state.frequency === 'monthly' ? 'active' : '');
+
+      // Title
+      document.getElementById('don-title').textContent = state.frequency === 'one-time' ? 'Don ponctuel' : 'Don mensuel';
+    }
+
+    function setAmount(val) {
+      state.amount = val;
+      state.customAmount = '';
+      render();
+    }
+
+    function showCustom() {
+      state.customAmount = '';
+      state.amount = 0;
+      render();
+    }
+
+    function handleCustom(val) {
+      state.customAmount = val;
+      render();
+    }
+
+    function setFrequency(freq) {
+      state.frequency = freq;
+      state.customAmount = '';
+      state.amount = 15;
+      render();
+    }
+
+    function setMethod(method) {
+      state.method = method;
+      render();
+    }
+
+    async function handlePayment() {
+      const final = state.customAmount ? parseFloat(state.customAmount) || 0 : state.amount;
+      if (final <= 0) return;
+
+      state.loading = true;
+      render();
+
+      try {
+        if (state.method === 'stripe') {
+          const res = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: final,
+              frequency: state.frequency,
+              successUrl: window.location.origin + '/paiement/confirmation?status=success',
+              cancelUrl: window.location.origin + '/faire-un-don.html?status=cancelled',
+            }),
+          });
+          const data = await res.json();
+          if (data.url) window.location.href = data.url;
+        } else if (state.method === 'fedapay') {
+          const res = await fetch('/api/fedapay/create-transaction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amountEUR: final }),
+          });
+          const data = await res.json();
+          if (data.paymentUrl) window.location.href = data.paymentUrl;
+        }
+      } catch (err) {
+        alert('Erreur de paiement : ' + err.message);
+      } finally {
+        state.loading = false;
+        render();
+      }
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

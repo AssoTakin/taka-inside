@@ -21,13 +21,10 @@ export default function AddToCartButton({ product }: { product: Product }) {
 
   const handleAdd = () => {
     addItem({
-      id: product.id,
-      documentId: product.documentId,
+      id: product.id.toString(),
       name: product.nom,
       price: product.prix,
       quantity: 1,
-      slug: product.slug || product.documentId,
-      type: product.type as "fixe" | "personnalisable" | "digital" | "album" | "single" | "merch" | "ticket",
       image: product.image || undefined,
       productType: product.type === "digital" || product.type === "album" || product.type === "single" ? product.type : undefined,
     });

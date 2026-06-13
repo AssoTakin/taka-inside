@@ -12,7 +12,19 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://takainside.vercel.app",
   },
+  async rewrites() {
+    return [
+      {
+        source: '/faire-un-don',
+        destination: '/faire-un-don.html',
+      },
+      {
+        source: '/checkout',
+        destination: '/checkout.html',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
-// Force rebuild 1780940000
+// Force rebuild 1780940001

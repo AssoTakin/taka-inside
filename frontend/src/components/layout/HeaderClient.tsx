@@ -1,25 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 
 export function CartButton() {
   const { itemCount, setIsOpen } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Afficher un contenu identique entre serveur et client pour éviter hydration mismatch
+  const displayCount = mounted ? itemCount : 0;
+
   return (
     <button
       onClick={() => setIsOpen(true)}
       className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
-      aria-label={`Panier (${itemCount} articles)`}
+      aria-label={`Panier (${displayCount} articles)`}
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
       </svg>
-      {itemCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-taka-red text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-          {itemCount}
-        </span>
-      )}
+      <span
+        className={`absolute -top-1 -right-1 bg-taka-red text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transition-opacity ${
+          displayCount > 0 ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {displayCount > 99 ? '99+' : displayCount}
+      </span>
     </button>
   );
 }

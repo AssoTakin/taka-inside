@@ -145,7 +145,7 @@ export function getImageUrl(image: { url: string } | null | undefined): string |
 /** Fetch site config (Single Type) */
 export async function fetchSiteConfig(): Promise<Record<string, unknown> | null> {
   if (typeof window !== 'undefined') {
-    console.warn('[fetchSiteConfig] Appel côté client bloqué — Server Component uniquement');
+    // Client-side: retourner null, le Header SSR a déjà les données
     return null;
   }
   return fetchStrapiSingle('site-config?populate=*');
