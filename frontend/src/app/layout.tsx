@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://takainside.vercel.app",
+    url: "https://takainside.org",
     siteName: "Taka Inside",
   },
   twitter: { card: "summary_large_image", site: "@takainsideasso" },

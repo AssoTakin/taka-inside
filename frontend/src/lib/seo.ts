@@ -7,7 +7,7 @@ export const defaultMetadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://takainside.vercel.app",
+    url: "https://takainside.org",
     siteName: "Taka Inside",
     images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Taka Inside" }],
   },
@@ -17,7 +17,7 @@ export const defaultMetadata: Metadata = {
     creator: "@takainsideasso",
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
-  alternates: { canonical: "https://takainside.vercel.app" },
+  alternates: { canonical: "https://takainside.org" },
   authors: [{ name: "Taka Inside" }],
   generator: "Next.js",
   applicationName: "Taka Inside",
@@ -36,7 +36,7 @@ export function generatePageMetadata(
     description: description || defaultMetadata.description,
     openGraph: {
       ...defaultMetadata.openGraph,
-      url: `https://takainside.vercel.app${pathname || ""}`,
+      url: `https://takainside.org${pathname || ""}`,
       title: `${title} | Taka Inside`,
       description: description || (typeof defaultMetadata.description === "string" ? defaultMetadata.description : undefined),
     },
@@ -45,6 +45,6 @@ export function generatePageMetadata(
       title: `${title} | Taka Inside`,
       description: description || (typeof defaultMetadata.description === "string" ? defaultMetadata.description : undefined),
     },
-    alternates: { canonical: `https://takainside.vercel.app${pathname || ""}` },
+    alternates: { canonical: `https://takainside.org${pathname || ""}` },
   };
 }

@@ -43,20 +43,20 @@ export default async function LabelMusicalPage() {
           )}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {artistes.map((artiste, i) => {
+            {artistes.map((artiste) => {
               const nom = String(artiste.nom || "");
-              const slug = String(artiste.slug || `artiste-${i}`);
-              const genre = String(artiste.genre_musical || "");
+              const id = String(artiste.documentId || "");
+              const genre = String(artiste.genre || "");
               const bio = String(artiste.biographie || "");
               const photoUrl = getImageUrl(artiste.photo as { url: string } | null);
-
+              if (!id) return null;
               return (
-                <Link href={`/label-musical/${slug}`} key={slug} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md transition-all group">
+                <Link href={`/label-musical/${id}`} key={id} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md transition-all group">
                   <div className="w-20 h-20 rounded-xl bg-taka-gray-light flex-shrink-0 overflow-hidden relative">
                     {photoUrl ? (
                       <Image src={photoUrl} alt={nom} fill className="object-cover" sizes="80px" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-taka-gray text-xs font-display font-bold text-xl">{nom.charAt(0)}</div>
+                      <div className="w-full h-full flex items-center justify-center text-taka-gray font-display font-bold text-xl">{nom.charAt(0)}</div>
                     )}
                   </div>
                   <div className="flex-1">

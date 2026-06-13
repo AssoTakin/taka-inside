@@ -313,7 +313,7 @@ export default async function HomePage() {
               const photoUrl = extractUrl(artiste.photo);
               const bio = String(artiste.biographie || '').substring(0, 140);
               return (
-                <Link href={`/label-musical/${artiste.slug || ''}`} key={String(artiste.id)} className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer bg-taka-black">
+                <Link href={`/label-musical/${artiste.documentId || ''}`} key={String(artiste.id)} className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer bg-taka-black">
                   {photoUrl && (
                     <Image src={getImageUrl({ url: photoUrl }) || ''} alt={String(artiste.nom)} fill className="object-cover opacity-60" sizes="(max-width: 768px) 100vw, 50vw" />
                   )}
