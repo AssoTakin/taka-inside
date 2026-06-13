@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
         ville: customer?.ville || "",
         code_postal: customer?.codePostal || "",
         pays: customer?.pays || "",
+        needsInvoice: customer?.needsInvoice ? "true" : "false",
         produits: JSON.stringify(items.map((item: any) => ({ name: item.name, quantity: item.quantity, price: item.price, type: item.productType || 'physique' }))),
         hasDigital: String(hasDigital || false),
         hasPhysical: String(hasPhysical || false),

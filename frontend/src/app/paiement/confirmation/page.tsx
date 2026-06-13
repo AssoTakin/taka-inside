@@ -9,6 +9,7 @@ interface OrderInfo {
   token: string | null;
   hasDigital: boolean;
   hasPhysical: boolean;
+  needsInvoice?: boolean;
   email: string;
   total: number;
   items: Array<{name: string; quantity: number}>;
@@ -17,10 +18,8 @@ interface OrderInfo {
 export default function ConfirmationPage() {
   const [order, setOrder] = useState<OrderInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Récupérer la commande depuis le localStorage (stockée avant redirection paiement)
     const pendingOrder = localStorage.getItem('taka-pending-order');
     
     if (pendingOrder) {
@@ -28,12 +27,9 @@ export default function ConfirmationPage() {
         const parsed = JSON.parse(pendingOrder);
         setOrder(parsed);
         setLoading(false);
-        // Nettoyer le pending order après affichage
         localStorage.removeItem('taka-pending-order');
-        // Vider le panier
         localStorage.removeItem('taka-cart');
       } catch {
-        setError('Impossible de récupérer les détails de la commande');
         setLoading(false);
       }
     } else {
@@ -58,7 +54,7 @@ export default function ConfirmationPage() {
     <SiteLayout>
       <div className="min-h-[60vh] flex items-center justify-center bg-taka-cream py-16">
         <div className="text-center max-w-lg mx-auto px-4">
-          {/* Succès */}
+          {/* Icône succès */}
           <div className="w-20 h-20 rounded-full bg-taka-green/15 flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -66,6 +62,7 @@ export default function ConfirmationPage() {
           </div>
           <h1 className="font-display text-3xl font-bold mb-4">Paiement confirmé !</h1>
 
+          {/* Digital — téléchargement */}
           {order?.hasDigital && (
             <div className="bg-taka-green/10 border border-taka-green/30 rounded-xl p-6 mb-6">
               <p className="text-sm font-semibold mb-2">🎵 Votre contenu digital est prêt</p>
@@ -87,6 +84,7 @@ export default function ConfirmationPage() {
             </div>
           )}
 
+          {/* Physique — livraison */}
           {order?.hasPhysical && (
             <div className="bg-taka-yellow/10 border border-taka-yellow/30 rounded-xl p-6 mb-6">
               <p className="text-sm font-semibold mb-2">📦 Livraison en cours de préparation</p>
@@ -96,6 +94,27 @@ export default function ConfirmationPage() {
             </div>
           )}
 
+          {/* Facture complète */}
+          {order?.needsInvoice && (
+            <div className="bg-taka-black text-taka-cream border border-taka-gray/30 rounded-xl p-6 mb-6">
+              <p className="text-sm font-semibold mb-2">🧾 Facture complète</p>
+              <p className="text-sm text-taka-gray">
+                Votre facture légale sera envoyée à {order.email} sous 24h.
+              </p>
+            </div>
+          )}
+
+          {/* Digital sans facture — reçu simple */}
+          {order?.hasDigital && !order?.needsInvoice && (
+            <div className="bg-taka-cream border border-taka-gray/20 rounded-xl p-6 mb-6">
+              <p className="text-sm font-semibold mb-2">📧 Reçu d'achat</p>
+              <p className="text-sm text-taka-gray">
+                Un reçu simplifié a été envoyé à {order.email}.
+              </p>
+            </div>
+          )}
+
+          {/* Sans commande connue (fallback) */}
           {!order && (
             <p className="text-taka-gray mb-8">
               Merci pour votre soutien à Taka Inside. Vous recevrez un email de confirmation sous peu avec les détails de votre commande.

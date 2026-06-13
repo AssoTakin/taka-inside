@@ -80,6 +80,15 @@
     .shipping-disabled { opacity: 0.5; pointer-events: none; }
     .shipping-disabled input, .shipping-disabled select { background: #F3F4F6; }
 
+    /* Toggle facturation digital */
+    .invoice-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 12px; }
+    .invoice-toggle input { width: auto; }
+    .invoice-toggle-label { font-size: 0.875rem; font-weight: 500; }
+    .invoice-toggle-hint { font-size: 0.75rem; color: var(--gray); }
+
+    .facturation-fields { margin-top: 16px; padding-top: 16px; border-top: 1px dashed #E5E7EB; }
+    .facturation-fields.hidden { display: none; }
+
     .error-msg { color: var(--red); font-size: 0.75rem; margin-top: 4px; display: none; }
     .error-msg.visible { display: block; }
 
@@ -140,6 +149,15 @@
             <span class="error-msg" id="tel-error">Format invalide — ex: +33 7 56 98 74 73</span>
           </div>
 
+          <!-- Adresse de facturation (digital — optionnel) -->
+          <div id="facturation-toggle" style="display:none;">
+            <label class="invoice-toggle">
+              <input type="checkbox" id="needs-invoice" onchange="toggleInvoice(this.checked)">
+              <span class="invoice-toggle-label">J'ai besoin d'une facture complète</span>
+            </label>
+            <p class="invoice-toggle-hint">Pour le reçu/facture légale — adresse requise</p>
+          </div>
+
           <div id="shipping-fields">
             <div class="form-group">
               <label id="adresse-label">Adresse</label>
@@ -149,12 +167,12 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label>Code postal</label>
+                <label id="cp-label">Code postal</label>
                 <input type="text" id="code-postal" placeholder="75001">
                 <span class="error-msg" id="cp-error">Code postal invalide</span>
               </div>
               <div class="form-group">
-                <label>Ville</label>
+                <label id="ville-label">Ville</label>
                 <input type="text" id="ville" placeholder="Paris">
                 <span class="error-msg" id="ville-error">La ville est requise pour la livraison</span>
               </div>
@@ -255,19 +273,47 @@
       const formTitle = document.getElementById('form-title');
       const digitalNotice = document.getElementById('digital-notice');
       const adresseLabel = document.getElementById('adresse-label');
+      const cpLabel = document.getElementById('cp-label');
+      const villeLabel = document.getElementById('ville-label');
+      const facturationToggle = document.getElementById('facturation-toggle');
 
       if (!hasPhysicalItems()) {
-        // 100% digital — masquer livraison
+        // 100% digital
         shippingFields.classList.add('shipping-disabled');
         formTitle.textContent = 'Informations';
         digitalNotice.style.display = 'block';
-        adresseLabel.textContent = 'Adresse (optionnel)';
+        facturationToggle.style.display = 'block';
+        adresseLabel.textContent = 'Adresse';
+        cpLabel.textContent = 'Code postal';
+        villeLabel.textContent = 'Ville';
       } else {
         // Produits physiques — livraison obligatoire
         shippingFields.classList.remove('shipping-disabled');
         formTitle.textContent = 'Informations de livraison';
         digitalNotice.style.display = 'none';
+        facturationToggle.style.display = 'none';
         adresseLabel.textContent = 'Adresse *';
+        cpLabel.textContent = 'Code postal *';
+        villeLabel.textContent = 'Ville *';
+      }
+    }
+
+    function toggleInvoice(checked) {
+      const shippingFields = document.getElementById('shipping-fields');
+      const adresseLabel = document.getElementById('adresse-label');
+      const cpLabel = document.getElementById('cp-label');
+      const villeLabel = document.getElementById('ville-label');
+
+      if (checked) {
+        shippingFields.classList.remove('shipping-disabled');
+        adresseLabel.textContent = 'Adresse *';
+        cpLabel.textContent = 'Code postal *';
+        villeLabel.textContent = 'Ville *';
+      } else {
+        shippingFields.classList.add('shipping-disabled');
+        adresseLabel.textContent = 'Adresse';
+        cpLabel.textContent = 'Code postal';
+        villeLabel.textContent = 'Ville';
       }
     }
 
@@ -379,14 +425,19 @@
         hasError = true;
       }
 
-      // Validation livraison uniquement pour produits physiques
-      if (hasPhysicalItems()) {
+      // Validation livraison / facturation
+      const needsInvoice = document.getElementById('needs-invoice').checked;
+      const requireAddress = hasPhysicalItems() || needsInvoice;
+
+      if (requireAddress) {
         if (!adresse) {
           showError('adresse', true);
+          document.getElementById('adresse-error').textContent = "L'adresse est requise";
           hasError = true;
         }
         if (!ville) {
           showError('ville', true);
+          document.getElementById('ville-error').textContent = 'La ville est requise';
           hasError = true;
         }
         if (!codePostal) {
@@ -419,6 +470,7 @@
         ville,
         codePostal,
         pays,
+        needsInvoice: needsInvoice || hasPhysicalItems(),
       };
 
       const hasDigital = hasDigitalItems();
