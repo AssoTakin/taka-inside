@@ -16,23 +16,21 @@ export async function POST(req: NextRequest) {
     // ─── Mode DON (legacy / faire-un-don.html) ───
     if (amount && !items) {
       const mode = frequency === 'monthly' ? 'subscription' : 'payment';
-      const lineItems = [{
-        price_data: {
-          currency: "eur",
-          product_data: {
-            name: frequency === 'monthly' ? "Don mensuel Taka Inside" : "Don ponctuel Taka Inside",
-          },
-          unit_amount: Math.round(amount * 100),
-          ...(frequency === 'monthly' && {
-            recurring: { interval: "month" },
-          }),
-        },
-        quantity: 1,
-      }];
-
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
-        line_items: lineItems,
+        line_items: [{
+          price_data: {
+            currency: "eur",
+            product_data: {
+              name: frequency === 'monthly' ? "Don mensuel Taka Inside" : "Don ponctuel Taka Inside",
+            },
+            unit_amount: Math.round(amount * 100),
+            ...(frequency === 'monthly' && {
+              recurring: { interval: 'month' as const },
+            }),
+          },
+          quantity: 1,
+        }],
         mode: mode as "payment" | "subscription",
         success_url: successUrl || `${req.nextUrl.origin}/paiement/confirmation?status=success`,
         cancel_url: cancelUrl || `${req.nextUrl.origin}/faire-un-don.html?status=cancelled`,
