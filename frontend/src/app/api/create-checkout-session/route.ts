@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
           frequency: frequency || "one-time",
         },
       });
-      return NextResponse.json({ url: session.url });
+      return NextResponse.json({ url: session.url, sessionId: session.id, metadata: session.metadata });
     }
 
     // ─── Mode BOUTIQUE (checkout.html) ───
@@ -181,7 +181,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: session.url, sessionId: session.id, metadata: session.metadata });
   } catch (err: unknown) {
     console.error("Stripe Checkout error:", err);
     const message = err instanceof Error ? err.message : "Erreur Stripe";
