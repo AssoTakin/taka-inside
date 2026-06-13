@@ -23,13 +23,13 @@ test.describe('Parcours dons — production', () => {
 
   test('DEV-DON-PROD-002 : Montant affiché par défaut est 15 €', async ({ page }) => {
     await page.goto('/faire-un-don');
-    const montantBox = page.locator('.font-display.text-2xl.font-bold');
+    const montantBox = page.locator('#amount-display');
     await expect(montantBox).toContainText('15');
   });
 
-  test('DEV-DON-PROD-003 : Bouton "Procéder au paiement" visible et activé', async ({ page }) => {
+  test('DEV-DON-PROD-003 : Bouton "Donner" visible et activé', async ({ page }) => {
     await page.goto('/faire-un-don');
-    const btn = page.locator('button', { hasText: /Procéder au paiement/ });
+    const btn = page.locator('button', { hasText: /Donner/ });
     await expect(btn).toBeVisible();
     await expect(btn).toBeEnabled();
   });
@@ -64,8 +64,10 @@ test.describe('Parcours checkout — production', () => {
     await expect(recap).toBeVisible({ timeout: 15000 });
   });
 
-  test('DEV-CHK-PROD-002 : Checkout panier vide montre le message', async ({ page }) => {
-    await context.clearCookies();
+  test('DEV-CHK-PROD-002 : Checkout panier vide montre le message', async ({ page, context }) => {
+    await context.addInitScript(() => {
+      localStorage.removeItem('taka-cart');
+    });
     await page.goto('/checkout');
     const emptyMsg = page.locator('text=/panier est vide/i');
     await expect(emptyMsg).toBeVisible({ timeout: 10000 });

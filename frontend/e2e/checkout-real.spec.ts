@@ -8,7 +8,7 @@ test('checkout avec panier', async ({ page, context }) => {
     ]));
   });
 
-  await page.goto('https://frontend-ngodphc48-sam-takas-projects.vercel.app/checkout');
+  await page.goto('/checkout');
   
   // Attendre que le chargement disparaisse
   await page.waitForFunction(() => !document.body.innerText.includes('Chargement du panier'), { timeout: 15000 });

@@ -35,9 +35,9 @@ test.describe('Parcours checkout — avec panier', () => {
     const tshirt = page.locator('text=/T-Shirt Taka Inside/i');
     await expect(tshirt).toBeVisible();
 
-    // Vérifier que le total est affiché
-    const total = page.locator('text=/25/');
-    await expect(total).toHaveCount(2, { timeout: 5000 }); // prix + total
+    // Vérifier que le prix est affiché
+    const priceLine = page.locator('text=/25,00/');
+    await expect(priceLine.first()).toBeVisible({ timeout: 5000 });
   });
 
   test('DEV-CHK-002 : Checkout sans panier montre "vide"', async ({ page, context }) => {

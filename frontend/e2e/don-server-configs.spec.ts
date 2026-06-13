@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('dons avec configs serveur', async ({ page }) => {
-  await page.goto('https://frontend-75vay5deg-sam-takas-projects.vercel.app/faire-un-don?_cache=20250701');
+  await page.goto('/faire-un-don?_cache=20250701');
   await page.waitForTimeout(3000);
   
   const html = await page.content();

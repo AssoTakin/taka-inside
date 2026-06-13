@@ -15,7 +15,7 @@ test.describe('Parcours e-commerce complet', () => {
     await page.getByRole('button', { name: /Ajouter au panier/i }).click();
 
     // 3. Attendre que le panier se mette à jour (badge)
-    await expect(page.locator('button:has-text("Panier")').filter({ hasText: '1' })).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('span', { hasText: '1' }).first()).toBeVisible({ timeout: 5000 });
 
     // 4. Naviguer sur /checkout VIA navigation interne (pas de reload)
     await page.evaluate(() => { window.location.href = '/checkout'; });

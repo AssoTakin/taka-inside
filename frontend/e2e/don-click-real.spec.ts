@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('test clic dons alias actuel', async ({ page }) => {
-  await page.goto('https://frontend-mu-one-82.vercel.app/faire-un-don?_t=123456789');
+  await page.goto('/faire-un-don?_t=123456789');
   
   // Attendre le chargement complet
   await page.waitForSelector('button:has-text("25 €")', { timeout: 10000 });
@@ -19,7 +19,7 @@ test('test clic dons alias actuel', async ({ page }) => {
   console.log('Class after:', btnAfter);
   
   // Vérifier que le montant affiché a changé
-  const montantText = await page.locator('p.font-display.text-2xl').textContent();
+  const montantText = await page.locator('#amount-display').textContent();
   console.log('Montant affiché:', montantText);
   
   expect(montantText).toContain('25');
