@@ -55,11 +55,16 @@ async function getProducts(): Promise<Product[]> {
   return data.map((p: Record<string, unknown>) => {
     const slug = String(p.slug || p.documentId || "");
     let image = resolveImageUrl(p.image);
+    // Fallback pour KIKOKO — l'image Strapi est parfois 404
+    if (slug === "kikoko") {
+      image = "/images/kikoko-cover.jpg";
+    } else if (slug.includes("t-shirt")) {
+      image = "/images/logo-taka-inside.jpg";
+    } else if (slug.includes("ticket")) {
+      image = "/images/logo-taka-inside.jpg";
+    }
     if (!image) {
-      if (slug === "kikoko") image = "/images/kikoko-cover.jpg";
-      else if (slug.includes("t-shirt")) image = "/images/logo-taka-inside.jpg";
-      else if (slug.includes("ticket")) image = "/images/logo-taka-inside.jpg";
-      else image = "/images/logo-taka-inside.jpg";
+      image = "/images/logo-taka-inside.jpg";
     }
     return {
       id: Number(p.id) || 0,
