@@ -54,9 +54,10 @@ async function getProducts(): Promise<Product[]> {
   if (!data || !Array.isArray(data)) return [];
   return data.map((p: Record<string, unknown>) => {
     const slug = String(p.slug || p.documentId || "");
+    const nomStr = String(p.titre || p.nom || "").toLowerCase();
     let image = resolveImageUrl(p.image);
     // Fallback pour KIKOKO — l'image Strapi est parfois 404
-    if (slug === "kikoko") {
+    if (slug === "kikoko" || nomStr.includes("kikoko")) {
       image = "/images/kikoko-cover.jpg";
     } else if (slug.includes("t-shirt")) {
       image = "/images/logo-taka-inside.jpg";

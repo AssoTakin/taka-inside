@@ -57,8 +57,11 @@ async function getProduct(slug: string): Promise<Product | null> {
   const p = data[0];
   let image = resolveImageUrl(p.image);
   const slugStr = String(p.slug || "");
+  const nomStr = String(p.titre || p.nom || "").toLowerCase();
   // Fallback forcé pour KIKOKO — l'image Strapi est invalide
-  if (slugStr === "kikoko") image = KIKOKO_FALLBACK_IMAGE;
+  if (slugStr === "kikoko" || nomStr.includes("kikoko")) {
+    image = KIKOKO_FALLBACK_IMAGE;
+  }
   if (!image) {
     image = "/images/logo-taka-inside.jpg";
   }
