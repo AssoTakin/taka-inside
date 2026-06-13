@@ -45,8 +45,9 @@
     .form-group { margin-bottom: 16px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 4px; }
-    input, select { width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 1rem; outline: none; }
+    input, select { width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
     input:focus, select:focus { border-color: var(--green); }
+    input.invalid { border-color: var(--red); background-color: #FEF2F2; }
     
     .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
     .method-btn { padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB; cursor: pointer; font-size: 0.875rem; font-weight: 500; background: white; transition: all 0.2s; }
@@ -73,6 +74,16 @@
     footer p { color: #9CA3AF; font-size: 0.875rem; }
     footer a { color: #9CA3AF; text-decoration: none; }
     footer a:hover { color: var(--yellow); }
+
+    .digital-badge { display: inline-block; background: var(--green); color: white; font-size: 0.625rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 4px; text-transform: uppercase; }
+
+    .shipping-disabled { opacity: 0.5; pointer-events: none; }
+    .shipping-disabled input, .shipping-disabled select { background: #F3F4F6; }
+
+    .error-msg { color: var(--red); font-size: 0.75rem; margin-top: 4px; display: none; }
+    .error-msg.visible { display: block; }
+
+    .help-text { color: var(--gray); font-size: 0.75rem; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -99,7 +110,10 @@
     <div class="main-inner">
       <div class="grid">
         <div class="card">
-          <h2>Informations de livraison</h2>
+          <h2 id="form-title">Informations de livraison</h2>
+          <p id="digital-notice" style="display:none; font-size:0.875rem; color:var(--green); margin-bottom:12px;">
+            ✅ Livraison par email — pas besoin d'adresse postale
+          </p>
           
           <div class="form-row">
             <div class="form-group">
@@ -109,47 +123,56 @@
             <div class="form-group">
               <label>Nom *</label>
               <input type="text" id="nom" placeholder="Nom" required>
+              <span class="error-msg" id="nom-error">Le nom est obligatoire</span>
             </div>
           </div>
 
           <div class="form-group">
             <label>Email *</label>
-            <input type="email" id="email" placeholder="email@exemple.com" required>
+            <input type="email" id="email" placeholder="votre@email.com" required>
+            <span class="error-msg" id="email-error">Veuillez entrer un email valide</span>
+            <span class="help-text">Le lien de téléchargement (si digital) sera envoyé à cette adresse</span>
           </div>
 
           <div class="form-group">
             <label>Téléphone</label>
-            <input type="tel" id="telephone" placeholder="+33 6 12 34 56 78">
+            <input type="tel" id="telephone" placeholder="+33 7 56 98 74 73">
+            <span class="error-msg" id="tel-error">Format invalide — ex: +33 7 56 98 74 73</span>
           </div>
 
-          <div class="form-group">
-            <label>Adresse</label>
-            <input type="text" id="adresse" placeholder="123 rue des Arts">
-          </div>
-
-          <div class="form-row">
+          <div id="shipping-fields">
             <div class="form-group">
-              <label>Code postal</label>
-              <input type="text" id="code-postal" placeholder="75001">
+              <label id="adresse-label">Adresse</label>
+              <input type="text" id="adresse" placeholder="123 rue des Arts">
+              <span class="error-msg" id="adresse-error">L'adresse est requise pour la livraison</span>
             </div>
-            <div class="form-group">
-              <label>Ville</label>
-              <input type="text" id="ville" placeholder="Paris">
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label>Pays</label>
-            <select id="pays">
-              <option value="FR">France</option>
-              <option value="BE">Belgique</option>
-              <option value="CH">Suisse</option>
-              <option value="CA">Canada</option>
-              <option value="BJ">Bénin</option>
-              <option value="CI">Côte d'Ivoire</option>
-              <option value="TG">Togo</option>
-              <option value="OTHER">Autre</option>
-            </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Code postal</label>
+                <input type="text" id="code-postal" placeholder="75001">
+                <span class="error-msg" id="cp-error">Code postal invalide</span>
+              </div>
+              <div class="form-group">
+                <label>Ville</label>
+                <input type="text" id="ville" placeholder="Paris">
+                <span class="error-msg" id="ville-error">La ville est requise pour la livraison</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Pays</label>
+              <select id="pays">
+                <option value="FR">France</option>
+                <option value="BE">Belgique</option>
+                <option value="CH">Suisse</option>
+                <option value="CA">Canada</option>
+                <option value="BJ">Bénin</option>
+                <option value="CI">Côte d'Ivoire</option>
+                <option value="TG">Togo</option>
+                <option value="OTHER">Autre</option>
+              </select>
+            </div>
           </div>
 
           <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Méthode de paiement</h3>
@@ -206,12 +229,46 @@
       return price.toFixed(2).replace('.', ',') + ' €';
     }
 
+    function isDigital(item) {
+      return item.productType === 'digital' || item.productType === 'album' || item.productType === 'single';
+    }
+
+    function hasDigitalItems() {
+      return state.items.some(isDigital);
+    }
+
+    function hasPhysicalItems() {
+      return state.items.some(item => !isDigital(item));
+    }
+
     function loadCart() {
       try {
         const stored = localStorage.getItem('taka-cart');
         if (stored) state.items = JSON.parse(stored);
       } catch (e) { console.error('Erreur chargement panier:', e); }
       render();
+      adaptFormForDigital();
+    }
+
+    function adaptFormForDigital() {
+      const shippingFields = document.getElementById('shipping-fields');
+      const formTitle = document.getElementById('form-title');
+      const digitalNotice = document.getElementById('digital-notice');
+      const adresseLabel = document.getElementById('adresse-label');
+
+      if (!hasPhysicalItems()) {
+        // 100% digital — masquer livraison
+        shippingFields.classList.add('shipping-disabled');
+        formTitle.textContent = 'Informations';
+        digitalNotice.style.display = 'block';
+        adresseLabel.textContent = 'Adresse (optionnel)';
+      } else {
+        // Produits physiques — livraison obligatoire
+        shippingFields.classList.remove('shipping-disabled');
+        formTitle.textContent = 'Informations de livraison';
+        digitalNotice.style.display = 'none';
+        adresseLabel.textContent = 'Adresse *';
+      }
     }
 
     function render() {
@@ -231,7 +288,7 @@
           <div class="cart-item">
             ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
             <div class="cart-item-info">
-              <h4>${item.name}</h4>
+              <h4>${item.name} ${isDigital(item) ? '<span class="digital-badge">Digital</span>' : ''}</h4>
               ${item.size ? `<p>Taille: ${item.size}</p>` : ''}
               <p class="price">${item.quantity} × ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}</p>
             </div>
@@ -259,14 +316,94 @@
       render();
     }
 
+    // ===== VALIDATIONS =====
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidPhone(phone) {
+      if (!phone || phone.trim() === '') return true; // Optionnel
+      return /^[+]?[0-9\s\-\(\)]{8,}$/.test(phone.trim());
+    }
+
+    function isValidPostal(code) {
+      if (!code || code.trim() === '') return true;
+      return /^[0-9A-Za-z\s\-]{3,10}$/.test(code.trim());
+    }
+
+    function showError(fieldId, show) {
+      const el = document.getElementById(fieldId + '-error');
+      if (el) el.classList.toggle('visible', show);
+      const input = document.getElementById(fieldId);
+      if (input) input.classList.toggle('invalid', show);
+    }
+
+    function clearErrors() {
+      ['nom', 'email', 'telephone', 'adresse', 'code-postal', 'ville'].forEach(id => showError(id, false));
+    }
+
     async function handlePayment() {
       if (state.items.length === 0) return;
 
-      const email = document.getElementById('email').value;
-      const nom = document.getElementById('nom').value;
+      clearErrors();
 
-      if (!email || !nom) {
-        alert('Veuillez remplir l\'email et le nom.');
+      const email = document.getElementById('email').value.trim();
+      const nom = document.getElementById('nom').value.trim();
+      const telephone = document.getElementById('telephone').value.trim();
+      const adresse = document.getElementById('adresse').value.trim();
+      const ville = document.getElementById('ville').value.trim();
+      const codePostal = document.getElementById('code-postal').value.trim();
+      const pays = document.getElementById('pays').value;
+
+      let hasError = false;
+
+      // Validation email
+      if (!email) {
+        showError('email', true);
+        hasError = true;
+      } else if (!isValidEmail(email)) {
+        showError('email', true);
+        document.getElementById('email-error').textContent = 'Email invalide — ex: contact@takainside.org';
+        hasError = true;
+      }
+
+      // Validation nom
+      if (!nom) {
+        showError('nom', true);
+        hasError = true;
+      }
+
+      // Validation téléphone
+      if (telephone && !isValidPhone(telephone)) {
+        showError('telephone', true);
+        hasError = true;
+      }
+
+      // Validation livraison uniquement pour produits physiques
+      if (hasPhysicalItems()) {
+        if (!adresse) {
+          showError('adresse', true);
+          hasError = true;
+        }
+        if (!ville) {
+          showError('ville', true);
+          hasError = true;
+        }
+        if (!codePostal) {
+          showError('code-postal', true);
+          document.getElementById('cp-error').textContent = 'Code postal requis';
+          hasError = true;
+        } else if (!isValidPostal(codePostal)) {
+          showError('code-postal', true);
+          document.getElementById('cp-error').textContent = 'Code postal invalide';
+          hasError = true;
+        }
+      }
+
+      if (hasError) {
+        // Focus premier champ en erreur
+        const firstInvalid = document.querySelector('.invalid');
+        if (firstInvalid) firstInvalid.focus();
         return;
       }
 
@@ -276,13 +413,16 @@
       const customer = {
         email,
         nom,
-        prenom: document.getElementById('prenom').value,
-        telephone: document.getElementById('telephone').value,
-        adresse: document.getElementById('adresse').value,
-        ville: document.getElementById('ville').value,
-        codePostal: document.getElementById('code-postal').value,
-        pays: document.getElementById('pays').value,
+        prenom: document.getElementById('prenom').value.trim(),
+        telephone,
+        adresse,
+        ville,
+        codePostal,
+        pays,
       };
+
+      const hasDigital = hasDigitalItems();
+      const hasPhysical = hasPhysicalItems();
 
       try {
         if (state.method === 'stripe') {
@@ -292,12 +432,13 @@
             body: JSON.stringify({
               items: state.items,
               customer,
+              hasDigital,
+              hasPhysical,
               successUrl: window.location.origin + '/paiement/confirmation?status=success',
               cancelUrl: window.location.origin + '/checkout?status=cancelled',
             }),
           });
           
-          // Vérifier si la réponse est du JSON valide
           const contentType = res.headers.get('content-type');
           if (!contentType || !contentType.includes('application/json')) {
             const text = await res.text();
@@ -317,7 +458,6 @@
             throw new Error('URL de paiement manquante');
           }
         } else if (state.method === 'fedapay') {
-          // Calcul du total
           const total = state.items.reduce((s, i) => s + (i.price * i.quantity), 0);
           
           const res = await fetch('/api/fedapay/create-transaction', {

@@ -10,7 +10,7 @@ function getStripe(): Stripe {
 export async function POST(req: NextRequest) {
   try {
     const stripe = getStripe();
-    const { items, customer, successUrl, cancelUrl } = await req.json();
+    const { items, customer, hasDigital, hasPhysical, successUrl, cancelUrl } = await req.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Panier vide" }, { status: 400 });
@@ -33,13 +33,18 @@ export async function POST(req: NextRequest) {
       cancel_url: cancelUrl || `${req.nextUrl.origin}/checkout?status=cancelled`,
       customer_email: customer?.email,
       metadata: {
-        nom: customer?.nom || "",
-        prenom: customer?.prenom || "",
+        nomClient: `${customer?.prenom || ""} ${customer?.nom || ""}`.trim() || "Client",
+        email: customer?.email || "",
         telephone: customer?.telephone || "",
         adresse: customer?.adresse || "",
         ville: customer?.ville || "",
         code_postal: customer?.codePostal || "",
         pays: customer?.pays || "",
+        produits: JSON.stringify(items.map((item: any) => ({ name: item.name, quantity: item.quantity, price: item.price, type: item.productType || 'physique' }))),
+        hasDigital: String(hasDigital || false),
+        hasPhysical: String(hasPhysical || false),
+        type_livraison: hasPhysical ? 'physique' : 'digital',
+        cout_livraison: '0',
       },
     });
 
