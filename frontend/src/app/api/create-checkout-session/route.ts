@@ -10,8 +10,42 @@ function getStripe(): Stripe {
 export async function POST(req: NextRequest) {
   try {
     const stripe = getStripe();
-    const { items, customer, hasDigital, hasPhysical, successUrl, cancelUrl } = await req.json();
+    const body = await req.json();
+    const { items, customer, hasDigital, hasPhysical, successUrl, cancelUrl, amount, frequency } = body;
 
+    // ─── Mode DON (legacy / faire-un-don.html) ───
+    if (amount && !items) {
+      const mode = frequency === 'monthly' ? 'subscription' : 'payment';
+      const lineItems = [{
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: frequency === 'monthly' ? "Don mensuel Taka Inside" : "Don ponctuel Taka Inside",
+          },
+          unit_amount: Math.round(amount * 100),
+          ...(frequency === 'monthly' && {
+            recurring: { interval: "month" },
+          }),
+        },
+        quantity: 1,
+      }];
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: mode as "payment" | "subscription",
+        success_url: successUrl || `${req.nextUrl.origin}/paiement/confirmation?status=success`,
+        cancel_url: cancelUrl || `${req.nextUrl.origin}/faire-un-don.html?status=cancelled`,
+        metadata: {
+          type: "don",
+          amount: String(amount),
+          frequency: frequency || "one-time",
+        },
+      });
+      return NextResponse.json({ url: session.url });
+    }
+
+    // ─── Mode BOUTIQUE (checkout.html) ───
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Panier vide" }, { status: 400 });
     }

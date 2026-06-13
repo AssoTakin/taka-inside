@@ -286,10 +286,10 @@
           const res = await fetch('/api/fedapay/create-transaction', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amountEUR: final }),
+            body: JSON.stringify({ amount: final, currency: 'EUR' }),
           });
           const data = await res.json();
-          if (data.paymentUrl) window.location.href = data.paymentUrl;
+          if (data.url) window.location.href = data.url;
         }
       } catch (err) {
         alert('Erreur de paiement : ' + err.message);
