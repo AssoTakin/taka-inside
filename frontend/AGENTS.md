@@ -3,7 +3,8 @@
 > **Agent cible :** Hermès Swarm Worker (taka-inside-maintenance)  
 > **Mission :** Maintenir le site Taka Inside opérationnel, préserver les parcours critiques (dons + boutique), éviter toute contamination avec SOLID'EAT.  
 > **Dernière mise à jour :** 2026-06-08  
-> **URL Production :** https://frontend-6qawzrc4n-sam-takas-projects.vercel.app (alias officiel : https://frontend-mu-one-82.vercel.app)  
+> **URL Production :** https://frontend-9oznm1l5r-sam-takas-projects.vercel.app (alias officiel : https://takainside.org)
+> **Projet Vercel :** `frontend` (`prj_8h5X7oZAbC02gjW6nIxw6rL5bToc`)
 
 ---
 
@@ -59,7 +60,7 @@ Deux projets Vercel distincts existent. **TU NE DOIS JAMAIS** mélanger les dép
 
 | Projet | Repo GitHub | Projet Vercel | Alias principal |
 |--------|-------------|---------------|-----------------|
-| **Taka Inside** | `AssoTakin/taka-inside` | `frontend` (`prj_8h5X7oZAbC02gjW6nI...`) | https://frontend-mu-one-82.vercel.app |
+| **Taka Inside** | `AssoTakin/taka-inside` | `frontend` (`prj_8h5X7oZAbC02gjW6nI...`) | https://frontend-9oznm1l5r-sam-takas-projects.vercel.app (alias https://takainside.org) |
 | **SOLID'EAT** | `AssoTakin/solideat` | `solideat` (`prj_QPBgoDOlMaGlXQ5...`) | — |
 
 ### Procédure de sécurité avant chaque déploiement

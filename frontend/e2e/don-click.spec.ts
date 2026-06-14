@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('don page click test', async ({ page }) => {
-  await page.goto('https://frontend-99m3bln3o-sam-takas-projects.vercel.app/faire-un-don');
+  await page.goto('/faire-un-don');
   
   // Click 25€ button using Playwright real click
   await page.locator('button:has-text("25 €")').click();
@@ -13,5 +13,5 @@ test('don page click test', async ({ page }) => {
   console.log('Button class after click:', className);
   
   // Check if it has the selected styling
-  expect(className).toContain('taka-green');
+  expect(className).toContain('selected');
 });

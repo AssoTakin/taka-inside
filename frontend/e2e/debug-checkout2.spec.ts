@@ -15,7 +15,7 @@ test('debug checkout hydrate', async ({ page, context }) => {
     if (msg.type() === 'error') errors.push(msg.text());
   });
 
-  await page.goto('https://frontend-nbz7ptay0-sam-takas-projects.vercel.app/checkout');
+  await page.goto('/checkout');
   
   // Attendre 5s
   await page.waitForTimeout(5000);

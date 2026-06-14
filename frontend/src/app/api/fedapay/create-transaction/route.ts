@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         currency: { iso: finalCurrency },
         callback_url:
           callback_url ||
-          `${process.env.NEXT_PUBLIC_APP_URL || "https://frontend-mu-one-82.vercel.app"}/paiement/confirmation?method=fedapay`,
+          `${process.env.NEXT_PUBLIC_APP_URL || "https://frontend-4uiva32uq-sam-takas-projects.vercel.app"}/paiement/confirmation?method=fedapay`,
         metadata: {
           source: "taka-inside",
           customer_email: customer?.email || "",
