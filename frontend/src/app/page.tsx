@@ -151,7 +151,7 @@ export default async function HomePage() {
                     <span className="relative z-10">Écouter la radio</span>
                   </Link>
                   <a
-                    href="https://bit.ly/4uvR1sY"
+                    href="https://play.google.com/store/apps/details?id=com.radioking.mibradio"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 border-2 border-taka-black text-taka-black px-5 py-3 rounded-xl font-semibold hover:bg-taka-black hover:text-white transition-all"

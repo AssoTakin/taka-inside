@@ -53,7 +53,10 @@ export default async function ProjetPage({ params }: Props) {
 
   if (!projet) notFound();
 
-  const coverUrl = getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
+  const coverUrl =
+    normalizedSlug === "made-in-benin-radio"
+      ? "/images/madeinbeninradio-logo.png"
+      : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
   const description = String(projet.description || "");
   const objectifs = String(projet.objectifs || "");
   const titre = String(projet.titre || "");
@@ -138,7 +141,7 @@ export default async function ProjetPage({ params }: Props) {
                     Écouter la radio
                   </a>
                   <a
-                    href="https://bit.ly/4uvR1sY"
+                    href="https://play.google.com/store/apps/details?id=com.radioking.mibradio"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 border-2 border-taka-black text-taka-black px-5 py-3 rounded-xl font-semibold hover:bg-taka-black hover:text-white transition-all"
