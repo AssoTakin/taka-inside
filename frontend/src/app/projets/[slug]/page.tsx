@@ -104,11 +104,11 @@ export default async function ProjetPage({ params }: Props) {
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
               {coverUrl ? (
-                <div className="aspect-[16/10] rounded-2xl overflow-hidden shadow-xl relative">
-                  <Image src={coverUrl} alt={titre} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl relative bg-white">
+                  <Image src={coverUrl} alt={titre} fill className="object-contain" sizes="(max-width: 1024px) 100vw, 50vw" />
                 </div>
               ) : (
-                <div className="aspect-[16/10] rounded-2xl bg-taka-gray-light flex items-center justify-center">
+                <div className="aspect-[4/3] rounded-2xl bg-taka-gray-light flex items-center justify-center">
                   <span className="text-taka-gray">Image du projet</span>
                 </div>
               )}
