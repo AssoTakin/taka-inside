@@ -55,7 +55,7 @@ export default async function ProjetPage({ params }: Props) {
 
   const coverUrl =
     normalizedSlug === "made-in-benin-radio"
-      ? "/images/madeinbeninradio-logo-new.png"
+      ? "/images/madeinbeninradio-logo-new.jpg"
       : normalizedSlug === "mib-talents-a-suivre"
         ? "/images/mib-talents-logo.jpg"
         : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
