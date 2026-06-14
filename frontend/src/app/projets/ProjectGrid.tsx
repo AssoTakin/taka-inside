@@ -104,7 +104,9 @@ export default function ProjectGrid({ projets }: { projets: Projet[] }) {
               const coverUrl =
                 slug === "made-in-benin-radio"
                   ? "/images/madeinbeninradio-logo-new.jpg"
-                  : getImageUrl(projet.image_couverture || null) || "/images/logo-taka-inside.jpg";
+                  : slug === "mib-talents-a-suivre"
+                    ? "/images/mib-talents-logo.jpg"
+                    : getImageUrl(projet.image_couverture || null) || "/images/logo-taka-inside.jpg";
               const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
               const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
 

@@ -55,8 +55,10 @@ export default async function ProjetPage({ params }: Props) {
 
   const coverUrl =
     normalizedSlug === "made-in-benin-radio"
-      ? "/images/madeinbeninradio-logo.png"
-      : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
+      ? "/images/madeinbeninradio-logo-new.png"
+      : normalizedSlug === "mib-talents-a-suivre"
+        ? "/images/mib-talents-logo.jpg"
+        : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
   const description = String(projet.description || "");
   const objectifs = String(projet.objectifs || "");
   const titre = String(projet.titre || "");
