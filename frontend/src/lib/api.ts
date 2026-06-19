@@ -87,8 +87,10 @@ async function _fetchStrapiRaw(
     const apiToken = typeof window === 'undefined'
       ? (process.env.STRAPI_API_TOKEN || process.env.NEXT_PUBLIC_STRAPI_API_TOKEN)
       : process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
-    if (apiToken) {
-      headers['Authorization'] = `Bearer ${apiToken}`;
+    // Défense contre les guillemets auto-ajoutés par certains exports .env
+    const cleanToken = apiToken?.replace(/^"+|"+$/g, '').trim();
+    if (cleanToken) {
+      headers['Authorization'] = `Bearer ${cleanToken}`;
     }
 
     const res = await fetch(url, {
