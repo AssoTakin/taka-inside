@@ -46,7 +46,7 @@ Ajouter une colonne "Maintenance Taka Inside" dans le workspace Hermes Kanban av
 1. `cd /tmp/taka-inside/frontend && cat .vercel/project.json | grep projectId`
 2. `npm run build` (doit passer 0 erreur)
 3. `npx playwright test` (doit passer 10/10)
-4. `curl -s https://frontend-9oznm1l5r-sam-takas-projects.vercel.app/faire-un-don | grep -o "Procéder au paiement"`
-5. `curl -s https://frontend-9oznm1l5r-sam-takas-projects.vercel.app/checkout | grep -o "Votre panier est vide"`
+4. `curl -s https://frontend-cperbr61k-sam-takas-projects.vercel.app/faire-un-don | grep -o "Procéder au paiement"`
+5. `curl -s https://frontend-cperbr61k-sam-takas-projects.vercel.app/checkout | grep -o "Votre panier est vide"`
 
 Si l'une de ces étapes échoue → intervention immédiate requise.
