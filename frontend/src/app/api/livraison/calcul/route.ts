@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
 const strapiToken = process.env.STRAPI_API_TOKEN;
 
 // Taux de conversion FCFA → EUR

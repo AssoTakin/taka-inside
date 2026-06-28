@@ -6,7 +6,7 @@ interface OrderPageProps {
   params: Promise<{ commandeId: string }>;
 }
 
-const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 const strapiToken = process.env.STRAPI_API_TOKEN;
 
 async function fetchCommande(commandeId: string) {
