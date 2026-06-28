@@ -619,7 +619,7 @@
           isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
           break;
         case 'telephone':
-          isValid = /^[+]?[0-9\s\-\(\)\.]{8,20}$/.test(value) && value.replace(/[^0-9]/g, '').length >= 8;
+          isValid = /^\+?[\d\s\-\(\)\.]{8,20}$/.test(value) && value.replace(/[^0-9]/g, '').length >= 8;
           break;
         case 'adresse':
           if (hasPhysicalItems() || document.getElementById('needs-invoice').checked) {
@@ -679,7 +679,7 @@
     }
 
     function isValidPhone(phone) {
-      return /^[+]?[0-9\s\-\(\)\.]{8,20}$/.test(phone.trim()) && phone.replace(/[^0-9]/g, '').length >= 8;
+      return /^\+?[\d\s\-\(\)\.]{8,20}$/.test(phone.trim()) && phone.replace(/[^0-9]/g, '').length >= 8;
     }
 
     function isValidPostal(code) {

@@ -12,7 +12,7 @@ function isValidEmail(email: string): boolean {
 }
 
 function isValidPhone(phone: string): boolean {
-  return /^[+]?[0-9\s\-\(\)\.]{8,20}$/.test(phone.trim()) && phone.replace(/[^0-9]/g, '').length >= 8;
+  return /^\+?[\d\s\-\(\)\.]{8,20}$/.test(phone.trim()) && phone.replace(/[^0-9]/g, '').length >= 8;
 }
 
 function sanitizeString(str: unknown, maxLength = 200): string {
