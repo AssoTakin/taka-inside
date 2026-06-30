@@ -245,10 +245,15 @@ export default async function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projets.map((projet: Record<string, unknown>) => {
-              const coverUrl = extractUrl(projet.image_couverture);
+              const slug = String(projet.slug || '');
+              const coverUrl =
+                slug === "made-in-benin-radio"
+                  ? "/images/madeinbeninradio-logo-new.jpg"
+                  : slug === "mib-talents-a-suivre"
+                    ? "/images/mib-talents-logo.jpg"
+                    : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
               const desc = String(projet.description || '').substring(0, 120);
               const statut = String(projet.statut || '');
-              const slug = String(projet.slug || '');
               const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
               const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
               return (
@@ -256,9 +261,11 @@ export default async function HomePage() {
                   <Link href={`/projets/${slug}`} className="block">
                     <div className="aspect-[16/10] bg-taka-gray-light relative">
                       {coverUrl ? (
-                        <Image src={getImageUrl({ url: coverUrl }) || ''} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                        <Image src={coverUrl} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/20 to-taka-green/20" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/30 to-taka-green/30 flex items-center justify-center">
+                          <Image src="/images/logo-taka-inside.jpg" alt={String(projet.titre)} width={120} height={120} className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover opacity-90" />
+                        </div>
                       )}
                     </div>
                   </Link>
