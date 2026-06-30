@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/spec/v2
 
 ## [Unreleased]
 
+### Fixed
+- fix(homepage) : les 3 cartes Projets en vedette affichaient un degrade vide au lieu des visuels des projets. La homepage app/page.tsx n utilisait pas le pattern slug-based deja en place dans /projets et /projets/[slug]. Aligne sur le pattern existant. (commit 46f9fd0)
+
+### Known
+- known(ssl) : le cert SSL de takainside.org est emis par Let s Encrypt YR2 (nouvelle chaine 2024). Certains reseaux (WiFi public, proxy d entreprise, FAI) ne reconnaissent pas encore YR2 et affichent NET::ERR_CERT_AUTHORITY_INVALID. Workaround cote visiteur : 4G/5G, VPN, ou Firefox. Cf docs/RAPPORT_SSL.md pour le detail.
+
+## [Unreleased-archive]
+
 ### Added
 - `feat(devise)` : Conversion universelle FCFA → EUR via helper `formatPrice()` (taux 655.957)
 - `feat(devise)` : API Stripe reçoit montants bruts FCFA, convertit en centimes EUR (`toEURCents`)

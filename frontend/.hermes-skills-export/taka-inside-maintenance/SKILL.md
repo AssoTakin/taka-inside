@@ -179,6 +179,59 @@ Si l'utilisateur n'a pas de terminal direct mais une interface web `http://IP:PO
 >   voir `references/workspace-permissions.md` pour les solutions de synchronisation
 >   entre le filesystem root et le workspace utilisateur.
 
+
+## 🧩 Patrons de Code Etablis (a maintenir quand on touche au code)
+
+### Pattern slug-based pour les images de projets (depuis 2026-06-30)
+
+Tout composant qui affiche un projet (homepage, page projets, page detail) DOIT utiliser ce pattern :
+
+```js
+const coverUrl =
+  slug === "made-in-benin-radio"
+    ? "/images/madeinbeninradio-logo-new.jpg"
+    : slug === "mib-talents-a-suivre"
+      ? "/images/mib-talents-logo.jpg"
+      : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
+```
+
+Puis dans le rendu :
+```jsx
+<Image src={coverUrl} alt={...} fill className="object-cover" />
+```
+
+PIEGES A EVITER :
+- NE PAS faire `getImageUrl({ url: coverUrl })` (double-wrapping, l URL devient cassee)
+- NE PAS faire `extractUrl(projet.image_couverture)` puis utiliser directement (mauvais pattern)
+- NE PAS hardcoder d images dans le code metier (cf ARCHITECTURE_CMS.md)
+
+Quand tu uploades une nouvelle image dans Strapi sur le champ `image_couverture` du projet, elle aura priorite sur l image locale slug-based. Le fallback final `/images/logo-taka-inside.jpg` est la garde de securite ultime.
+
+### Si tu dois ajouter un nouveau projet avec un visuel specifique
+
+1. Placer l image dans `frontend/public/images/`
+2. Ajouter le slug dans la condition ternaire
+3. Le `slug` du projet dans Strapi DOIT correspondre exactement au slug utilise dans le pattern (kebab-case)
+
+### Bug historique a NE PAS re-creer
+
+- Bug : homepage affichait un degrade vide au lieu des visuels (3 projets vedettes concernes)
+- Cause : homepage n utilisait pas le pattern slug-based
+- Fix : commit `46f9fd0` (2026-06-30) - alignement avec le pattern deja en place dans `/projets` et `/projets/[slug]`
+
+## 🔒 SSL takainside.org - cert YR2 (depuis 2026-06-30)
+
+Le cert SSL du domain custom `takainside.org` est emis par Let s Encrypt **YR2** (nouvelle chaine 2024, Ed25519). C est plus moderne que R10/R11/R12 mais moins repandu.
+
+Si un visiteur signale une erreur `NET::ERR_CERT_AUTHORITY_INVALID` :
+- Cote serveur : tout est OK (cert valide jusqu au 11 sept 2026, signe par Let s Encrypt)
+- Cote visiteur : il est probablement sur un WiFi avec proxy SSL-inspection / FAI ancien
+- Workaround cote visiteur : 4G/5G, VPN, ou Firefox
+- NE PAS tenter de migrer le cert vers une autre CA (Vercel ne le permet pas, et YR2 est le standard moderne)
+
+Cf `/docs/RAPPORT_SSL.md` pour le detail complet.
+
+
 ## 🕐 Cron Job
 
 ```

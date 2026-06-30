@@ -54,6 +54,24 @@
 
 ---
 
+
+## 1.1 KNOWN ISSUES (à jour 2026-06-30)
+
+### SSL YR2 sur takainside.org
+Le cert SSL du domain custom `takainside.org` est émis par Let's Encrypt YR2 (nouvelle chaîne 2024). Certains réseaux (WiFi public, proxy d'entreprise, FAI anciens) ne reconnaissent pas YR2 et affichent `NET::ERR_CERT_AUTHORITY_INVALID`. Cote serveur tout est OK. Cote visiteur : 4G/5G ou VPN ou Firefox. Cf `/docs/RAPPORT_SSL.md`.
+
+### Pattern image projets vedettes
+Le composant "Projets en vedette" de la homepage (et a fortiori toute carte projet) DOIT utiliser le pattern slug-based :
+```js
+const coverUrl = slug === "made-in-benin-radio"
+  ? "/images/madeinbeninradio-logo-new.jpg"
+  : slug === "mib-talents-a-suivre"
+    ? "/images/mib-talents-logo.jpg"
+    : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
+```
+Et le rendu doit utiliser `coverUrl` directement (PAS `getImageUrl({url: coverUrl})` qui double-wrap l'URL).
+Ce pattern est déjà standardisé dans `/projets/ProjectGrid.tsx` et `/projets/[slug]/page.tsx`.
+
 ## 2. RÈGLE ABSOLUE — PAS DE CONTAMINATION CROISÉE
 
 Deux projets Vercel distincts existent. **TU NE DOIS JAMAIS** mélanger les déploiements.

@@ -188,9 +188,12 @@
 | 2026-06-04 | `e44a174` | Fiche produit SSG + liens "En savoir plus" |
 | 2026-06-04 | `dad50ed` | Images fixes + formatPrice EUR sur cartes produits |
 | 2026-06-03 | (multiples) | Streaming R2, variables d'env Vercel, fix build |
+| 2026-06-30 | `46f9fd0` | fix(homepage) Projets en vedette : pattern slug-based local image + Strapi + fallback logo (cf CHANGELOG.md) |
+| 2026-06-30 | (debug) | Investigation SSL YR2 sur takainside.org (cf docs/RAPPORT_SSL.md) |
 
 ---
 
-*Dernière MAJ : 2026-06-04*
-*URL production : https://frontend-rgnbnot1u-sam-takas-projects.vercel.app*
-*Commit actuel : `42b28d4`*
+*Dernière MAJ : 2026-06-30*
+*URL production : https://takainside.org (canonical) + https://frontend-kx2bq6oer-sam-takas-projects.vercel.app (Vercel)*
+*Commit actuel : `46f9fd0`*
+
