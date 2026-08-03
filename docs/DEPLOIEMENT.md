@@ -45,7 +45,7 @@ Tu dois avoir ou créer des comptes sur :
 
 # 2. Exécute le script de setup
 cd /root/taka-inside
-./scripts/setup-github.sh ghp_TON_TOKEN_ICI
+./scripts/setup-github.sh TOKEN_PLACEHOLDER
 
 # Le script crée le repo et push tout le code.
 # Une fois fait, supprime le token pour la sécurité.
@@ -70,12 +70,12 @@ cd /root/taka-inside
 4. Dans **Variables**, ajoute :
    ```
    DATABASE_CLIENT=postgres
-   DATABASE_URL=postgres://postgres:****@db.****.supabase.co:5432/postgres
-   JWT_SECRET=un-truc-aleatoire-de-32-caracteres
-   ADMIN_JWT_SECRET=un-autre-truc-aleatoire
-   APP_KEYS=cle1,cle2,cle3,cle4
-   API_TOKEN_SALT=un-salt-aleatoire
-   TRANSFER_TOKEN_SALT=un-autre-salt
+   DATABASE_URL=DATABASE_URL_PLACEHOLDER
+   JWT_SECRET=SECRET_PLACEHOLDER
+   ADMIN_JWT_SECRET=SECRET_PLACEHOLDER
+   APP_KEYS=KEY1,KEY2,KEY3,KEY4
+   API_TOKEN_SALT=SALT_PLACEHOLDER
+   TRANSFER_TOKEN_SALT=SALT_PLACEHOLDER
    ```
 5. Railway déploie automatiquement à chaque push sur `main`
 
@@ -89,9 +89,9 @@ cd /root/taka-inside
    ```
    NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
    NEXT_PUBLIC_SITE_URL=https://takainside.vercel.app
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-   STRIPE_SECRET_KEY=*** PAYPAL_CLIENT_ID=...
-   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_PLACEHOLDER
+   STRIPE_SECRET_KEY=SECRET_PLACEHOLDER PAYPAL_CLIENT_ID=CLIENT_ID_PLACEHOLDER
+   NEXT_PUBLIC_PAYPAL_CLIENT_ID=CLIENT_ID_PLACEHOLDER
    ```
 6. Déploie ! Vercel donne une URL `.vercel.app`
 7. Configure un domaine personnalisé si tu en as un
@@ -131,13 +131,13 @@ cd /root/taka-inside
 Dans les **Settings → Secrets → Actions** du repo GitHub, ajoute :
 
 ```
-VERCEL_TOKEN=...
-VERCEL_ORG_ID=...
-VERCEL_PROJECT_ID=...
-RAILWAY_TOKEN=...
-NEXT_PUBLIC_STRAPI_API_URL=...
-STRIPE_SECRET_KEY=...
-PAYPAL_SECRET=...
+VERCEL_TOKEN=TOKEN_PLACEHOLDER
+VERCEL_ORG_ID=ORG_ID_PLACEHOLDER
+VERCEL_PROJECT_ID=PROJECT_ID_PLACEHOLDER
+RAILWAY_TOKEN=TOKEN_PLACEHOLDER
+NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
+STRIPE_SECRET_KEY=SECRET_PLACEHOLDER
+PAYPAL_SECRET=SECRET_PLACEHOLDER
 ```
 
 > ℹ️ Les `VERCEL_ORG_ID` et `VERCEL_PROJECT_ID` se trouvent dans le fichier `.vercel/project.json` après avoir linké le projet via `vercel link`.
@@ -150,20 +150,20 @@ PAYPAL_SECRET=...
 ```
 NEXT_PUBLIC_STRAPI_API_URL=https://takainside.up.railway.app
 NEXT_PUBLIC_SITE_URL=https://takainside.vercel.app
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=*** PAYPAL_CLIENT_ID=...
-PAYPAL_SECRET=...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_PLACEHOLDER
+STRIPE_SECRET_KEY=SECRET_PLACEHOLDER PAYPAL_CLIENT_ID=CLIENT_ID_PLACEHOLDER
+PAYPAL_SECRET=SECRET_PLACEHOLDER
 ```
 
 ### Backend (Railway Variables)
 ```
 DATABASE_CLIENT=postgres
-DATABASE_URL=postgres://...
-JWT_SECRET=...
-ADMIN_JWT_SECRET=...
-APP_KEYS=...
-API_TOKEN_SALT=...
-TRANSFER_TOKEN_SALT=...
+DATABASE_URL=DATABASE_URL_PLACEHOLDER
+JWT_SECRET=SECRET_PLACEHOLDER
+ADMIN_JWT_SECRET=SECRET_PLACEHOLDER
+APP_KEYS=KEY1,KEY2,KEY3,KEY4
+API_TOKEN_SALT=SALT_PLACEHOLDER
+TRANSFER_TOKEN_SALT=SALT_PLACEHOLDER
 ```
 
 ---
