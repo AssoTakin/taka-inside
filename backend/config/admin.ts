@@ -1,7 +1,7 @@
 import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
-  path: env('ADMIN_PATH', '/taka-admin-2026'),
+  url: env('ADMIN_PATH', '/taka-admin-2026'),
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
@@ -24,4 +24,4 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
 });
 
 export default config;
-// force rebuild Wed Aug  5 09:35:00 UTC 2026
+// force rebuild Wed Aug  5 10:45:00 UTC 2026
