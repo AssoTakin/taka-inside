@@ -40,17 +40,14 @@ export const metadata: Metadata = {
 
 import CartDrawer from "@/components/ui/CartDrawer";
 import { CartProvider } from "@/contexts/CartContext";
-import PayPalProvider from "@/components/payments/PayPalProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="font-body bg-taka-cream text-taka-black antialiased">
         <CartProvider>
-          <PayPalProvider>
-            {children}
-            <CartDrawer />
-          </PayPalProvider>
+          {children}
+          <CartDrawer />
         </CartProvider>
       </body>
     </html>

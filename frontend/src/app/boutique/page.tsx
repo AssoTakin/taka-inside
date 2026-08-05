@@ -109,7 +109,7 @@ export default async function BoutiquePage() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="font-display text-2xl font-bold">Nos produits</h2>
             <div className="text-sm text-taka-gray">
-              Paiement sécurisé via <span className="font-semibold">Stripe</span> · <span className="font-semibold">PayPal</span> · <span className="font-semibold">Mobile Money</span>
+              Paiement sécurisé via <span className="font-semibold">Stripe</span> · <span className="font-semibold">Mobile Money</span>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import Stripe from "stripe";
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY manquant");
-  return new Stripe(key, { apiVersion: "2024-12-18.acacia" as any });
+  return new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
 }
 
 export async function GET(req: NextRequest) {

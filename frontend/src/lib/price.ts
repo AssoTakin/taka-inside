@@ -2,7 +2,7 @@
  * Helpers de formatage des prix — TOUT EN EUR
  * Taux fixe : 1 EUR = 655.957 FCFA (taux CFAO)
  * 
- * Règle d'or : tout est EUR dans Strapi, l'UI, Stripe, PayPal.
+ * Règle d'or : tout est EUR dans Strapi, l'UI, Stripe et FedaPay.
  * Seule FedaPay (Mobile Money) reçoit EUR converti en FCFA côté client.
  */
 
@@ -30,12 +30,4 @@ export function toStripeCents(eurAmount: number): number {
 /** FedaPay : montant EUR converti en FCFA */
 export function toFedaPayAmount(eurAmount: number): number {
   return toFCFA(eurAmount);
-}
-
-/** PayPal : montant EUR */
-export function toPayPalAmount(eurAmount: number): { value: string; currencyCode: string } {
-  return {
-    value: eurAmount.toFixed(2),
-    currencyCode: "EUR",
-  };
 }

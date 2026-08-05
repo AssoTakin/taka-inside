@@ -25,7 +25,7 @@ export default function CGVPage() {
 
             <article>
               <h2 className="font-display text-xl font-bold mb-3">2. Prix et paiement</h2>
-              <p className="text-taka-gray">Les prix sont indiqués en EUR et sont sujets à modification sans préavis. Le paiement est sécurisé via Stripe, PayPal ou Mobile Money (FedaPay). La commande est validée après confirmation du paiement.</p>
+              <p className="text-taka-gray">Les prix sont indiqués en EUR et sont sujets à modification sans préavis. Le paiement est sécurisé via Stripe ou Mobile Money (FedaPay). La commande est validée après confirmation du paiement.</p>
             </article>
 
             <article>

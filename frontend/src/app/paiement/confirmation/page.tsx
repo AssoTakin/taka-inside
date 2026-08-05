@@ -32,7 +32,24 @@ interface ServerOrderInfo {
   paymentStatus: string;
 }
 
-export default function ConfirmationPage() {
+export default function ConfirmationPageWrapper() {
+  return (
+    <Suspense fallback={
+      <SiteLayout>
+        <div className="min-h-[60vh] flex items-center justify-center bg-taka-cream py-16">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-taka-yellow mx-auto mb-4" />
+            <p className="text-taka-gray">Vérification du paiement...</p>
+          </div>
+        </div>
+      </SiteLayout>
+    }>
+      <ConfirmationPage />
+    </Suspense>
+  );
+}
+
+function ConfirmationPage() {
   return (
     <Suspense fallback={<ConfirmationLoading />}>
       <ConfirmationContent />

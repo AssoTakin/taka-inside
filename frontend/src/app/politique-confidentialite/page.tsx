@@ -20,7 +20,7 @@ export default function PolitiqueConfidentialitePage() {
           <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-8">
             <article>
               <h2 className="font-display text-xl font-bold mb-3">1. Données collectées</h2>
-              <p className="text-taka-gray">Nous collectons uniquement les données nécessaires à votre interaction avec Taka Inside : nom, email, téléphone (facultatif), et informations de paiement (gérées par Stripe/PayPal). Ces données sont transmises volontairement via nos formulaires.</p>
+              <p className="text-taka-gray">Nous collectons uniquement les données nécessaires à votre interaction avec Taka Inside : nom, email, téléphone (facultatif), et informations de paiement (gérées par Stripe et FedaPay). Ces données sont transmises volontairement via nos formulaires.</p>
             </article>
 
             <article>
@@ -40,7 +40,7 @@ export default function PolitiqueConfidentialitePage() {
 
             <article>
               <h2 className="font-display text-xl font-bold mb-3">5. Sécurité</h2>
-              <p className="text-taka-gray">Vos données sont stockées de manière sécurisée (chiffrement SSL, accès restreint). Les paiements sont traités par Stripe et PayPal ; nous ne stockons pas vos données bancaires.</p>
+              <p className="text-taka-gray">Vos données sont stockées de manière sécurisée (chiffrement SSL, accès restreint). Les paiements sont traités par Stripe et FedaPay ; nous ne stockons pas vos données bancaires.</p>
             </article>
 
             <article>
