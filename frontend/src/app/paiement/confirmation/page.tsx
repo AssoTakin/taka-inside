@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import SiteLayout from "@/components/layout/SiteLayout";
 import Link from "next/link";
 
@@ -17,28 +18,100 @@ interface OrderInfo {
   methode?: string;
 }
 
+interface ServerOrderInfo {
+  success: boolean;
+  amount: number;
+  email: string;
+  customerName?: string;
+  hasDigital: boolean;
+  hasPhysical: boolean;
+  needsInvoice?: boolean;
+  items: Array<{name: string; quantity: number; type?: string}>;
+  shipping?: { type: string; cost: number };
+  sessionId: string;
+  paymentStatus: string;
+}
+
 export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={<ConfirmationLoading />}>
+      <ConfirmationContent />
+    </Suspense>
+  );
+}
+
+function ConfirmationLoading() {
+  return (
+    <SiteLayout>
+      <div className="min-h-[60vh] flex items-center justify-center bg-taka-cream py-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-taka-yellow mx-auto mb-4" />
+          <p className="text-taka-gray">Vérification du paiement...</p>
+        </div>
+      </div>
+    </SiteLayout>
+  );
+}
+
+function ConfirmationContent() {
   const [order, setOrder] = useState<OrderInfo | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const status = searchParams.get("status");
 
   useEffect(() => {
-    const pendingOrder = localStorage.getItem('taka-pending-order');
-    
-    if (pendingOrder) {
+    async function verifyServerSide() {
+      if (!sessionId) return;
       try {
-        const parsed = JSON.parse(pendingOrder);
-        setOrder(parsed);
-        setLoading(false);
-        // On garde pending-order en backup pour rechargements
-        // localStorage.removeItem('taka-pending-order');
-        localStorage.removeItem('taka-cart');
-      } catch {
+        const res = await fetch(`/api/verify-checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "Échec de la vérification Stripe");
+        }
+        const serverOrder: ServerOrderInfo = data;
+        setOrder({
+          id: serverOrder.sessionId,
+          token: null,
+          hasDigital: serverOrder.hasDigital,
+          hasPhysical: serverOrder.hasPhysical,
+          needsInvoice: serverOrder.needsInvoice,
+          email: serverOrder.email,
+          total: serverOrder.amount,
+          items: serverOrder.items,
+          shipping: serverOrder.shipping,
+          methode: "stripe",
+        });
+        localStorage.removeItem("taka-cart");
+      } catch (err: unknown) {
+        console.error("Erreur vérification session Stripe:", err);
+        setServerError(err instanceof Error ? err.message : "Erreur inconnue");
+      } finally {
         setLoading(false);
       }
+    }
+
+    if (sessionId) {
+      verifyServerSide();
     } else {
+      const pendingOrder = localStorage.getItem("taka-pending-order");
+      if (pendingOrder) {
+        try {
+          const parsed = JSON.parse(pendingOrder);
+          setOrder(parsed);
+          localStorage.removeItem("taka-cart");
+        } catch {
+          // JSON corrompu, fallback silencieux
+        }
+      }
       setLoading(false);
     }
-  }, []);
+  }, [sessionId]);
+
+  // Gérer le paramètre status=success sans session_id : afficher un message de
+  // remerciement générique, puisque l'on n'a pas de session à vérifier.
+  const isGenericSuccess = !order && status === "success" && !serverError;
 
   if (loading) {
     return (
@@ -53,8 +126,8 @@ export default function ConfirmationPage() {
     );
   }
 
-  const digitalItems = order?.items?.filter(i => i.type === 'digital') || [];
-  const physicalItems = order?.items?.filter(i => i.type !== 'digital') || [];
+  const digitalItems = order?.items?.filter(i => i.type === "digital") || [];
+  const physicalItems = order?.items?.filter(i => i.type !== "digital") || [];
   const isMixed = (order?.hasDigital && order?.hasPhysical) || (digitalItems.length > 0 && physicalItems.length > 0);
 
   return (
@@ -68,6 +141,17 @@ export default function ConfirmationPage() {
             </svg>
           </div>
           <h1 className="font-display text-3xl font-bold mb-4">Paiement confirmé !</h1>
+
+          {serverError && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+              <p className="text-sm text-red-800">
+                ⚠️ {serverError}
+              </p>
+              <p className="text-sm text-taka-gray mt-2">
+                Vous recevrez un email de confirmation sous peu avec les détails de votre commande.
+              </p>
+            </div>
+          )}
 
           {isMixed && (
             <div className="bg-taka-blue/10 border border-taka-blue/30 rounded-xl p-6 mb-6">
@@ -109,7 +193,7 @@ export default function ConfirmationPage() {
               </p>
               {order.shipping && order.shipping.cost > 0 && (
                 <p className="text-sm text-taka-gray mt-2">
-                  Mode : {order.shipping.type} — {order.shipping.cost.toFixed(2).replace('.', ',')} €
+                  Mode : {order.shipping.type} — {order.shipping.cost.toFixed(2).replace(".", ",")} €
                 </p>
               )}
             </div>
@@ -136,7 +220,7 @@ export default function ConfirmationPage() {
           )}
 
           {/* Sans commande connue (fallback) */}
-          {!order && (
+          {(isGenericSuccess || !order) && !serverError && (
             <p className="text-taka-gray mb-8">
               Merci pour votre soutien à Taka Inside. Vous recevrez un email de confirmation sous peu avec les détails de votre commande.
             </p>
