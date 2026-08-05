@@ -1,6 +1,12 @@
 import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
+  path: env('ADMIN_PATH', '/taka-admin-2026'),
+  /**
+   * Liste des IPs autorisées à accéder au panel admin (séparées par des virgules).
+   * Exemple : "187.77.160.185, 203.0.113.42"
+   */
+  allowedIps: env('ADMIN_ALLOWED_IPS', '187.77.160.185'),
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
@@ -23,3 +29,4 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
 });
 
 export default config;
+// force rebuild Wed Aug  5 09:35:00 UTC 2026
