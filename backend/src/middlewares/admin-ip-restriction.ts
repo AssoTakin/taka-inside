@@ -7,11 +7,11 @@ import type { Core } from '@strapi/strapi';
  * L'API publique (/api/*) n'est pas touchée.
  */
 const ipRestriction = (config: any, { strapi }: { strapi: Core.Strapi }) => {
-  const allowedIps = (strapi.config.get('admin.allowedIps') as string | undefined)
-    ?.split(',')
+  const allowedIps = (process.env.ADMIN_ALLOWED_IPS || '187.77.160.185')
+    .split(',')
     .map((ip: string) => ip.trim())
-    .filter(Boolean) || [];
-  const adminPath = (strapi.config.get('admin.path') as string) || '/taka-admin-2026';
+    .filter(Boolean);
+  const adminPath = process.env.ADMIN_PATH || '/taka-admin-2026';
 
   return async (ctx: any, next: () => Promise<void>) => {
     if (!ctx.path.startsWith(adminPath)) {

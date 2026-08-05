@@ -1,7 +1,9 @@
-import { parse } from 'pg-connection-string';
+import { parse, ConnectionOptions } from 'pg-connection-string';
 
 export default ({ env }: any) => {
-  const { host, port, database, user, password } = parse(env('DATABASE_URL', ''));
+  const dbUrl = env('DATABASE_URL', '');
+  const parsed: ConnectionOptions = dbUrl ? parse(dbUrl) : ({} as any);
+  const { host, port, database, user, password } = parsed;
 
   return {
     connection: {
