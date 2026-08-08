@@ -1,10 +1,9 @@
 import type { Core } from '@strapi/strapi';
 
 /**
- * Middleware de restriction IP sur le nouveau chemin admin.
- * Seules les IPs listées dans ADMIN_ALLOWED_IPS (virgule) peuvent accéder
- * à ADMIN_PATH (/taka-admin-2026 par défaut).
- * L'API publique (/api/*) n'est pas touchée.
+ * Middleware de restriction IP sur le chemin admin Strapi.
+ * Seules les IPs listees dans ADMIN_ALLOWED_IPS (virgule) peuvent acceder
+ * a ADMIN_PATH (/taka-admin-2026 par defaut). L'API publique (/api/*) n'est pas touchee.
  */
 const ipRestriction = (config: any, { strapi }: { strapi: Core.Strapi }) => {
   const allowedIps = (process.env.ADMIN_ALLOWED_IPS || '187.77.160.185')
@@ -19,8 +18,12 @@ const ipRestriction = (config: any, { strapi }: { strapi: Core.Strapi }) => {
     }
 
     const forwarded = ctx.request.headers['x-forwarded-for'];
-    const remoteIp = (typeof forwarded === 'string' ? forwarded.split(',')[0] : ctx.request.ip)
-      ?.trim();
+    const realIp = ctx.request.headers['x-real-ip'];
+    const remoteIp = (
+      (typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined) ||
+      realIp ||
+      ctx.request.ip
+    )?.trim();
 
     strapi.log.debug(
       `[admin-ip-restriction] Request on ${adminPath} from IP: ${remoteIp} (allowed: ${allowedIps.join(', ') || 'none'})`

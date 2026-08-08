@@ -10,8 +10,8 @@ const config: Core.Config.Middlewares = [
   'strapi::body',
   'strapi::session',
   'strapi::favicon',
-  'strapi::public',
   'global::admin-ip-restriction',
+  'strapi::public',
 ];
 
 export default config;
