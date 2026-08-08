@@ -7,7 +7,7 @@ function getStripe(): Stripe {
   if (!key) {
     throw new Error("STRIPE_SECRET_KEY manquant");
   }
-  return new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
+  return new Stripe(key, { apiVersion: "2026-07-29.dahlia" });
 }
 
 export async function POST(req: NextRequest) {
