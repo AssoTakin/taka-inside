@@ -124,7 +124,7 @@ Voir `.env.example` à la racine. Les secrets incluent :
 ## 7. Sécurité
 
 - **Headers HTTP** ajoutés côté Next.js : `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`.
-- **Admin Strapi durci** : chemin personnalisé (`/taka-admin-2026`) + restriction IP en amont, désactivation de l'inscription publique.
+- **Admin Strapi partiellement durci** : chemin personnalisé (`/taka-admin-2026`) et ancien `/admin` désactivé. Le middleware global de restriction IP ne bloque pas l'admin Strapi v5 (servi en interne avant les middlewares Koa) ; une solution réseau/proxy est requise pour bloquer complètement l'accès public.
 - **Secrets** : nettoyage des placeholders de credentials dans `docs/DEPLOIEMENT.md`.
 
 ---
@@ -170,7 +170,6 @@ docker compose down
 | 2024-05-30 | Création charte graphique et UI kit |
 | 2026-07-27 | Création de ce `PROJECT.md` pour centraliser le suivi |
 | 2026-08-05 | Mise à jour sécurité, paiement et stabilisation backend |
+| 2026-08-08 | Correction deploys Vercel (rootDirectory, package-lock, pin Stripe). Investigation middleware IP Strapi : le middleware global ne bloque pas l'admin v5 ; une restriction réseau/proxy (Caddy/Nginx/Railway Policy/Cloudflare Access) est requise pour durcir l'accès admin. |
 
----
-
-*Dernière mise à jour : 2026-08-05*
+*Dernière mise à jour : 2026-08-08*
