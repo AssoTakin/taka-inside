@@ -124,7 +124,7 @@ Voir `.env.example` à la racine. Les secrets incluent :
 ## 7. Sécurité
 
 - **Headers HTTP** ajoutés côté Next.js : `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`.
-- **Admin Strapi partiellement durci** : chemin personnalisé (`/taka-admin-2026`) et ancien `/admin` désactivé. Le middleware global de restriction IP ne bloque pas l'admin Strapi v5 (servi en interne avant les middlewares Koa) ; une solution réseau/proxy est requise pour bloquer complètement l'accès public.
+- **Admin Strapi partiellement durci** : chemin personnalisé (`/taka-admin-2026`) et ancien `/admin` désactivé. Le middleware global de restriction IP ne bloque pas l'admin Strapi v5 (servi en interne avant les middlewares Koa). Une restriction réseau/proxy (Caddy/Nginx/Railway Policy/Cloudflare Access) est à implémenter plus tard pour bloquer complètement l'accès public.
 - **Secrets** : nettoyage des placeholders de credentials dans `docs/DEPLOIEMENT.md`.
 
 ---
