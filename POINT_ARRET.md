@@ -103,8 +103,8 @@ Va sur https://vercel.com/new
 3. **Root Directory** : `frontend`
 4. Dans **Environment Variables** :
    ```
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = pk_live_51L5u5cEKzPeYzUocrPhXEPQBVJR7PzEMAFEmnKAyy4cFXD7ngncM4FqLudQrngTvwFtpfKAtAx8T1VHFrB7WetEu00GIV4RVyn
-   STRIPE_SECRET_KEY = <même clé secrète que dans .env>
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = pk_live_PUBLISHABLE_KEY_PLACEHOLDER
+   STRIPE_SECRET_KEY = SECRET_PLACEHOLDER
    NEXT_PUBLIC_STRAPI_API_URL = <URL Railway backend>
    ```
 5. Clique **"Deploy"**
