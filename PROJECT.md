@@ -170,6 +170,6 @@ docker compose down
 | 2024-05-30 | Création charte graphique et UI kit |
 | 2026-07-27 | Création de ce `PROJECT.md` pour centraliser le suivi |
 | 2026-08-05 | Mise à jour sécurité, paiement et stabilisation backend |
-| 2026-08-08 | Correction deploys Vercel (rootDirectory, package-lock, pin Stripe). Investigation middleware IP Strapi : le middleware global ne bloque pas l'admin v5 ; une restriction réseau/proxy (Caddy/Nginx/Railway Policy/Cloudflare Access) est requise pour durcir l'accès admin. |
+| 2026-08-10 | Nettoyage projets Vercel parasites (`taka-inside-paypal-cleanup-v3`, `frontend-mu-one-82`), correction régression du mot de passe coming-soon, backup des configs sur le VPS. |
 
-*Dernière mise à jour : 2026-08-08*
+*Dernière mise à jour : 2026-08-10*
