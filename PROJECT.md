@@ -171,5 +171,6 @@ docker compose down
 | 2026-07-27 | Création de ce `PROJECT.md` pour centraliser le suivi |
 | 2026-08-05 | Mise à jour sécurité, paiement et stabilisation backend |
 | 2026-08-10 | Nettoyage projets Vercel parasites (`taka-inside-paypal-cleanup-v3`, `frontend-mu-one-82`), correction régression du mot de passe coming-soon, backup des configs sur le VPS. |
+| 2026-08-11 | Désactivation du middleware `admin-ip-restriction` qui bloquait l'accès admin Strapi. L'admin reste sécurisé par son chemin personnalisé `/taka-admin-2026` et les credentials forts. |
 
-*Dernière mise à jour : 2026-08-10*
+*Dernière mise à jour : 2026-08-11*
