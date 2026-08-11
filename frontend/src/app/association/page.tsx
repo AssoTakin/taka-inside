@@ -1,13 +1,41 @@
 import SiteLayout from "@/components/layout/SiteLayout";
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
+const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
+
+async function getAssociationPage() {
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/page-contents?filters[slug]=association&populate=heroImage`, {
+      headers: STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {},
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const item = json.data?.[0];
+    if (!item) return null;
+    const attrs = item.attributes || item;
+    const hero = attrs.heroImage;
+    if (hero && typeof hero === "object") {
+      const url = hero.url || hero.data?.attributes?.url;
+      if (url) return { imageUrl: url.startsWith("http") ? url : `${STRAPI_URL}${url}` };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export const metadata: Metadata = {
   title: "L'Association",
   description: "Découvrez Taka Inside, carrefour culturel et label musical associatif basé au Bénin.",
 };
 
-export default function AssociationPage() {
+export default async function AssociationPage() {
+  const pageData = await getAssociationPage();
+  const imageUrl = pageData?.imageUrl || `${STRAPI_URL}/uploads/Takin_logo_final_sans_229_7671f0d3ab.png`;
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -54,8 +82,15 @@ export default function AssociationPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
-                <span className="text-taka-gray text-sm">Image association</span>
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center relative">
+                <Image
+                  src={imageUrl}
+                  alt="Taka Inside - Logo de l'association"
+                  fill
+                  className="object-contain p-8"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
               </div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-taka-yellow rounded-2xl -z-10"></div>
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-taka-red rounded-full -z-10"></div>
