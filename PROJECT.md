@@ -172,5 +172,6 @@ docker compose down
 | 2026-08-05 | Mise à jour sécurité, paiement et stabilisation backend |
 | 2026-08-10 | Nettoyage projets Vercel parasites (`taka-inside-paypal-cleanup-v3`, `frontend-mu-one-82`), correction régression du mot de passe coming-soon, backup des configs sur le VPS. |
 | 2026-08-11 | Désactivation du middleware `admin-ip-restriction` qui bloquait l'accès admin Strapi. L'admin reste sécurisé par son chemin personnalisé `/taka-admin-2026` et les credentials forts. |
+| 2026-08-11 | Correction du workflow GitHub Actions Vercel : le secret `VERCEL_PROJECT_ID` pointait sur le projet `solideat` au lieu de `frontend`. Nettoyage du workflow en remote build (`vercel deploy --prod`), suppression des rewrites legacy et des commits de debug. Alignement Vercel ↔ GitHub `master` rétabli. |
 
 *Dernière mise à jour : 2026-08-11*
