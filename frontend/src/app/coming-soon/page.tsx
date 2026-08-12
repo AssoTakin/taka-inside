@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function ComingSoonPage() {
   const [password, setPassword] = useState("");
@@ -32,9 +33,11 @@ export default function ComingSoonPage() {
       <div className="max-w-md w-full text-center">
         {/* Logo */}
         <div className="mb-8">
-          <img
+          <Image
             src="/images/logo-taka-inside.jpg"
             alt="Taka Inside"
+            width={96}
+            height={96}
             className="h-24 w-24 rounded-full mx-auto mb-4 object-cover"
           />
           <h1 className="font-display text-3xl font-bold text-taka-black">Taka Inside</h1>

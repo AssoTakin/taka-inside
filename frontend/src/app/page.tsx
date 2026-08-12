@@ -53,6 +53,8 @@ export default async function HomePage() {
 
   const config = extractData(configRaw);
   const ctaDon = extractData(ctaRaw);
+  const headerDonLabel = (ctaDon?.label as string) || 'Faire un Don';
+  const headerDonUrl = (ctaDon?.url as string) || '/faire-un-don';
 
   const rawSocials = config?.socialLinks as unknown[] | undefined;
   const socialLinks: { platform: string; url: string }[] = [];
@@ -351,14 +353,14 @@ export default async function HomePage() {
               <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
                 <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
               </div>
-              <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Faire un Don</h3>
+              <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{headerDonLabel}</h3>
               <p className="text-taka-gray mb-8">Votre soutien permet de financer nos projets culturels, d&apos;accompagner les artistes et de promouvoir le Bénin.</p>
               <div className="flex flex-wrap gap-3 mb-8">
                 {[10, 15, 25, 50].map((amount) => (
                   <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
                 ))}
               </div>
-              <Link href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>
+              <Link href={headerDonUrl} className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>
             </div>
 
             <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">

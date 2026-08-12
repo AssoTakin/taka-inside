@@ -165,5 +165,6 @@ docker compose down
 | 2026-08-11 | Désactivation du middleware `admin-ip-restriction` qui bloquait l'accès admin Strapi. L'admin reste sécurisé par son chemin personnalisé `/taka-admin-2026` et les credentials forts. |
 | 2026-08-11 | Correction du workflow GitHub Actions Vercel : le secret `VERCEL_PROJECT_ID` pointait sur le projet `solideat` au lieu de `frontend`. Nettoyage du workflow en remote build (`vercel deploy --prod`), suppression des rewrites legacy et des commits de debug. Alignement Vercel ↔ GitHub `master` rétabli. |
 | 2026-08-12 | Optimisation homepage : parallélisation des appels Strapi, cache SSR passé à 60 s / revalidate 300 s, remplacement des balises `<a>` internes par `<Link />`. Page Association branchée sur le content-type Strapi `page-content` (slug `association`). Header : logo dynamique depuis `site-config.logo`. Cronjob healthcheck mis à jour avec sondes preview et vérification admin `/taka-admin-2026`. |
+| 2026-08-12 | Refacto qualité : utilisation systématique de `<Image />` Next.js à la place de `<img>` (Header, Footer, Coming Soon, Boutique). Logo du footer dynamique via Strapi. Nettoyage du warning `ctaDon` unused. Mise à jour du middleware avec `runtime: 'nodejs'`. Contenu texte et stats de la page Association écrits dans Strapi. |
 
 *Dernière mise à jour : 2026-08-12*

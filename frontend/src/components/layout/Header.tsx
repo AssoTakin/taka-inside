@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
 import { CartButton, MobileMenu } from './HeaderClient';
 
@@ -21,7 +22,14 @@ export default async function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logo.url ? (
-              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="h-12 w-auto object-contain" />
+              <Image
+                src={logo.url}
+                alt={logo.alt || siteName}
+                width={48}
+                height={48}
+                className="h-12 w-auto object-contain"
+                unoptimized={logo.url.startsWith('http')}
+              />
             ) : (
               <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
                 {siteName.charAt(0)}

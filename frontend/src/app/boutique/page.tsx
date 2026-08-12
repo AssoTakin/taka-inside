@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchStrapiList } from "@/lib/api";
 import { formatPrice } from "@/lib/price";
@@ -127,10 +128,13 @@ export default async function BoutiquePage() {
                 >
                   <div className="aspect-square bg-taka-gray-light flex items-center justify-center relative overflow-hidden">
                     {product.image ? (
-                      <img
+                      <Image
                         src={product.image}
                         alt={product.nom}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        unoptimized={product.image.startsWith('http')}
                       />
                     ) : (
                       <span className="text-taka-gray">Image produit</span>
