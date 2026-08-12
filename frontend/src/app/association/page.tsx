@@ -126,7 +126,7 @@ export default async function AssociationPage() {
             <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12">
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Soutenez-nous</h3>
               <p className="text-taka-gray mb-6">Votre don permet de financer nos projets culturels, d'accompagner les artistes et de promouvoir le Bénin.</p>
-              <a href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</a>
+              <Link href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>
             </div>
             <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Rejoignez-nous</h3>

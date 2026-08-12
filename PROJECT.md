@@ -49,104 +49,95 @@ Next.js 14 (frontend)
     │
     ├─→ API Routes Next.js (webhooks, emails, liens sécurisés)
     │
-    └─→ Services tiers (Stripe, PayPal, FedaPay, Cloudinary, Resend)
-                │
-                ▼
-        PostgreSQL ( données métier )
+    └─→ Stripe / FedaPay (paiements)
 ```
 
 ---
 
-## 4. États d'avancement
+## 4. Environnements
 
-### ✅ Livré / actif
-
-- [x] Choix de stack (`docs/CHOIX_STACK.md`)
-- [x] Architecture initiale (`docs/ARCHITECTURE.md`)
-- [x] Cahier des charges (`docs/CDC.md`)
-- [x] Charte graphique et UI kit (`docs/design/`)
-- [x] Wireframes (`docs/wireframes/`)
-- [x] Setup Docker Compose local
-- [x] Strapi v5 en production sur Railway
-- [x] PostgreSQL en production sur Railway
-- [x] Déploiement Vercel frontend
-- [x] SSL configuré (`docs/RAPPORT_SSL.md`)
-- [x] **Sécurité : headers HTTP durcis** (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy)
-- [x] **Sécurité : nettoyage des placeholders de secrets** dans `docs/DEPLOIEMENT.md`
-- [x] **Sécurité : durcissement de l'admin Strapi** (chemin secret personnalisé + restriction IP)
-- [x] **Paiement : confirmation Stripe côté serveur** via `/api/verify-checkout-session`
-- [x] **Paiement : suppression du code PayPal sandbox mort**
-- [x] **Backend : stabilisation du build Strapi / Railway**
-
-### 🚧 En cours / itéré régulièrement
-
-- [ ] Pages frontend selon wireframes
-- [ ] Intégration contenus Strapi ↔ Next.js
-- [ ] Page Projets (liste + filtre + détail)
-- [ ] Système de dons Stripe / FedaPay
-- [ ] E-commerce (produits, panier, checkout)
-
-### 🔴 Non démarré
-
-- [ ] Lecteur audio MIBRADIO
-- [ ] Espace bénévole
-- [ ] SEO avancé (sitemap, Open Graph, metadata)
-- [ ] Tests E2E Playwright
-- [ ] Documentation admin pour l'association
+| Environnement | URL | Notes |
+|---------------|-----|-------|
+| Production | https://takainside.org | Domaine personnalisé, mode coming-soon activable |
+| Vercel Preview | `frontend-*.vercel.app` | Deploys automatiques des branches |
+| Strapi CMS | https://taka-inside-production.up.railway.app | Chemin admin : `/taka-admin-2026` |
 
 ---
 
-## 5. URLs clés
+## 5. Sécurité & conformité
 
-| Environnement | URL |
-|---------------|-----|
-| Production frontend | https://takainside.org |
-| Production frontend (Vercel) | https://frontend-oypbrlxgx-sam-takas-projects.vercel.app |
-| Backend Strapi | https://taka-inside-production.up.railway.app |
-
----
-
-## 6. Variables d'environnement
-
-Voir `.env.example` à la racine. Les secrets incluent :
-- `STRAPI_API_TOKEN`
-- `NEXT_PUBLIC_STRAPI_URL`
-- `STRIPE_SECRET_KEY` / `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `FEDAPAY_SECRET_KEY`
-- `CLOUDINARY_*` (si activé)
-- `RESEND_API_KEY` (si activé)
-
-> **Note sécurité :** les placeholders de secrets ont été retirés de la documentation (`docs/DEPLOIEMENT.md`). Aucune valeur sensible ne doit être versionnée.
+- HTTPS forcé sur Vercel.
+- Headers de sécurité dans `frontend/next.config.ts`.
+- Données personnelles : RGPD (mentions légales + politique de confidentialité).
+- Paiements Stripe en mode **live**.
 
 ---
 
-## 7. Sécurité
+## 6. Paiements
 
-- **Headers HTTP** ajoutés côté Next.js : `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`.
-- **Admin Strapi partiellement durci** : chemin personnalisé (`/taka-admin-2026`) et ancien `/admin` désactivé. Le middleware global de restriction IP ne bloque pas l'admin Strapi v5 (servi en interne avant les middlewares Koa). Une restriction réseau/proxy (Caddy/Nginx/Railway Policy/Cloudflare Access) est à implémenter plus tard pour bloquer complètement l'accès public.
-- **Secrets** : nettoyage des placeholders de credentials dans `docs/DEPLOIEMENT.md`.
+### Parcours don
+1. Page `/faire-un-don`
+2. Stripe Checkout ou FedaPay
+3. Confirmation `/paiement/confirmation?status=success`
+4. Enregistrement webhook Stripe → création du don dans Strapi
+
+### Parcours boutique
+1. Catalogue `/boutique`
+2. Panier (`CartContext`)
+3. Checkout `/checkout`
+4. Paiement Stripe
+5. Commande créée dans Strapi via webhook
 
 ---
 
-## 8. Paiement
+## 7. Déploiement
 
-- **Stripe** est la méthode principale en production (`pk_live_*`, `sk_live_*`).
-- La page `/paiement/confirmation` vérifie le `session_id` Stripe côté serveur via `/api/verify-checkout-session` avant d'afficher le récapitulatif.
-- **FedaPay** reste utilisée pour le Mobile Money.
-- **PayPal sandbox mort retiré** : suppression des routes `/api/paypal/*`, du provider React et de la dépendance `@paypal/react-paypal-js`.
+### Frontend (Vercel)
+- Déploiement automatique via GitHub Actions : `.github/workflows/frontend.yml`
+- **Configuration actuelle** : remote build par Vercel (`vercel deploy --prod`)
+- `vercel.json` à la racine pointe vers `frontend/` (monorepo)
+- Secrets GitHub requis : `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+
+### Backend (Railway)
+- Déploiement automatique depuis `master` via Railway + GitHub
+- Variables d'environnement dans le dashboard Railway
+
+---
+
+## 8. Tests
+
+### E2E
+- Playwright : `frontend/e2e/`
+- Lancer : `cd frontend && npx playwright test`
+
+### Smoke test post-déploiement
+- https://takainside.org/ → coming-soon (si actif)
+- https://takainside.org/?preview=<PREVIEW_SECRET> → vrai site
+- https://taka-inside-production.up.railway.app/taka-admin-2026 → admin Strapi
+- `/boutique`, `/checkout`, `/faire-un-don` → 200
 
 ---
 
 ## 9. Commandes utiles
 
 ```bash
-# Dev local
-./scripts/setup-dev.sh
+# Dev frontend
+cd frontend
+npm install
+npm run dev
 
-# Docker
-docker compose up -d --build
-docker compose logs -f backend
+# Build local
+cd frontend
+npm run build
+
+# Tests E2E
+cd frontend
+npx playwright test
+
+# Dev backend (Docker)
+docker compose up -d
+
+# Arrêt
 docker compose down
 ```
 
@@ -173,5 +164,6 @@ docker compose down
 | 2026-08-10 | Nettoyage projets Vercel parasites (`taka-inside-paypal-cleanup-v3`, `frontend-mu-one-82`), correction régression du mot de passe coming-soon, backup des configs sur le VPS. |
 | 2026-08-11 | Désactivation du middleware `admin-ip-restriction` qui bloquait l'accès admin Strapi. L'admin reste sécurisé par son chemin personnalisé `/taka-admin-2026` et les credentials forts. |
 | 2026-08-11 | Correction du workflow GitHub Actions Vercel : le secret `VERCEL_PROJECT_ID` pointait sur le projet `solideat` au lieu de `frontend`. Nettoyage du workflow en remote build (`vercel deploy --prod`), suppression des rewrites legacy et des commits de debug. Alignement Vercel ↔ GitHub `master` rétabli. |
+| 2026-08-12 | Optimisation homepage : parallélisation des appels Strapi, cache SSR passé à 60 s / revalidate 300 s, remplacement des balises `<a>` internes par `<Link />`. Page Association branchée sur le content-type Strapi `page-content` (slug `association`). Header : logo dynamique depuis `site-config.logo`. Cronjob healthcheck mis à jour avec sondes preview et vérification admin `/taka-admin-2026`. |
 
-*Dernière mise à jour : 2026-08-11*
+*Dernière mise à jour : 2026-08-12*

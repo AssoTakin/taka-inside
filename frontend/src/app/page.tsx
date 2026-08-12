@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SiteLayout from "@/components/layout/SiteLayout";
-import { fetchStrapi, fetchSiteConfig, getImageUrl, extractData } from '@/lib/api';
+import { fetchStrapi, fetchSiteConfig, getImageUrl, extractData, fetchGlobalCta } from '@/lib/api';
 import { formatPrice } from '@/lib/price';
 
 function statutLabel(s: string) {
@@ -43,8 +43,16 @@ function extractUrl(image: unknown): string | null {
 }
 
 export default async function HomePage() {
-  const configRaw = await fetchSiteConfig();
+  // Paralléliser tous les appels Strapi pour réduire la latence
+  const [configRaw, projetsData, artistesData, ctaRaw] = await Promise.all([
+    fetchSiteConfig(),
+    fetchStrapi('projets?populate=*&sort=createdAt:desc&pagination[pageSize]=3'),
+    fetchStrapi('artistes?populate=*&sort=createdAt:desc&pagination[pageSize]=2'),
+    fetchGlobalCta('header-don'),
+  ]);
+
   const config = extractData(configRaw);
+  const ctaDon = extractData(ctaRaw);
 
   const rawSocials = config?.socialLinks as unknown[] | undefined;
   const socialLinks: { platform: string; url: string }[] = [];
@@ -58,9 +66,6 @@ export default async function HomePage() {
       }
     });
   }
-
-  const projetsData = await fetchStrapi('projets?populate=*&sort=createdAt:desc&pagination[pageSize]=3');
-  const artistesData = await fetchStrapi('artistes?populate=*&sort=createdAt:desc&pagination[pageSize]=2');
 
   const projetsRaw = projetsData as Record<string, unknown>[] | null;
   const artistesRaw = artistesData as Record<string, unknown>[] | null;
@@ -90,9 +95,9 @@ export default async function HomePage() {
                 Découvrir nos projets
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               </Link>
-              <a href="/faire-un-don" className="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition-all">
+              <Link href="/faire-un-don" className="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition-all">
                 Soutenir notre action
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -283,9 +288,9 @@ export default async function HomePage() {
                         En savoir plus →
                       </Link>
                       {ctaDon && (
-                        <a href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
+                        <Link href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
                           Soutenir 💛
-                        </a>
+                        </Link>
                       )}
                       {ctaBenevole && (
                         <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">
@@ -353,7 +358,7 @@ export default async function HomePage() {
                   <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
                 ))}
               </div>
-              <a href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</a>
+              <Link href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</Link>
             </div>
 
             <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
