@@ -8,21 +8,47 @@ const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
 async function getAssociationPage() {
   try {
-    const res = await fetch(`${STRAPI_URL}/api/page-contents?filters[slug]=association&populate=heroImage`, {
+    const res = await fetch(`${STRAPI_URL}/api/page-contents?filters[slug]=association&populate=*`, {
       headers: STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {},
-      next: { revalidate: 60 },
+      next: { revalidate: 300 },
     });
     if (!res.ok) return null;
     const json = await res.json();
     const item = json.data?.[0];
     if (!item) return null;
     const attrs = item.attributes || item;
+
+    // Hero image
     const hero = attrs.heroImage;
+    let imageUrl = null;
     if (hero && typeof hero === "object") {
       const url = hero.url || hero.data?.attributes?.url;
-      if (url) return { imageUrl: url.startsWith("http") ? url : `${STRAPI_URL}${url}` };
+      if (url) imageUrl = url.startsWith("http") ? url : `${STRAPI_URL}${url}`;
     }
-    return null;
+
+    // Texte dynamique depuis content blocks
+    const contentBlocks = Array.isArray(attrs.content) ? attrs.content : [];
+    const paragraphs = contentBlocks
+      .filter((b: any) => b.type === "paragraph")
+      .map((b: any) => b.children?.map((c: any) => c.text).join("") || "")
+      .filter(Boolean);
+
+    // Stats depuis formConfig
+    const rawStats = attrs.formConfig?.stats || [];
+    const stats = Array.isArray(rawStats) && rawStats.length === 4
+      ? rawStats
+      : [
+          { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
+          { number: "5+", label: "Artistes signés", color: "text-taka-red" },
+          { number: "3", label: "Années d'existence", color: "text-taka-green" },
+          { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
+        ];
+
+    return {
+      imageUrl,
+      paragraphs,
+      stats,
+    };
   } catch {
     return null;
   }
@@ -36,6 +62,16 @@ export const metadata: Metadata = {
 export default async function AssociationPage() {
   const pageData = await getAssociationPage();
   const imageUrl = pageData?.imageUrl || `${STRAPI_URL}/uploads/Takin_logo_final_sans_229_7671f0d3ab.png`;
+  const paragraphs = pageData?.paragraphs || [
+    "Taka Inside est un carrefour culturel et un label musical associatif dédié à mettre l'art au service de l'humain à travers des projets innovants et authentiques au Bénin et dans le monde.",
+    "Convaincue que les cultures sont des ponts entre les peuples, Taka Inside œuvre pour la promotion du Bénin à travers le monde. Nous croyons que l'art a le pouvoir de transformer, d'unir et d'inspirer.",
+  ];
+  const stats = pageData?.stats || [
+    { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
+    { number: "5+", label: "Artistes signés", color: "text-taka-red" },
+    { number: "3", label: "Années d'existence", color: "text-taka-green" },
+    { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
+  ];
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -58,22 +94,14 @@ export default async function AssociationPage() {
             <div>
               <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">Notre mission</p>
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-                L'Art au Service de
-                <span className="text-taka-yellow"> l'Humain</span>
+                L&apos;Art au Service de
+                <span className="text-taka-yellow"> l&apos;Humain</span>
               </h2>
-              <p className="text-taka-gray text-lg leading-relaxed mb-6">
-                Taka Inside est un carrefour culturel et un label musical associatif dédié à mettre l'art au service de l'humain à travers des projets innovants et authentiques au Bénin et dans le monde.
-              </p>
-              <p className="text-taka-gray text-lg leading-relaxed mb-6">
-                Convaincue que les cultures sont des ponts entre les peuples, Taka Inside œuvre pour la promotion du Bénin à travers le monde. Nous croyons que l'art a le pouvoir de transformer, d'unir et d'inspirer.
-              </p>
+              {paragraphs.map((text: string, idx: number) => (
+                <p key={idx} className="text-taka-gray text-lg leading-relaxed mb-6">{text}</p>
+              ))}
               <div className="grid grid-cols-2 gap-6 mb-8">
-                {[
-                  { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
-                  { number: "5+", label: "Artistes signés", color: "text-taka-red" },
-                  { number: "3", label: "Années d'existence", color: "text-taka-green" },
-                  { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
-                ].map((stat) => (
+                {stats.map((stat) => (
                   <div key={stat.label} className="bg-white rounded-xl p-4 border border-taka-gray-light">
                     <p className={`font-display text-3xl font-bold ${stat.color}`}>{stat.number}</p>
                     <p className="text-taka-gray text-sm">{stat.label}</p>
