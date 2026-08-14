@@ -1,17 +1,31 @@
 import { ImageResponse } from "next/og";
-import { fetchSiteConfig, extractData } from "@/lib/api";
 
 export const runtime = "edge";
 export const alt = "Taka Inside — L'Art au Service de l'Humain";
 export const size = { width: 1200, height: 630 };
 
 export default async function Image() {
-  const raw = await fetchSiteConfig();
-  const config = extractData(raw) || {};
-  const seo = config?.defaultSeo as Record<string, unknown> | undefined;
+  let siteName = "Taka Inside";
+  let tagline = "L'Art au Service de l'Humain";
 
-  const siteName = String(config?.siteName || "Taka Inside");
-  const tagline = String(seo?.metaDescription || config?.tagline || "L'Art au Service de l'Humain");
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
+    const token = process.env.STRAPI_API_TOKEN || process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
+    const res = await fetch(`${apiUrl}/api/site-config?populate=*`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      next: { revalidate: 300 },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      const data = json?.data;
+      const attrs = data?.attributes || data || {};
+      const seo = attrs.defaultSeo || {};
+      siteName = String(attrs.siteName || siteName);
+      tagline = String(seo.metaDescription || attrs.tagline || tagline);
+    }
+  } catch {
+    // Keep defaults
+  }
 
   // Split site name into words; highlight last word in yellow if there are at least 2 words
   const words = siteName.split(/\s+/).filter(Boolean);
