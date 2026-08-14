@@ -63,11 +63,13 @@ export default async function Footer() {
               {logo.url ? (
                 <Image
                   src={logo.url}
-                  alt={logo.alt || siteName}
+                  alt={siteName}
                   width={48}
                   height={48}
                   className="h-12 w-auto object-contain"
                   unoptimized={logo.url.startsWith('http')}
+                  priority
+                  loading="eager"
                 />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">{siteName.charAt(0)}</div>
