@@ -340,7 +340,14 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
             <div className="text-taka-gray text-lg leading-relaxed mb-6">
               <RichTextToPlain text={description} />
             </div>
-            {cta && <CtaButton cta={cta} baseClass="border-taka-black text-taka-black hover:bg-taka-black hover:text-white" />}
+            {cta && (
+              <Link
+                href={String(cta.link || '/association')}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all border-2 border-taka-black text-taka-black hover:bg-taka-black hover:text-white"
+              >
+                {String(cta.label || 'En savoir plus')}
+              </Link>
+            )}
           </div>
           <div className="relative">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
