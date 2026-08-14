@@ -19,7 +19,7 @@ export async function fetchStrapi(
 
 // Cache simple pour SSR (évite les re-fetch en boucle)
 const serverCache = new Map<string, { data: unknown; ts: number }>();
-const SSR_CACHE_MS = 10_000; // 10 secondes
+const SSR_CACHE_MS = 60_000; // 60 secondes
 
 /** Fetch a list from Strapi */
 export async function fetchStrapiList(
@@ -94,7 +94,7 @@ async function _fetchStrapiRaw(
     }
 
     const res = await fetch(url, {
-      next: { revalidate: options?.revalidate ?? 60 },
+      next: { revalidate: options?.revalidate ?? 300 },
       headers,
     });
 
@@ -174,7 +174,7 @@ export async function fetchMenuItems(position?: 'header' | 'footer' | 'both'): P
 
 /** Fetch homepage (Single Type) */
 export async function fetchHomepage(): Promise<Record<string, unknown> | null> {
-  return fetchStrapiSingle('homepage?populate[hero][populate]=*&populate[sections][populate]=*');
+  return fetchStrapiSingle('homepage?populate[hero][populate]=*&populate[sections][populate]=*&populate[seo][populate]=*');
 }
 
 /** Fetch a page content by slug */

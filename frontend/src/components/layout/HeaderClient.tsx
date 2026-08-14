@@ -35,7 +35,7 @@ export function CartButton() {
   );
 }
 
-export function MobileMenu({ menuItems, siteName }: { menuItems: Record<string, unknown>[]; siteName: string }) {
+export function MobileMenu({ menuItems, siteName, cta }: { menuItems: Record<string, unknown>[]; siteName?: string; cta?: { label: string; link: string } }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -71,11 +71,11 @@ export function MobileMenu({ menuItems, siteName }: { menuItems: Record<string, 
               </Link>
             ))}
             <Link
-              href="/faire-un-don"
+              href={cta?.link || "/faire-un-don"}
               className="block text-sm font-medium bg-taka-yellow text-taka-black px-4 py-2 rounded-lg text-center"
               onClick={() => setMobileOpen(false)}
             >
-              Faire un Don
+              {cta?.label || 'Faire un Don'}
             </Link>
           </div>
         </div>

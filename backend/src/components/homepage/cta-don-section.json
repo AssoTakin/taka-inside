@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_homepage_cta_don_sections",
+  "info": {
+    "displayName": "CTA Don Section",
+    "icon": "heart",
+    "description": "Section appel au don sur la homepage"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Faire un Don"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "amounts": {
+      "type": "string",
+      "required": true,
+      "default": "10,15,25,50",
+      "description": "Montants suggérés séparés par des virgules (en euros)"
+    },
+    "button": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "required": true
+    },
+    "backgroundColor": {
+      "type": "enumeration",
+      "enum": ["yellow", "black", "cream"],
+      "default": "yellow"
+    }
+  }
+}

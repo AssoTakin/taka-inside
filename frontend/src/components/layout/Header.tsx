@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
 import { CartButton, MobileMenu } from './HeaderClient';
 
@@ -9,9 +10,15 @@ export default async function Header() {
   const menuItems = (menuItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
   const strapiLogo = config ? extractImage(config.logo) : null;
-  // FORCER le logo local — l'URL Strapi est trop volatile
-  const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  // Utiliser le logo Strapi s'il est défini, sinon fallback local
+  const logo = strapiLogo?.url ? { url: strapiLogo.url, alt: strapiLogo.alt || 'Taka Inside' } : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
+
+  // Fetch mobile CTA (same as desktop DonCta) for mobile menu
+  const { fetchGlobalCta, extractData: extractCtaData } = await import('@/lib/api');
+  const ctaRaw = await fetchGlobalCta('header-don');
+  const cta = extractCtaData(ctaRaw);
+  const mobileCta = cta ? { label: String(cta.label || 'Faire un Don'), link: String(cta.link || '/faire-un-don') } : undefined;
 
   return (
     <header className="sticky top-0 z-50 bg-taka-black text-white">
@@ -21,7 +28,14 @@ export default async function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {logo.url ? (
-              <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="h-12 w-auto object-contain" />
+              <Image
+                src={logo.url}
+                alt={logo.alt || siteName}
+                width={48}
+                height={48}
+                className="h-12 w-auto object-contain"
+                unoptimized={logo.url.startsWith('http')}
+              />
             ) : (
               <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">
                 {siteName.charAt(0)}
@@ -54,7 +68,7 @@ export default async function Header() {
           {/* Mobile controls */}
           <div className="flex items-center gap-2 lg:hidden">
             <CartButton />
-            <MobileMenu menuItems={menuItems} siteName={siteName} />
+            <MobileMenu menuItems={menuItems} siteName={siteName} cta={mobileCta} />
           </div>
         </div>
       </div>

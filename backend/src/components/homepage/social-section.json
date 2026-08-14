@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_homepage_social_sections",
+  "info": {
+    "displayName": "Social Section",
+    "icon": "share",
+    "description": "Section réseaux sociaux sur la homepage"
+  },
+  "category": "homepage",
+  "attributes": {
+    "description": {
+      "type": "text"
+    },
+    "useGlobalSocials": {
+      "type": "boolean",
+      "default": true,
+      "description": "Utiliser les réseaux sociaux de la configuration globale du site"
+    }
+  }
+}

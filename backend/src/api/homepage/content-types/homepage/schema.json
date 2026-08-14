@@ -25,7 +25,10 @@
         "homepage.featured-projects-section",
         "homepage.featured-artists-section",
         "homepage.stats-section",
-        "homepage.newsletter-section"
+        "homepage.newsletter-section",
+        "homepage.cta-don-section",
+        "homepage.cta-benevole-section",
+        "homepage.social-section"
       ]
     },
     "seo": {

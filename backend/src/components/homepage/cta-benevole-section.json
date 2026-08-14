@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_homepage_cta_benevole_sections",
+  "info": {
+    "displayName": "CTA Bénévole Section",
+    "icon": "user",
+    "description": "Section appel au bénévolat sur la homepage"
+  },
+  "category": "homepage",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Devenir Bénévole"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "items": {
+      "type": "component",
+      "component": "homepage.stat-item",
+      "repeatable": true,
+      "max": 6,
+      "description": "Liste des missions ou avantages (value = icône emoji optionnel, label = texte)"
+    },
+    "button": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "required": true
+    }
+  }
+}

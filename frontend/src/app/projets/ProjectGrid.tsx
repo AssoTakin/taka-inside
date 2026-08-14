@@ -123,7 +123,7 @@ export default function ProjectGrid({ projets }: { projets: Projet[] }) {
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className={`${statutColor(statut)} text-white text-xs font-semibold px-3 py-1 rounded-full`}>{statutLabel(statut)}</span>
+                      <span className={`${statutColor(statut)} text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap`}>{statutLabel(statut)}</span>
                       {categorie && <span className="text-taka-gray text-xs">{categorie}</span>}
                     </div>
                     <Link href={`/projets/${slug}`} className="font-display text-xl font-bold mb-2 hover:text-taka-yellow transition-colors">

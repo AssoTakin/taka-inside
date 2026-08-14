@@ -15,7 +15,14 @@
       "type": "string",
       "required": true
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "nom"
+    },
     "genre": {
+      "type": "string"
+    },
+    "genre_musical": {
       "type": "string"
     },
     "biographie": {

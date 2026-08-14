@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ReactNode } from "react";
 import SiteLayout from "@/components/layout/SiteLayout";
-import { fetchStrapi, fetchSiteConfig, getImageUrl, extractData } from '@/lib/api';
-import { formatPrice } from '@/lib/price';
+import { fetchHomepage, fetchSiteConfig, fetchStrapiList, getImageUrl, extractData, fetchGlobalCta } from "@/lib/api";
+import { formatPrice } from "@/lib/price";
+import { Metadata } from "next";
 
 function statutLabel(s: string) {
   switch (s) {
@@ -42,9 +44,69 @@ function extractUrl(image: unknown): string | null {
   return null;
 }
 
+function RichTextToPlain({ text }: { text?: string }) {
+  if (!text) return null;
+  const plain = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return <>{plain}</>;
+}
+
+function CtaButton({ cta, baseClass }: { cta?: Record<string, unknown> | null; baseClass?: string }) {
+  if (!cta) return null;
+  const label = String(cta.label || '');
+  const link = String(cta.link || '/');
+  const isExternal = Boolean(cta.isExternal);
+  const style = String(cta.style || 'primary');
+  const icon = cta.icon ? String(cta.icon) : null;
+
+  const styleClass =
+    style === 'secondary'
+      ? 'bg-taka-yellow text-taka-black hover:bg-opacity-90'
+      : style === 'outline'
+        ? 'border border-white/30 text-white hover:bg-white/5'
+        : 'bg-taka-yellow text-taka-black hover:bg-opacity-90';
+
+  const className = `${baseClass || ''} ${styleClass} px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center gap-2`;
+
+  if (isExternal) {
+    return (
+      <a href={link} target="_blank" rel="noopener noreferrer" className={className}>
+        {label}
+        {icon && <span>{icon}</span>}
+      </a>
+    );
+  }
+  return (
+    <Link href={link} className={className}>
+      {label}
+      {icon && <span>{icon}</span>}
+    </Link>
+  );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const homepage = await fetchHomepage();
+  const data = extractData(homepage);
+  const seo = data?.seo as Record<string, unknown> | undefined;
+  return {
+    title: String(seo?.metaTitle || "Taka Inside"),
+    description: String(seo?.metaDescription || "L'Art au Service de l'Humain"),
+  };
+}
+
 export default async function HomePage() {
-  const configRaw = await fetchSiteConfig();
-  const config = extractData(configRaw);
+  const [homepage, configRaw, ctaRaw, projetsData, artistesData] = await Promise.all([
+    fetchHomepage(),
+    fetchSiteConfig(),
+    fetchGlobalCta('header-don'),
+    fetchStrapiList("projets?populate=*&sort=createdAt:desc"),
+    fetchStrapiList("artistes?populate=*&sort=createdAt:desc"),
+  ]);
+
+  const homepageData = extractData(homepage) || {};
+  const config = extractData(configRaw) || {};
+  const ctaDon = extractData(ctaRaw);
+  const headerDonLabel = (ctaDon?.label as string) || 'Faire un Don';
+  const headerDonUrl = (ctaDon?.url as string) || '/faire-un-don';
 
   const rawSocials = config?.socialLinks as unknown[] | undefined;
   const socialLinks: { platform: string; url: string }[] = [];
@@ -59,323 +121,532 @@ export default async function HomePage() {
     });
   }
 
-  const projetsData = await fetchStrapi('projets?populate=*&sort=createdAt:desc&pagination[pageSize]=3');
-  const artistesData = await fetchStrapi('artistes?populate=*&sort=createdAt:desc&pagination[pageSize]=2');
+  const projets = (projetsData && Array.isArray(projetsData) ? projetsData : []) as Record<string, unknown>[];
+  const artistes = (artistesData && Array.isArray(artistesData) ? artistesData : []) as Record<string, unknown>[];
 
-  const projetsRaw = projetsData as Record<string, unknown>[] | null;
-  const artistesRaw = artistesData as Record<string, unknown>[] | null;
+  const hero = homepageData.hero as Record<string, unknown> | undefined;
+  const sections = (homepageData.sections as Record<string, unknown>[] | undefined) || [];
 
-  const projets = projetsRaw && Array.isArray(projetsRaw) ? projetsRaw : [];
-  const artistes = artistesRaw && Array.isArray(artistesRaw) ? artistesRaw : [];
+  // Fallback hero si Strapi vide
+  const heroBadge = String(hero?.badgeText || "Association culturelle · Label musical · Bénin");
+  const heroTitle = String(hero?.title || "L'Art au Service de");
+  const heroHighlighted = String((hero?.highlightedWord as string) || "l'Humain");
+  const heroDescription = String(
+    (hero?.description as string) ||
+      "Taka Inside est un carrefour culturel et un label musical associatif dédié à mettre l'art au service de l'humain à travers des projets innovants et authentiques au Bénin et dans le monde."
+  );
+  const heroPrimaryCta = (hero?.primaryCta as Record<string, unknown>) || { label: "Découvrir nos projets", link: "/projets", style: "primary" };
+  const heroSecondaryCta = hero?.secondaryCta as Record<string, unknown> | undefined;
+  const heroBg = extractUrl(hero?.backgroundImage);
+
+  // Sections statiques par défaut si aucune section Strapi
+  const defaultSections = [
+    { __component: 'homepage.radio-section', title: 'LA Radio des Béninois', subtitle: 'Radio', description: 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.', logo: null, listenCta: { label: "Écouter la radio", link: "/projets/made-in-benin-radio", style: "primary", icon: "play" }, projectLink: '/projets/made-in-benin-radio' },
+    { __component: 'homepage.about-section', title: 'À Propos', description: 'Convaincue que les cultures sont des ponts entre les peuples...', image: null, cta: { label: 'En savoir plus', link: '/association', style: 'outline' } },
+    { __component: 'homepage.featured-projects-section', title: 'Nos projets', description: 'Projets en vedette', numberToDisplay: 3, cta: { label: 'Voir tous', link: '/projets', style: 'primary' } },
+    { __component: 'homepage.featured-artists-section', title: 'Artistes du label', description: 'Nos artistes', numberToDisplay: 2, cta: { label: 'Découvrir le label', link: '/label-musical', style: 'primary' } },
+    { __component: 'homepage.cta-don-section', title: headerDonLabel, description: 'Votre soutien permet de financer nos projets culturels...', amounts: '10,15,25,50', button: { label: 'Je fais un don', link: headerDonUrl, style: 'primary' } },
+    { __component: 'homepage.cta-benevole-section', title: 'Devenir Bénévole', description: 'Rejoignez notre communauté...', items: [], button: { label: "Rejoindre l'équipe", link: '/devenir-benevole', style: 'primary' } },
+  ];
+
+  const activeSections = sections.length > 0 ? sections : defaultSections;
 
   return (
     <SiteLayout>
       {/* Hero */}
       <section className="bg-taka-black text-white relative overflow-hidden">
+        {heroBg && (
+          <div className="absolute inset-0 -z-10">
+            <Image src={getImageUrl({ url: heroBg }) || heroBg} alt="" fill className="object-cover opacity-30" priority />
+          </div>
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-yellow/15 text-taka-yellow text-sm font-medium mb-6">
               <span className="w-2 h-2 rounded-full bg-taka-yellow animate-pulse"></span>
-              Association culturelle · Label musical · Bénin
+              {heroBadge}
             </div>
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6">
-              L&apos;Art au Service de
-              <span className="text-taka-yellow"> l&apos;Humain</span>
+              {heroTitle}
+              <span className="text-taka-yellow"> {heroHighlighted}</span>
             </h1>
             <p className="text-lg md:text-xl text-taka-gray mb-8 max-w-2xl">
-              Taka Inside est un carrefour culturel et un label musical associatif dédié à mettre l&apos;art au service de l&apos;humain à travers des projets innovants et authentiques au Bénin et dans le monde.
+              <RichTextToPlain text={heroDescription} />
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/projets" className="bg-taka-yellow text-taka-black px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-2 hover:bg-opacity-90 transition-all">
-                Découvrir nos projets
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-              </Link>
-              <a href="/faire-un-don" className="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/5 transition-all">
-                Soutenir notre action
-              </a>
+              <CtaButton cta={heroPrimaryCta} baseClass="text-lg" />
+              {heroSecondaryCta && <CtaButton cta={heroSecondaryCta} baseClass="text-lg" />}
             </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-taka-cream to-transparent"></div>
       </section>
 
-      {/* Section Made In Bénin Radio en vedette */}
-      <section className="py-12 md:py-20 bg-taka-yellow relative overflow-hidden">
-        {/* Notes de musique flottantes */}
-        <span className="absolute top-6 left-8 text-white/40 text-3xl animate-float-note" style={{ animationDelay: '0s' }}>🎵</span>
-        <span className="absolute top-12 right-20 text-white/30 text-2xl animate-float-note" style={{ animationDelay: '1s' }}>🎶</span>
-        <span className="absolute bottom-8 left-1/4 text-white/25 text-xl animate-float-note" style={{ animationDelay: '2s' }}>🎵</span>
-        <span className="absolute bottom-10 right-1/3 text-white/35 text-2xl animate-float-note" style={{ animationDelay: '0.5s' }}>🎶</span>
+      {/* Dynamic sections */}
+      {activeSections.map((section, idx) => {
+        const comp = String(section.__component || '');
+        if (comp === 'homepage.radio-section') {
+          return <RadioSection key={idx} section={section} socialLinks={socialLinks} />;
+        }
+        if (comp === 'homepage.about-section') {
+          return <AboutSection key={idx} section={section} />;
+        }
+        if (comp === 'homepage.featured-projects-section') {
+          return <FeaturedProjectsSection key={idx} section={section} projets={projets} />;
+        }
+        if (comp === 'homepage.featured-artists-section') {
+          return <FeaturedArtistsSection key={idx} section={section} artistes={artistes} />;
+        }
+        if (comp === 'homepage.stats-section') {
+          return <StatsSection key={idx} section={section} />;
+        }
+        if (comp === 'homepage.newsletter-section') {
+          return <NewsletterSection key={idx} section={section} />;
+        }
+        if (comp === 'homepage.cta-don-section') {
+          return <CtaDonSection key={idx} section={section} />;
+        }
+        if (comp === 'homepage.cta-benevole-section') {
+          return <CtaBenevoleSection key={idx} section={section} />;
+        }
+        if (comp === 'homepage.social-section') {
+          return <SocialSection key={idx} section={section} socialLinks={socialLinks} />;
+        }
+        return null;
+      })}
+    </SiteLayout>
+  );
+}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="flex items-center gap-6">
-              {/* Logo - pas de halo, fond jaune déjà vibrant */}
-              <div className="relative flex-shrink-0">
-                <Image
-                  src="/images/madeinbeninradio-logo.png"
-                  alt="Made In Bénin Radio"
-                  width={120}
-                  height={120}
-                  className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300"
-                />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-semibold mb-3">
-                  <span className="w-2 h-2 rounded-full bg-taka-red animate-pulse"></span>
-                  EN DIRECT
-                  {/* Petit égaliseur visuel */}
-                  <span className="flex items-end gap-[2px] h-3 ml-1">
-                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0s' }}></span>
-                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.15s' }}></span>
-                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.3s' }}></span>
-                    <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.45s' }}></span>
-                  </span>
-                </div>
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-taka-black mb-2">
-                  Made In <span className="text-taka-red">Bénin</span> Radio
-                </h2>
-                <p className="text-taka-black/70 mb-4">
-                  <span className="font-semibold text-taka-black">LA Radio des Béninois</span> — 100% culture béninoise, 24H/24 et 7J/7. Écoutez, partout, tout le temps.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    href="/projets/made-in-benin-radio"
-                    className="relative overflow-hidden inline-flex items-center gap-2 bg-taka-black text-white px-5 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all animate-glow"
-                  >
-                    <span className="absolute inset-0 animate-shimmer pointer-events-none"></span>
-                    <svg className="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="relative z-10">Écouter la radio</span>
-                  </Link>
-                  <a
-                    href="https://play.google.com/store/apps/details?id=com.radioking.mibradio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border-2 border-taka-black text-taka-black px-5 py-3 rounded-xl font-semibold hover:bg-taka-black hover:text-white transition-all"
-                  >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.303 2.303-8.633-8.635z"/>
-                    </svg>
-                    Télécharger l'appli
-                  </a>
-                </div>
-              </div>
-            </div>
+function SectionWrapper({ children, className, id }: { children: ReactNode; className?: string; id?: string }) {
+  return (
+    <section id={id} className={className}>
+      {children}
+    </section>
+  );
+}
 
-            <div className="flex justify-center lg:justify-end gap-3">
-              {socialLinks.length > 0 ? (
-                socialLinks.map((social) => (
-                  <a
-                    key={social.platform}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-taka-black flex items-center justify-center text-white hover:bg-white hover:text-taka-black transition-all"
-                    aria-label={social.platform}
-                  >
-                    <SocialIcon platform={social.platform} />
-                  </a>
-                ))
+function RadioSection({ section, socialLinks }: { section: Record<string, unknown>; socialLinks: { platform: string; url: string }[] }) {
+  const title = String(section.title || 'LA Radio des Béninois');
+  const subtitle = String(section.subtitle || 'Radio');
+  const description = String(section.description || 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.');
+  const logo = extractUrl(section.logo);
+  const listenCta = (section.listenCta as Record<string, unknown> | undefined) || { label: 'Écouter la radio', link: '/projets/made-in-benin-radio', style: 'primary' };
+
+  return (
+    <SectionWrapper className="py-12 md:py-20 bg-taka-yellow relative overflow-hidden">
+      <span className="absolute top-6 left-8 text-white/40 text-3xl animate-float-note" style={{ animationDelay: '0s' }}>🎵</span>
+      <span className="absolute top-12 right-20 text-white/30 text-2xl animate-float-note" style={{ animationDelay: '1s' }}>🎶</span>
+      <span className="absolute bottom-8 left-1/4 text-white/25 text-xl animate-float-note" style={{ animationDelay: '2s' }}>🎵</span>
+      <span className="absolute bottom-10 right-1/3 text-white/35 text-2xl animate-float-note" style={{ animationDelay: '0.5s' }}>🎶</span>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="flex items-center gap-6">
+            <div className="relative flex-shrink-0">
+              {logo ? (
+                <Image src={getImageUrl({ url: logo }) || logo} alt={title} width={120} height={120} className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300" />
               ) : (
-                <p className="text-taka-black/50 text-sm">Réseaux sociaux à venir...</p>
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-taka-black flex items-center justify-center text-white font-display text-xl">
+                  {title.slice(0, 2).toUpperCase()}
+                </div>
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* À Propos */}
-      <section className="py-16 md:py-24 bg-taka-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">À Propos</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-                Brassage culturel &amp; promotion du
-                <span className="text-taka-red"> Bénin</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-semibold mb-3 whitespace-nowrap">
+                <span className="w-2 h-2 rounded-full bg-taka-red animate-pulse"></span>
+                EN DIRECT
+                <span className="flex items-end gap-[2px] h-3 ml-1">
+                  <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0s' }}></span>
+                  <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.15s' }}></span>
+                  <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.3s' }}></span>
+                  <span className="w-[3px] bg-taka-red rounded-full animate-equalizer" style={{ animationDelay: '0.45s' }}></span>
+                </span>
+              </div>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-taka-black mb-2">
+                {title.includes('Bénin') ? (
+                  <>{title.split('Bénin')[0]}<span className="text-taka-red">Bénin</span>{title.split('Bénin')[1]}</>
+                ) : (
+                  title
+                )}
               </h2>
-              <p className="text-taka-gray text-lg leading-relaxed mb-6">
-                Convaincue que les cultures sont des ponts entre les peuples, Taka Inside œuvre pour la promotion du Bénin à travers le monde. Nous croyons que l&apos;art a le pouvoir de transformer, d&apos;unir et d&apos;inspirer.
+              <p className="text-taka-black/70 mb-4">
+                <span className="font-semibold text-taka-black">{subtitle}</span> — <RichTextToPlain text={description} />
               </p>
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                {[
-                  { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
-                  { number: "5+", label: "Artistes signés", color: "text-taka-red" },
-                  { number: "3", label: "Années d'existence", color: "text-taka-green" },
-                  { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
-                ].map((stat) => (
-                  <div key={stat.label} className="bg-white rounded-xl p-4 border border-taka-gray-light">
-                    <p className={`font-display text-3xl font-bold ${stat.color}`}>{stat.number}</p>
-                    <p className="text-taka-gray text-sm">{stat.label}</p>
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-3">
+                <CtaButton cta={listenCta} baseClass="relative overflow-hidden animate-glow" />
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.radioking.mibradio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border-2 border-taka-black text-taka-black px-5 py-3 rounded-xl font-semibold hover:bg-taka-black hover:text-white transition-all"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.8 8.99l-2.303 2.303-8.633-8.635z"/>
+                  </svg>
+                  Télécharger l'appli
+                </a>
               </div>
-              <Link href="/association" className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all">
-                En savoir plus
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-              </Link>
             </div>
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
+          </div>
+
+          <div className="flex justify-center lg:justify-end gap-3">
+            {socialLinks.length > 0 ? (
+              socialLinks.map((social) => (
+                <a
+                  key={social.platform}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-xl bg-taka-black flex items-center justify-center text-white hover:bg-white hover:text-taka-black transition-all"
+                  aria-label={social.platform}
+                >
+                  <SocialIcon platform={social.platform} />
+                </a>
+              ))
+            ) : (
+              <p className="text-taka-black/50 text-sm">Réseaux sociaux à venir...</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function AboutSection({ section }: { section: Record<string, unknown> }) {
+  const title = String(section.title || 'À Propos');
+  const description = String(section.description || '');
+  const image = extractUrl(section.image);
+  const cta = section.cta as Record<string, unknown> | undefined;
+
+  const titleParts = title.split(' ');
+  const lastWord = titleParts.pop() || '';
+  const titleStart = titleParts.join(' ');
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{title}</p>
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
+              {titleStart} <span className="text-taka-red">{lastWord}</span>
+            </h2>
+            <div className="text-taka-gray text-lg leading-relaxed mb-6">
+              <RichTextToPlain text={description} />
+            </div>
+            {cta && <CtaButton cta={cta} />}
+          </div>
+          <div className="relative">
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
+              {image ? (
+                <Image src={getImageUrl({ url: image }) || image} alt={title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
+              ) : (
                 <span className="text-taka-gray">Image association</span>
-              </div>
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-taka-yellow rounded-2xl -z-10"></div>
-              <div className="absolute -top-6 -right-6 w-24 h-24 bg-taka-red rounded-full -z-10"></div>
+              )}
             </div>
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-taka-yellow rounded-2xl -z-10"></div>
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-taka-red rounded-full -z-10"></div>
           </div>
         </div>
-      </section>
+      </div>
+    </SectionWrapper>
+  );
+}
 
-      {/* Projets en vedette */}
-      <section className="py-16 md:py-24 bg-taka-gray-light">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">Nos Projets</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold">Projets en <span className="text-taka-yellow">vedette</span></h2>
-            </div>
-            <Link href="/projets" className="hidden md:inline-flex items-center gap-2 text-taka-green font-semibold hover:gap-4 transition-all">
-              Voir tous
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </Link>
-          </div>
+function FeaturedProjectsSection({ section, projets }: { section: Record<string, unknown>; projets: Record<string, unknown>[] }) {
+  const title = String(section.title || 'Nos projets');
+  const description = String(section.description || '');
+  const numberToDisplay = Math.min(Math.max(Number(section.numberToDisplay) || 3, 1), 6);
+  const cta = section.cta as Record<string, unknown> | undefined;
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projets.map((projet: Record<string, unknown>) => {
-              const slug = String(projet.slug || '');
-              const coverUrl =
-                slug === "made-in-benin-radio"
-                  ? "/images/madeinbeninradio-logo-new.jpg"
-                  : slug === "mib-talents-a-suivre"
-                    ? "/images/mib-talents-logo.jpg"
-                    : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
-              const desc = String(projet.description || '').substring(0, 120);
-              const statut = String(projet.statut || '');
-              const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
-              const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
-              return (
-                <div key={String(projet.id)} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group flex flex-col">
-                  <Link href={`/projets/${slug}`} className="block">
-                    <div className="aspect-[16/10] bg-taka-gray-light relative">
-                      {coverUrl ? (
-                        <Image src={coverUrl} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/30 to-taka-green/30 flex items-center justify-center">
-                          <Image src="/images/logo-taka-inside.jpg" alt={String(projet.titre)} width={120} height={120} className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover opacity-90" />
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`${statutColor(statut)} text-white text-xs font-semibold px-3 py-1 rounded-full`}>{statutLabel(statut)}</span>
-                      <span className="text-taka-gray text-xs">{String(projet.tags || 'Projet')}</span>
-                    </div>
-                    <Link href={`/projets/${slug}`}>
-                      <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-yellow transition-colors">{String(projet.titre)}</h3>
-                    </Link>
-                    <p className="text-taka-gray text-sm mb-4 flex-1">{desc}{desc.length >= 120 ? '...' : ''}</p>
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                      <Link href={`/projets/${slug}`} className="text-sm font-medium text-taka-black hover:text-taka-yellow transition-colors">
-                        En savoir plus →
-                      </Link>
-                      {ctaDon && (
-                        <a href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
-                          Soutenir 💛
-                        </a>
-                      )}
-                      {ctaBenevole && (
-                        <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">
-                          Bénévolat 🌱
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+  const titleParts = title.split(' ');
+  const lastWord = titleParts.pop() || '';
+  const titleStart = titleParts.join(' ');
+
+  const featured = projets.slice(0, numberToDisplay);
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-gray-light">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description || 'Nos Projets'}</p>
+            <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-yellow">{lastWord}</span></h2>
           </div>
+          {cta && <CtaButton cta={cta} />}
         </div>
-      </section>
 
-      {/* Label Musical */}
-      <section className="py-16 md:py-24 bg-taka-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-taka-red font-semibold text-sm uppercase tracking-wider mb-3">Label Musical</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold">Nos <span className="text-taka-yellow">artistes</span></h2>
-            </div>
-            <Link href="/label-musical" className="hidden md:inline-flex items-center gap-2 text-taka-red font-semibold hover:gap-4 transition-all">
-              Découvrir le label
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </Link>
-          </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featured.map((projet) => {
+            const slug = String(projet.slug || '');
+            const statut = String(projet.statut || '');
+            const coverUrl =
+              slug === "made-in-benin-radio"
+                ? "/images/madeinbeninradio-logo-new.jpg"
+                : slug === "mib-talents-a-suivre"
+                  ? "/images/mib-talents-logo.jpg"
+                  : getImageUrl(projet.image_couverture as { url: string } | null) || "/images/logo-taka-inside.jpg";
+            const desc = String(projet.description || '').substring(0, 120);
+            const ctaDon = Boolean(projet.cta_don) && statut !== "termine";
+            const ctaBenevole = Boolean(projet.cta_benevole) && statut !== "termine";
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {artistes.map((artiste: Record<string, unknown>) => {
-              const photoUrl = extractUrl(artiste.photo);
-              const bio = String(artiste.biographie || '').substring(0, 140);
-              return (
-                <Link href={`/label-musical/${artiste.documentId || ''}`} key={String(artiste.id)} className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer bg-taka-black">
-                  {photoUrl && (
-                    <Image src={getImageUrl({ url: photoUrl }) || ''} alt={String(artiste.nom)} fill className="object-cover opacity-60" sizes="(max-width: 768px) 100vw, 50vw" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent z-10"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-20">
-                    <p className="text-taka-yellow font-medium text-sm mb-2">{String(artiste.genre_musical || 'Artiste')}</p>
-                    <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">{String(artiste.nom)}</h3>
-                    <p className="text-taka-gray text-sm mb-4">{bio}{bio.length >= 140 ? '...' : ''}</p>
-                    <span className="text-white/80 hover:text-taka-yellow transition-colors text-sm font-semibold">Écouter →</span>
+            return (
+              <div key={slug} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group flex flex-col">
+                <Link href={`/projets/${slug}`} className="block">
+                  <div className="aspect-[16/10] bg-taka-gray-light relative">
+                    {coverUrl ? (
+                      <Image src={coverUrl} alt={String(projet.titre)} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-taka-yellow/30 to-taka-green/30 flex items-center justify-center">
+                        <Image src="/images/logo-taka-inside.jpg" alt={String(projet.titre)} width={120} height={120} className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover opacity-90" />
+                      </div>
+                    )}
                   </div>
                 </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Don / Bénévole */}
-      <section className="py-16 md:py-24 bg-taka-yellow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12">
-              <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className={`${statutColor(statut)} text-white text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap`}>{statutLabel(statut)}</span>
+                    <span className="text-taka-gray text-xs">{String(projet.tags || 'Projet')}</span>
+                  </div>
+                  <Link href={`/projets/${slug}`}>
+                    <h3 className="font-display text-xl font-bold mb-2 group-hover:text-taka-yellow transition-colors">{String(projet.titre)}</h3>
+                  </Link>
+                  <p className="text-taka-gray text-sm mb-4 flex-1">{desc}{desc.length >= 120 ? '...' : ''}</p>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    <Link href={`/projets/${slug}`} className="text-sm font-medium text-taka-black hover:text-taka-yellow transition-colors">
+                      En savoir plus →
+                    </Link>
+                    {ctaDon && (
+                      <Link href="/faire-un-don" className="text-sm font-medium text-taka-red hover:text-taka-red/80 transition-colors">
+                        Soutenir 💛
+                      </Link>
+                    )}
+                    {ctaBenevole && (
+                      <Link href="/devenir-benevole" className="text-sm font-medium text-taka-green hover:text-taka-green/80 transition-colors">
+                        Bénévolat 🌱
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
-              <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Faire un Don</h3>
-              <p className="text-taka-gray mb-8">Votre soutien permet de financer nos projets culturels, d&apos;accompagner les artistes et de promouvoir le Bénin.</p>
+            );
+          })}
+        </div>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function FeaturedArtistsSection({ section, artistes }: { section: Record<string, unknown>; artistes: Record<string, unknown>[] }) {
+  const title = String(section.title || 'Artistes du label');
+  const description = String(section.description || '');
+  const numberToDisplay = Math.min(Math.max(Number(section.numberToDisplay) || 2, 1), 6);
+  const cta = section.cta as Record<string, unknown> | undefined;
+
+  const titleParts = title.split(' ');
+  const lastWord = titleParts.pop() || '';
+  const titleStart = titleParts.join(' ');
+
+  const featured = artistes.slice(0, numberToDisplay);
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="text-taka-red font-semibold text-sm uppercase tracking-wider mb-3">{description || 'Label Musical'}</p>
+            <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-yellow">{lastWord}</span></h2>
+          </div>
+          {cta && <CtaButton cta={cta} />}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {featured.map((artiste) => {
+            const photoUrl = extractUrl(artiste.photo);
+            const bio = String(artiste.biographie || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 140);
+            const slug = String(artiste.slug || artiste.documentId || '');
+            return (
+              <Link href={`/label-musical/${slug}`} key={String(artiste.id)} className="relative rounded-2xl overflow-hidden aspect-[4/5] group cursor-pointer bg-taka-black">
+                {photoUrl && (
+                  <Image src={getImageUrl({ url: photoUrl }) || photoUrl} alt={String(artiste.nom)} fill className="object-cover opacity-60" sizes="(max-width: 768px) 100vw, 50vw" unoptimized={photoUrl.startsWith('http')} />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-taka-black via-taka-black/50 to-transparent z-10"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-20">
+                  <p className="text-taka-yellow font-medium text-sm mb-2">{String(artiste.genre_musical || artiste.genre || 'Artiste')}</p>
+                  <h3 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">{String(artiste.nom)}</h3>
+                  <p className="text-taka-gray text-sm mb-4">{bio}{bio.length >= 140 ? '...' : ''}</p>
+                  <span className="text-white/80 hover:text-taka-yellow transition-colors text-sm font-semibold">Écouter →</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function StatsSection({ section }: { section: Record<string, unknown> }) {
+  const title = String(section.title || '');
+  const stats = (section.stats as Record<string, unknown>[] | undefined) || [];
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {title && <h2 className="font-display text-3xl md:text-4xl font-bold mb-12 text-center">{title}</h2>}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {stats.map((stat, i) => {
+            const value = String(stat.value || '0');
+            const label = String(stat.label || '');
+            const color = ['text-taka-yellow', 'text-taka-red', 'text-taka-green', 'text-taka-black'][i % 4];
+            return (
+              <div key={label + i} className="bg-white rounded-xl p-4 border border-taka-gray-light">
+                <p className={`font-display text-3xl font-bold ${color}`}>{value}</p>
+                <p className="text-taka-gray text-sm">{label}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function NewsletterSection({ section }: { section: Record<string, unknown> }) {
+  const title = String(section.title || 'Restez informés');
+  const description = String(section.description || '');
+  const placeholder = String(section.placeholderText || 'Votre email');
+  const buttonText = String(section.buttonText || "S'inscrire");
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-black text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">{title}</h2>
+        <p className="text-taka-gray mb-8 max-w-2xl mx-auto">{description}</p>
+        <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+          <input type="email" placeholder={placeholder} className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-taka-gray focus:outline-none focus:border-taka-yellow" />
+          <button type="submit" className="px-6 py-3 bg-taka-yellow text-taka-black rounded-xl font-semibold hover:bg-opacity-90 transition-all">{buttonText}</button>
+        </form>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function CtaDonSection({ section }: { section: Record<string, unknown> }) {
+  const title = String(section.title || 'Faire un Don');
+  const description = String(section.description || '');
+  const amountsStr = String(section.amounts || '10,15,25,50');
+  const amounts = amountsStr.split(',').map(a => Number(a.trim())).filter(Boolean);
+  const button = (section.button as Record<string, unknown>) || { label: 'Je fais un don', link: '/faire-un-don', style: 'primary' };
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-yellow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12">
+            <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
+              <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </div>
+            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{title}</h3>
+            <div className="text-taka-gray mb-8">
+              <RichTextToPlain text={description} />
+            </div>
+            {amounts.length > 0 && (
               <div className="flex flex-wrap gap-3 mb-8">
-                {[10, 15, 25, 50].map((amount) => (
+                {amounts.map((amount) => (
                   <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
                 ))}
               </div>
-              <a href="/faire-un-don" className="bg-taka-green text-white px-8 py-4 rounded-xl font-semibold text-center block hover:bg-opacity-90 transition-all">Je fais un don</a>
-            </div>
+            )}
+            <CtaButton cta={button} baseClass="w-full justify-center text-center block" />
+          </div>
 
-            <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
-              <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              </div>
-              <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Devenir Bénévole</h3>
-              <p className="text-taka-gray mb-8">Rejoignez notre communauté de passionnés ! Participez à l&apos;organisation d&apos;événements et à la promotion des artistes.</p>
-              <ul className="space-y-3 mb-8 text-taka-gray">
-                {["Organisation d'événements", "Communication & réseaux sociaux", "Accompagnement artistique"].map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/devenir-benevole" className="bg-taka-yellow text-taka-black px-8 py-4 rounded-xl font-semibold text-center block border-2 border-taka-black hover:bg-opacity-90 transition-all">Rejoindre l&apos;équipe</Link>
+          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
+            <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
+              <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
+            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Devenir Bénévole</h3>
+            <p className="text-taka-gray mb-8">Rejoignez notre communauté de passionnés et contribuez activement à la promotion de la culture béninoise.</p>
+            <Link href="/devenir-benevole" className="bg-taka-yellow text-taka-black px-8 py-4 rounded-xl font-semibold text-center block border-2 border-taka-black hover:bg-opacity-90 transition-all">Rejoindre l&apos;équipe</Link>
           </div>
         </div>
-      </section>
-    </SiteLayout>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function CtaBenevoleSection({ section }: { section: Record<string, unknown> }) {
+  const title = String(section.title || 'Devenir Bénévole');
+  const description = String(section.description || '');
+  const items = (section.items as Record<string, unknown>[] | undefined) || [];
+  const button = (section.button as Record<string, unknown>) || { label: "Rejoindre l'équipe", link: '/devenir-benevole', style: 'primary' };
+
+  const defaultItems = [
+    { value: '', label: "Organisation d'événements" },
+    { value: '', label: "Communication & réseaux sociaux" },
+    { value: '', label: "Accompagnement artistique" },
+  ];
+
+  const list = items.length > 0 ? items : defaultItems;
+
+  return (
+    <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
+          <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
+            <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{title}</h3>
+          <div className="text-taka-gray mb-8">
+            <RichTextToPlain text={description} />
+          </div>
+          <ul className="space-y-3 mb-8 text-taka-gray">
+            {list.map((item, i) => (
+              <li key={i} className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+                {String(item.value || '') && <span className="mr-1">{String(item.value)}</span>}
+                {String(item.label)}
+              </li>
+            ))}
+          </ul>
+          <CtaButton cta={button} baseClass="w-full justify-center text-center block" />
+        </div>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+function SocialSection({ section, socialLinks }: { section: Record<string, unknown>; socialLinks: { platform: string; url: string }[] }) {
+  const description = String(section.description || '');
+  const useGlobal = section.useGlobalSocials !== false;
+  const links = useGlobal ? socialLinks : [];
+
+  return (
+    <SectionWrapper className="py-12 bg-taka-yellow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {description && <p className="text-taka-black/70 mb-4">{description}</p>}
+        <div className="flex justify-center gap-3">
+          {links.length > 0 ? (
+            links.map((social) => (
+              <a
+                key={social.platform}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-xl bg-taka-black flex items-center justify-center text-white hover:bg-white hover:text-taka-black transition-all"
+                aria-label={social.platform}
+              >
+                <SocialIcon platform={social.platform} />
+              </a>
+            ))
+          ) : (
+            <p className="text-taka-black/50 text-sm">Réseaux sociaux à venir...</p>
+          )}
+        </div>
+      </div>
+    </SectionWrapper>
   );
 }
 
@@ -389,17 +660,7 @@ function SocialIcon({ platform }: { platform: string }) {
     ),
     instagram: (
       <svg className={size} fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-      </svg>
-    ),
-    twitter: (
-      <svg className={size} fill="currentColor" viewBox="0 0 24 24">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    ),
-    youtube: (
-      <svg className={size} fill="currentColor" viewBox="0 0 24 24">
-        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.66-.01 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
       </svg>
     ),
     tiktok: (
