@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { fetchSiteConfig, fetchMenuItems, extractData, extractImage } from '@/lib/api';
 
 export default async function Footer() {
@@ -9,8 +10,8 @@ export default async function Footer() {
   const navItems = (navItemsRaw || []).map(extractData).filter(Boolean) as Record<string, unknown>[];
 
   const strapiLogo = config ? extractImage(config.logo) : null;
-  // FORCER le logo local — l'URL Strapi est trop volatile
-  const logo = { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
+  // Utiliser le logo Strapi s'il est défini, sinon fallback local
+  const logo = strapiLogo?.url ? { url: strapiLogo.url, alt: strapiLogo.alt || 'Taka Inside' } : { url: '/images/logo-taka-inside.jpg', alt: 'Taka Inside' };
   const siteName = (config?.siteName as string) || 'Taka Inside';
   const tagline = (config?.tagline as string) || "Carrefour culturel et label musical associatif. L'art au service de l'humain.";
   // Nettoie le copyrightText pour retirer l'année déjà présente (évite le doublon 2026 2025)
@@ -60,7 +61,14 @@ export default async function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               {logo.url ? (
-                <img src={logo.url} alt={logo.alt || siteName} width={48} height={48} className="h-12 w-auto object-contain" />
+                <Image
+                  src={logo.url}
+                  alt={logo.alt || siteName}
+                  width={48}
+                  height={48}
+                  className="h-12 w-auto object-contain"
+                  unoptimized={logo.url.startsWith('http')}
+                />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-taka-yellow/20 flex items-center justify-center font-bold text-taka-yellow">{siteName.charAt(0)}</div>
               )}

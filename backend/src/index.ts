@@ -15,41 +15,52 @@ export default {
    */
   bootstrap({ strapi }: { strapi: any }) {
     console.log('[Taka Inside] Strapi bootstrap complete');
-    
+
     // Auto-configure public permissions for new content-types
+    // Safe-guarded to avoid "Update requires data" errors when no permission rows match.
     const configurePublicPermissions = async () => {
       try {
         const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
           where: { type: 'public' },
           populate: { permissions: true }
         });
-        
+
         if (!publicRole) return;
-        
+
         const ctsToEnable = [
           'api::site-config.site-config',
-          'api::homepage.homepage', 
+          'api::homepage.homepage',
           'api::menu-item.menu-item',
           'api::page-content.page-content',
           'api::legal-page.legal-page',
           'api::payment-method.payment-method',
           'api::global-cta.global-cta'
         ];
-        
+
         for (const ctUid of ctsToEnable) {
           try {
             const ctrlName = ctUid.split('.')[1];
-            
-            // Désactiver l'action fantôme
-            await strapi.db.query('plugin::users-permissions.permission').updateMany({
+            const ghostAction = `${ctUid}.${ctrlName}`;
+
+            // Only disable ghost action if rows exist
+            const ghostRows = await strapi.db.query('plugin::users-permissions.permission').findMany({
               where: {
                 role: { id: publicRole.id },
-                action: `${ctUid}.${ctrlName}`
-              },
-              data: { enabled: false }
+                action: ghostAction
+              }
             });
-            
-            // Activer find et findOne
+
+            if (ghostRows.length > 0) {
+              await strapi.db.query('plugin::users-permissions.permission').updateMany({
+                where: {
+                  role: { id: publicRole.id },
+                  action: ghostAction
+                },
+                data: { enabled: false }
+              });
+            }
+
+            // Enable find/findOne (create if missing)
             for (const action of ['find', 'findOne']) {
               const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({
                 where: {
@@ -57,12 +68,14 @@ export default {
                   action: `${ctUid}.${action}`
                 }
               });
-              
+
               if (existing) {
-                await strapi.db.query('plugin::users-permissions.permission').update({
-                  where: { id: existing.id },
-                  data: { enabled: true }
-                });
+                if (existing.enabled !== true) {
+                  await strapi.db.query('plugin::users-permissions.permission').update({
+                    where: { id: existing.id },
+                    data: { enabled: true }
+                  });
+                }
               } else {
                 await strapi.db.query('plugin::users-permissions.permission').create({
                   data: {
@@ -73,7 +86,7 @@ export default {
                 });
               }
             }
-            
+
             console.log(`[Taka Inside] Fixed permissions for ${ctUid}`);
           } catch (e) {
             console.warn(`[Taka Inside] Failed for ${ctUid}:`, e);
@@ -83,7 +96,7 @@ export default {
         console.warn('[Taka Inside] Bootstrap error:', e);
       }
     };
-    
+
     configurePublicPermissions();
   },
 };

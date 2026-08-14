@@ -37,5 +37,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Next.js 16 a déplacé les middlewares vers le runtime 'proxy' par défaut,
+  // mais la convention `middleware.ts` reste supportée via matcher + runtime.
+  runtime: 'nodejs',
   matcher: "/((?!api|_next/static|_next/image|favicon.ico|icon.png|images|coming-soon).*)",
 };

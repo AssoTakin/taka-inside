@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     let adresse = '';
     let ville = '';
     let codePostal = '';
-    let pays = sanitizeString(customer?.pays, 50) || 'FR';
+    const pays = sanitizeString(customer?.pays, 50) || 'FR';
 
     if (needsInvoice || cartHasPhysical) {
       adresse = sanitizeString(customer?.adresse, 200);

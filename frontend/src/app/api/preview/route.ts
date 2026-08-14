@@ -1,23 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-const COOKIE_NAME = "taka-preview";
-const COOKIE_VALUE = "taka2026";
+export async function POST(request: Request) {
+  try {
+    const { password } = await request.json();
+    const secret = process.env.PREVIEW_SECRET;
 
-export async function POST(req: NextRequest) {
-  const { password } = await req.json();
-  const correctPassword = process.env.PREVIEW_PASSWORD || "taka2026";
+    if (!secret || password !== secret) {
+      return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 });
+    }
 
-  if (password === correctPassword) {
     const response = NextResponse.json({ success: true });
-    response.cookies.set(COOKIE_NAME, COOKIE_VALUE, {
+    response.cookies.set("taka-preview", secret, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 30,
-      path: "/",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24, // 24h
     });
-    return response;
-  }
 
-  return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 });
+    return response;
+  } catch {
+    return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
+  }
 }

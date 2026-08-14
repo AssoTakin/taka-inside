@@ -15,6 +15,10 @@ const eslintConfig = defineConfig([
       "react-hooks/set-state-in-effect": "off",
       // Désactivé : fonctions impures dans render — usage acceptable pour valeurs par défaut
       "react-hooks/purity": "off",
+      // Desactive : balises a pour navigation interne
+      "@next/next/no-html-link-for-pages": "off",
+      // Desactive : type any dans routes API legacy
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
   // Override default ignores of eslint-config-next.
