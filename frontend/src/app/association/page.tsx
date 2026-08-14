@@ -82,8 +82,8 @@ export default async function AssociationPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/association" className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all">
-                En savoir plus
+              <Link href="/projets" className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all">
+                Découvrir nos projets
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               </Link>
             </div>
