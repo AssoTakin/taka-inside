@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
-import { fetchSiteConfig, extractData } from "@/lib/api";
+import { fetchSiteConfig, extractData, extractImage } from "@/lib/api";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -22,6 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = String(seo?.metaTitle || config.siteName || "Taka Inside");
   const description = String(seo?.metaDescription || config.tagline || "L'Art au Service de l'Humain");
 
+  // Use site-config logo or OG image for social sharing (avoids edge runtime issues with opengraph-image.tsx)
+  const ogImage = extractImage(config.ogImage || config.logo).url || "https://takainside.org/images/logo-taka-inside.jpg";
+  const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: `${title} — ${description}` }] : [];
+
   return {
     title: { template: `%s | ${title}`, default: `${title} — ${description}` },
     description,
@@ -41,8 +45,9 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "fr_FR",
       url: "https://takainside.org",
       siteName: title,
+      images,
     },
-    twitter: { card: "summary_large_image", site: "@takainsideasso" },
+    twitter: { card: "summary_large_image", site: "@takainsideasso", images },
     robots: { index: true, follow: true },
   };
 }
