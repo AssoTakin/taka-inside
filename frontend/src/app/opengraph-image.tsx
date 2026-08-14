@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
+export const contentType = "image/png";
 export const alt = "Taka Inside — L'Art au Service de l'Humain";
 export const size = { width: 1200, height: 630 };
 
