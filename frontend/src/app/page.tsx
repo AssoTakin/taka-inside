@@ -146,7 +146,6 @@ export default async function HomePage() {
     { __component: 'homepage.featured-projects-section', title: 'Nos projets', description: 'Projets en vedette', numberToDisplay: 3, cta: { label: 'Voir tous', link: '/projets', style: 'primary' } },
     { __component: 'homepage.featured-artists-section', title: 'Artistes du label', description: 'Nos artistes', numberToDisplay: 2, cta: { label: 'Découvrir le label', link: '/label-musical', style: 'primary' } },
     { __component: 'homepage.cta-don-section', title: headerDonLabel, description: 'Votre soutien permet de financer nos projets culturels...', amounts: '10,15,25,50', button: { label: 'Je fais un don', link: headerDonUrl, style: 'primary' } },
-    { __component: 'homepage.cta-benevole-section', title: 'Devenir Bénévole', description: 'Rejoignez notre communauté...', items: [], button: { label: "Rejoindre l'équipe", link: '/devenir-benevole', style: 'primary' } },
   ];
 
   const activeSections = sections.length > 0 ? sections : defaultSections;
