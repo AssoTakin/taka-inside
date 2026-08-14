@@ -334,7 +334,13 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-              <span className="text-taka-green">À</span> <span className="text-taka-red">Propos</span>
+              {title.split(' ').length > 1 ? (
+                <>
+                  {title.split(' ').slice(0, -1).join(' ')} <span className="text-taka-red">{title.split(' ').pop()}</span>
+                </>
+              ) : (
+                <span className="text-taka-black">{title}</span>
+              )}
             </h2>
             <div className="text-taka-gray text-lg leading-relaxed mb-6">
               <RichTextToPlain text={description} />
