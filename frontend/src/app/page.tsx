@@ -141,8 +141,8 @@ export default async function HomePage() {
 
   // Sections statiques par défaut si aucune section Strapi
   const defaultSections = [
-    { __component: 'homepage.radio-section', title: 'LA Radio des Béninois', subtitle: 'Radio', description: 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.', logo: null, listenCta: { label: "Écouter la radio", link: "/projets/made-in-benin-radio", style: "primary", icon: "play" }, projectLink: '/projets/made-in-benin-radio' },
-    { __component: 'homepage.about-section', title: 'À Propos', description: 'Convaincue que les cultures sont des ponts entre les peuples...', image: null, cta: { label: 'En savoir plus', link: '/association', style: 'outline' } },
+    { __component: 'homepage.radio-section', title: 'LA Radio des Béninois', subtitle: 'Radio', description: 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.', logo: '/images/madeinbeninradio-logo-new.jpg', listenCta: { label: "Écouter la radio", link: "/projets/made-in-benin-radio", style: "primary", icon: "play" }, projectLink: '/projets/made-in-benin-radio' },
+    { __component: 'homepage.about-section', title: 'À Propos', description: 'Convaincue que les cultures sont des ponts entre les peuples...', image: '/images/logo-taka-inside.jpg', cta: { label: 'En savoir plus', link: '/association', style: 'outline' } },
     { __component: 'homepage.featured-projects-section', title: 'Nos projets', description: 'Projets en vedette', numberToDisplay: 3, cta: { label: 'Voir tous', link: '/projets', style: 'primary' } },
     { __component: 'homepage.featured-artists-section', title: 'Artistes du label', description: 'Nos artistes', numberToDisplay: 2, cta: { label: 'Découvrir le label', link: '/label-musical', style: 'primary' } },
     { __component: 'homepage.cta-don-section', title: headerDonLabel, description: 'Votre soutien permet de financer nos projets culturels...', amounts: '10,15,25,50', button: { label: 'Je fais un don', link: headerDonUrl, style: 'primary' } },
@@ -333,9 +333,8 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{title}</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-              {titleStart} <span className="text-taka-red">{lastWord}</span>
+              <span className="text-taka-green">À</span> <span className="text-taka-red">Propos</span>
             </h2>
             <div className="text-taka-gray text-lg leading-relaxed mb-6">
               <RichTextToPlain text={description} />
@@ -343,9 +342,12 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
             {cta && (
               <Link
                 href={String(cta.link || '/association')}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all border-2 border-taka-black text-taka-black hover:bg-taka-black hover:text-white"
+                className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all group"
               >
                 {String(cta.label || 'En savoir plus')}
+                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
               </Link>
             )}
           </div>
