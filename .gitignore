@@ -49,3 +49,4 @@ backend/.strapi/client/
 frontend/test-results/
 .vercel/
 .vercel
+__pycache__/

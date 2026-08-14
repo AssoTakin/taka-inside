@@ -2,76 +2,50 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { fetchPageContent, extractData } from "@/lib/api";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
-const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
-
-async function getAssociationPage() {
-  try {
-    const res = await fetch(`${STRAPI_URL}/api/page-contents?filters[slug]=association&populate=*`, {
-      headers: STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {},
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
-    const item = json.data?.[0];
-    if (!item) return null;
-    const attrs = item.attributes || item;
-
-    // Hero image
-    const hero = attrs.heroImage;
-    let imageUrl = null;
-    if (hero && typeof hero === "object") {
-      const url = hero.url || hero.data?.attributes?.url;
-      if (url) imageUrl = url.startsWith("http") ? url : `${STRAPI_URL}${url}`;
-    }
-
-    // Texte dynamique depuis content blocks
-    const contentBlocks = Array.isArray(attrs.content) ? attrs.content : [];
-    const paragraphs = contentBlocks
-      .filter((b: any) => b.type === "paragraph")
-      .map((b: any) => b.children?.map((c: any) => c.text).join("") || "")
-      .filter(Boolean);
-
-    // Stats depuis formConfig
-    const rawStats = attrs.formConfig?.stats || [];
-    const stats = Array.isArray(rawStats) && rawStats.length === 4
-      ? rawStats
-      : [
-          { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
-          { number: "5+", label: "Artistes signés", color: "text-taka-red" },
-          { number: "3", label: "Années d'existence", color: "text-taka-green" },
-          { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
-        ];
-
-    return {
-      imageUrl,
-      paragraphs,
-      stats,
-    };
-  } catch {
-    return null;
-  }
+function blocksToText(blocks: unknown): string[] {
+  if (!Array.isArray(blocks)) return [];
+  return blocks
+    .filter((b: any) => b.type === "paragraph")
+    .map((b: any) => b.children?.map((c: any) => c.text).join(""))
+    .filter(Boolean);
 }
 
-export const metadata: Metadata = {
-  title: "L'Association",
-  description: "Découvrez Taka Inside, carrefour culturel et label musical associatif basé au Bénin.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const raw = await fetchPageContent("association");
+  const data = extractData(raw);
+  const seo = data?.seo as Record<string, unknown> | undefined;
+  return {
+    title: String(seo?.metaTitle || "L'Association"),
+    description: String(seo?.metaDescription || "Découvrez Taka Inside."),
+  };
+}
 
 export default async function AssociationPage() {
-  const pageData = await getAssociationPage();
-  const imageUrl = pageData?.imageUrl || `${STRAPI_URL}/uploads/Takin_logo_final_sans_229_7671f0d3ab.png`;
-  const paragraphs = pageData?.paragraphs || [
-    "Taka Inside est un carrefour culturel et un label musical associatif dédié à mettre l'art au service de l'humain à travers des projets innovants et authentiques au Bénin et dans le monde.",
-    "Convaincue que les cultures sont des ponts entre les peuples, Taka Inside œuvre pour la promotion du Bénin à travers le monde. Nous croyons que l'art a le pouvoir de transformer, d'unir et d'inspirer.",
-  ];
-  const stats = pageData?.stats || [
-    { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
-    { number: "5+", label: "Artistes signés", color: "text-taka-red" },
-    { number: "3", label: "Années d'existence", color: "text-taka-green" },
-    { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
-  ];
+  const raw = await fetchPageContent("association");
+  const data = extractData(raw);
+  const attrs = data || {};
+
+  // Hero image
+  const hero = attrs.heroImage;
+  let imageUrl: string | null = null;
+  if (hero && typeof hero === "object") {
+    const url = (hero as any).url || (hero as any).data?.attributes?.url;
+    if (url) imageUrl = url.startsWith("http") ? url : `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app"}${url}`;
+  }
+
+  const paragraphs = blocksToText(attrs.content);
+  const rawStats = (attrs.formConfig as Record<string, unknown>)?.stats || [];
+  const stats = Array.isArray(rawStats) && rawStats.length === 4
+    ? rawStats
+    : [
+        { number: "10+", label: "Projets réalisés", color: "text-taka-yellow" },
+        { number: "5+", label: "Artistes signés", color: "text-taka-red" },
+        { number: "3", label: "Années d'existence", color: "text-taka-green" },
+        { number: "50+", label: "Bénévoles actifs", color: "text-taka-black" },
+      ];
+
   return (
     <SiteLayout>
       <section className="bg-taka-black text-white py-16 md:py-24">
@@ -101,18 +75,22 @@ export default async function AssociationPage() {
                 <p key={idx} className="text-taka-gray text-lg leading-relaxed mb-6">{text}</p>
               ))}
               <div className="grid grid-cols-2 gap-6 mb-8">
-                {stats.map((stat) => (
+                {stats.map((stat: any) => (
                   <div key={stat.label} className="bg-white rounded-xl p-4 border border-taka-gray-light">
                     <p className={`font-display text-3xl font-bold ${stat.color}`}>{stat.number}</p>
                     <p className="text-taka-gray text-sm">{stat.label}</p>
                   </div>
                 ))}
               </div>
+              <Link href="/association" className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all">
+                En savoir plus
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </Link>
             </div>
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center relative">
                 <Image
-                  src={imageUrl}
+                  src={imageUrl || "/images/logo-taka-inside.jpg"}
                   alt="Taka Inside - Logo de l'association"
                   fill
                   className="object-contain p-8"
