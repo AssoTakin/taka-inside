@@ -23,6 +23,19 @@ export function middleware(request: NextRequest) {
 
   // Si accès via takainside.org (et pas sur un chemin public)
   if (hostname.includes("takainside.org")) {
+    // Autoriser aussi le paramètre ?preview=taka2026 (pas seulement le cookie)
+    const previewParam = request.nextUrl.searchParams.get("preview");
+    if (previewParam === BYPASS_VALUE) {
+      const response = NextResponse.next();
+      response.cookies.set(BYPASS_COOKIE, BYPASS_VALUE, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24,
+      });
+      return response;
+    }
+
     const bypass = request.cookies.get(BYPASS_COOKIE)?.value;
 
     if (bypass === BYPASS_VALUE) {
