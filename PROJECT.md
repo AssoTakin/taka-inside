@@ -170,5 +170,6 @@ docker compose down
 | 2026-08-14 | **Migration du hardcoding restant** : pages `/coming-soon`, `/contact`, `/devenir-benevole` et `/association` entièrement pilotées par le content-type Strapi `page-content`. Metadata `layout.tsx` dynamique via `site-config.defaultSeo`. |
 | 2026-08-14 | **Correction du preview bypass** : le middleware accepte maintenant le paramètre `?preview=taka2026` en plus du cookie, permettant d'accéder au vrai site sans action manuelle préalable. |
 | 2026-08-14 | **Healthcheck autocorrectif finalisé** : skill `taka-inside-daily-healthcheck` réparé et enrichi de sondes live + preview, auto-fix de redeploy si SHA Vercel ≠ GitHub master, sections `AUTO-FIXES` et `ACTIONS MANUELLES`. Verdict final : **HEALTHY**. |
+| 2026-08-14 | **Finalisation itération** : `og:image` dynamique depuis `site-config.logo` (fallback local). Suppression de `frontend/src/app/opengraph-image.tsx` qui retournait un PNG vide en edge runtime. Backend Strapi déjà déployé et SUCCESS. Alignement Vercel ↔ GitHub `master` confirmé. Tests anti-régression OK sur toutes les pages critiques. |
 
 *Dernière mise à jour : 2026-08-14*

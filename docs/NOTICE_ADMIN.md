@@ -30,6 +30,26 @@ https://taka-inside-production.up.railway.app/taka-admin-2026
 3. Ajouter, modifier ou supprimer des entrées avec `position = header`.
 4. Publier les changements.
 
+## Modifier les pages statiques (Coming Soon, Contact, Bénévole, Association)
+
+1. Dans Strapi, aller dans **Content Manager**.
+2. Sélectionner la collection **Page Content**.
+3. Ouvrir l'entrée correspondant au slug :
+   - `coming-soon` : page d'attente affichée sur `takainside.org`
+   - `contact` : page Contact
+   - `devenir-benevole` : page Bénévole
+   - `association` : page Association
+4. Modifier les champs **Title**, **Subtitle**, **Content**, **SEO**, etc.
+5. **Save** → **Publish**.
+6. Le site se met à jour automatiquement dans les 5 minutes (cache ISR).
+
+## Modifier l'image de partage sociale (Open Graph)
+
+1. Dans Strapi, aller dans **Content Manager**.
+2. Sélectionner le single type **Configuration du site** (`site-config`).
+3. Utiliser le champ **OG Image** (si renseigné) ou le champ **Logo** comme image de partage.
+4. **Save** → **Publish**.
+
 ## API publique / sécurité
 
 - Les endpoints sensibles (`artistes`, `produits`, `projets`, `categorie-produits`) sont **protégés** (403 sans token).
