@@ -236,6 +236,13 @@ function RadioSection({ section, socialLinks }: { section: Record<string, unknow
   const description = String(section.description || 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.');
   const logo = extractUrl(section.logo);
   const listenCta = (section.listenCta as Record<string, unknown> | undefined) || { label: 'Écouter la radio', link: '/projets/made-in-benin-radio', style: 'primary' };
+  const logoSize = String(section.logoSize || 'medium');
+  const sizeClasses: Record<string, string> = {
+    small: 'w-20 h-20 md:w-28 md:h-28',
+    medium: 'w-32 h-32 md:w-44 md:h-44',
+    large: 'w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60',
+  };
+  const logoClasses = sizeClasses[logoSize] || sizeClasses.medium;
 
   return (
     <SectionWrapper className="py-12 md:py-20 bg-taka-yellow relative overflow-hidden">
@@ -249,7 +256,7 @@ function RadioSection({ section, socialLinks }: { section: Record<string, unknow
           <div className="flex items-center gap-6">
             <div className="relative flex-shrink-0">
               {logo ? (
-                <Image src={getImageUrl({ url: logo }) || logo} alt={title} width={180} height={180} className="w-32 h-32 md:w-44 md:h-44 lg:w-52 lg:h-52 rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300" />
+                <Image src={getImageUrl({ url: logo }) || logo} alt={title} width={240} height={240} className={`${logoClasses} rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300`} />
               ) : (
                 <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-taka-black flex items-center justify-center text-white font-display text-xl">
                   {title.slice(0, 2).toUpperCase()}

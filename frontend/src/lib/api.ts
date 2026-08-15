@@ -113,11 +113,13 @@ async function _fetchStrapiRaw(
 export function getImageUrl(image: { url: string } | null | undefined): string | null {
   if (!image) return null;
   
-  // Local absolute path (fallback image from public/)
+  // Strapi v5 direct: { url: "..." }
   if (typeof (image as Record<string, unknown>).url === 'string') {
     const url = (image as Record<string, unknown>).url as string;
-    if (url.startsWith('/')) return url;
     if (url.startsWith('http')) return url;
+    // Local fallback images (frontend public/) stay relative
+    if (url.startsWith('/images/')) return url;
+    // Strapi media (/uploads/...) must be absolute so Next.js can optimize them
     return `${API_BASE}${url}`;
   }
   
@@ -131,8 +133,8 @@ export function getImageUrl(image: { url: string } | null | undefined): string |
       if (attrs && typeof attrs === 'object') {
         const url = (attrs as Record<string, unknown>).url;
         if (typeof url === 'string') {
-          if (url.startsWith('/')) return url;
           if (url.startsWith('http')) return url;
+          if (url.startsWith('/images/')) return url;
           return `${API_BASE}${url}`;
         }
       }

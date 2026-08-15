@@ -26,6 +26,11 @@
       "required": true,
       "allowedTypes": ["images"]
     },
+    "logoSize": {
+      "type": "enumeration",
+      "enum": ["small", "medium", "large"],
+      "default": "medium"
+    },
     "listenCta": {
       "type": "component",
       "component": "shared.cta-button",
