@@ -21,7 +21,7 @@
       "component": "homepage.stat-item",
       "repeatable": true,
       "max": 6,
-      "description": "Liste des missions ou avantages (value = icône emoji optionnel, label = texte)"
+      "description": "Liste des missions ou avantages bénévoles (label = texte, value optionnel)"
     },
     "button": {
       "type": "component",

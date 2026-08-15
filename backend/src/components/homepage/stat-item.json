@@ -9,9 +9,7 @@
   "attributes": {
     "value": {
       "type": "string",
-      "required": true,
-      "description": "Le chiffre (ex: 1500+)",
-      "default": "0"
+      "description": "Le chiffre ou icône optionnel(le)"
     },
     "label": {
       "type": "string",
