@@ -364,7 +364,17 @@ function AboutSection({ section, stats }: { section: Record<string, unknown>; st
               </div>
             )}
 
-            {cta && <CtaButton cta={cta} />}
+            {cta && (
+              <Link
+                href={String(cta.link || '/association')}
+                className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all group"
+              >
+                {String(cta.label || 'En savoir plus')}
+                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </Link>
+            )}
           </div>
           <div className="relative">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
