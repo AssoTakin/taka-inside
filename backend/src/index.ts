@@ -98,6 +98,45 @@ export default {
     };
 
     configurePublicPermissions();
+
+    // Seed default radio section links if empty
+    const seedRadioLinks = async () => {
+      try {
+        const homepage = await strapi.documents('api::homepage.homepage').findFirst({
+          populate: { sections: { populate: { links: true } } }
+        });
+        if (!homepage) return;
+
+        const sections = homepage.sections || [];
+        const radioIdx = sections.findIndex((s: any) => s.__component === 'homepage.radio-section');
+        if (radioIdx === -1) return;
+
+        const radio = sections[radioIdx];
+        if (radio.links && radio.links.length > 0) {
+          console.log('[Taka Inside] Radio links already populated, skipping seed');
+          return;
+        }
+
+        const defaultLinks = [
+          { label: 'Facebook', link: 'https://www.facebook.com/takainside', style: 'primary', icon: 'facebook', isExternal: true },
+          { label: 'Instagram', link: 'https://www.instagram.com/takainside_asso', style: 'primary', icon: 'instagram', isExternal: true },
+          { label: 'X', link: 'https://x.com/takainsideasso', style: 'primary', icon: 'twitter', isExternal: true },
+        ];
+
+        sections[radioIdx] = { ...radio, links: defaultLinks };
+
+        await strapi.documents('api::homepage.homepage').update({
+          documentId: homepage.documentId,
+          data: { sections },
+          populate: { sections: { populate: { links: true } } }
+        });
+        console.log('[Taka Inside] Seeded default radio section links');
+      } catch (e) {
+        console.warn('[Taka Inside] Failed to seed radio links:', e);
+      }
+    };
+
+    seedRadioLinks();
   },
 };
 // force rebuild Sat Jun  6 21:12:13 UTC 2026
