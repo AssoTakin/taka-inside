@@ -213,7 +213,8 @@ export default async function HomePage() {
           return <NewsletterSection key={idx} section={section} />;
         }
         if (comp === 'homepage.cta-don-section') {
-          return <CtaDonSection key={idx} section={section} />;
+          const bSection = activeSections.find(s => s.__component === 'homepage.cta-benevole-section');
+          return <CtaDonSection key={idx} section={section} benevoleSection={bSection} />;
         }
         if (comp === 'homepage.cta-benevole-section') {
           // Skip standalone benevole section since it's merged with CTA don
@@ -572,18 +573,22 @@ function NewsletterSection({ section }: { section: Record<string, unknown> }) {
   );
 }
 
-function CtaDonSection({ section }: { section: Record<string, unknown> }) {
+function CtaDonSection({ section, benevoleSection }: { section: Record<string, unknown>; benevoleSection?: Record<string, unknown> }) {
   const title = String(section.title || 'Faire un Don');
   const description = String(section.description || '');
   const amountsStr = String(section.amounts || '10,15,25,50');
   const amounts = amountsStr.split(',').map(a => Number(a.trim())).filter(Boolean);
   const button = (section.button as Record<string, unknown>) || { label: 'Je fais un don', link: '/faire-un-don', style: 'primary' };
 
+  const bTitle = String(benevoleSection?.title || 'Devenir Bénévole');
+  const bDescription = String(benevoleSection?.description || 'Rejoignez notre communauté de passionnés et contribuez activement à la promotion de la culture béninoise.');
+  const bButton = (benevoleSection?.button as Record<string, unknown>) || { label: "Rejoindre l'équipe", link: '/devenir-benevole', style: 'primary' };
+
   return (
     <SectionWrapper className="py-16 md:py-24 bg-taka-yellow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12">
+        <div className="grid md:grid-cols-2 gap-8 items-stretch">
+          <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12 flex flex-col">
             <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             </div>
@@ -598,16 +603,20 @@ function CtaDonSection({ section }: { section: Record<string, unknown> }) {
                 ))}
               </div>
             )}
-            <CtaButton cta={button} baseClass="w-full justify-center text-center block" />
+            <div className="mt-auto">
+              <CtaButton cta={button} baseClass="w-full justify-center text-center block py-4" />
+            </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
+          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black flex flex-col">
             <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
-            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Devenir Bénévole</h3>
-            <p className="text-taka-gray mb-8">Rejoignez notre communauté de passionnés et contribuez activement à la promotion de la culture béninoise.</p>
-            <Link href="/devenir-benevole" className="bg-taka-yellow text-taka-black px-8 py-4 rounded-xl font-semibold text-center block border-2 border-taka-black hover:bg-opacity-90 transition-all">Rejoindre l&apos;équipe</Link>
+            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{bTitle}</h3>
+            <p className="text-taka-gray mb-8">{bDescription}</p>
+            <div className="mt-auto">
+              <CtaButton cta={bButton} baseClass="w-full justify-center text-center block py-4 border-2 border-taka-black" />
+            </div>
           </div>
         </div>
       </div>
