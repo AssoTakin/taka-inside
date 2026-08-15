@@ -155,6 +155,10 @@ export default async function HomePage() {
 
   const activeSections = sections.length > 0 ? sections : defaultSections;
 
+  // Extract stats section so it can be merged with AboutSection
+  const statsSection = activeSections.find(s => s.__component === 'homepage.stats-section') as Record<string, unknown> | undefined;
+  const stats = statsSection?.stats as Record<string, unknown>[] | undefined;
+
   return (
     <SiteLayout>
       {/* Hero */}
@@ -193,7 +197,7 @@ export default async function HomePage() {
           return <RadioSection key={idx} section={section} socialLinks={socialLinks} />;
         }
         if (comp === 'homepage.about-section') {
-          return <AboutSection key={idx} section={section} />;
+          return <AboutSection key={idx} section={section} stats={stats} />;
         }
         if (comp === 'homepage.featured-projects-section') {
           return <FeaturedProjectsSection key={idx} section={section} projets={projets} />;
@@ -202,7 +206,8 @@ export default async function HomePage() {
           return <FeaturedArtistsSection key={idx} section={section} artistes={artistes} />;
         }
         if (comp === 'homepage.stats-section') {
-          return <StatsSection key={idx} section={section} />;
+          // Stats are rendered inside AboutSection when both exist
+          return stats ? null : <StatsSection key={idx} section={section} />;
         }
         if (comp === 'homepage.newsletter-section') {
           return <NewsletterSection key={idx} section={section} />;
@@ -319,7 +324,7 @@ function RadioSection({ section, socialLinks }: { section: Record<string, unknow
   );
 }
 
-function AboutSection({ section }: { section: Record<string, unknown> }) {
+function AboutSection({ section, stats }: { section: Record<string, unknown>; stats?: Record<string, unknown>[] }) {
   const title = String(section.title || 'À Propos');
   const description = String(section.description || '');
   const image = extractUrl(section.image);
@@ -328,6 +333,8 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
   const titleParts = title.split(' ');
   const lastWord = titleParts.pop() || '';
   const titleStart = titleParts.join(' ');
+
+  const colorClasses = ['text-taka-yellow', 'text-taka-red', 'text-taka-green', 'text-taka-black'];
 
   return (
     <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
@@ -341,6 +348,22 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
             <div className="text-taka-gray text-lg leading-relaxed mb-6">
               <RichTextToPlain text={description} />
             </div>
+
+            {stats && stats.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {stats.map((stat, i) => {
+                  const value = String(stat.value || '0');
+                  const label = String(stat.label || '');
+                  return (
+                    <div key={label + i} className="bg-white rounded-xl p-4 border border-taka-gray-light">
+                      <p className={`font-display text-3xl font-bold ${colorClasses[i % 4]}`}>{value}</p>
+                      <p className="text-taka-gray text-sm">{label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {cta && <CtaButton cta={cta} />}
           </div>
           <div className="relative">
