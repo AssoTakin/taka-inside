@@ -133,11 +133,20 @@ export default {
           { label: 'X', link: 'https://x.com/takainsideasso', style: 'primary', icon: 'twitter', isExternal: true },
         ];
 
-        sections[radioIdx] = { ...radio, links: defaultLinks };
+        const updatedRadio = { ...radio, links: defaultLinks };
+        // Remove internal IDs to avoid "components not related" error on update
+        const cleanSections = sections.map((s: any) => {
+          if (s.__component === 'homepage.radio-section') {
+            const { id: _id, ...rest } = updatedRadio;
+            return rest;
+          }
+          const { id: _id, ...rest } = s;
+          return rest;
+        });
 
         await strapi.documents('api::homepage.homepage').update({
           documentId: homepage.documentId,
-          data: { sections },
+          data: { sections: cleanSections },
           status: 'published',
         });
         console.log('[Taka Inside] Seeded default radio section links');
