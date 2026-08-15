@@ -408,7 +408,7 @@
 
     async function loadPaymentMethods() {
       try {
-        const res = await fetch('/api/payment-methods?populate=*&sort=displayOrder&filters[isActive][$eq]=true');
+        const res = await fetch('/api/payment-methods');
         if (!res.ok) throw new Error('Erreur de chargement');
         const data = await res.json();
         const methods = (data.data || [])
