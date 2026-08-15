@@ -103,6 +103,7 @@ export default {
     const seedRadioLinks = async () => {
       try {
         const homepage = await strapi.documents('api::homepage.homepage').findFirst({
+          status: 'published',
           populate: {
             sections: {
               on: {
@@ -120,7 +121,8 @@ export default {
         if (radioIdx === -1) return;
 
         const radio = sections[radioIdx];
-        if (radio.links && radio.links.length > 0) {
+        console.log('[Taka Inside] Radio links debug:', JSON.stringify(radio.links));
+        if (Array.isArray(radio.links) && radio.links.length > 0) {
           console.log('[Taka Inside] Radio links already populated, skipping seed');
           return;
         }
@@ -136,6 +138,7 @@ export default {
         await strapi.documents('api::homepage.homepage').update({
           documentId: homepage.documentId,
           data: { sections },
+          status: 'published',
         });
         console.log('[Taka Inside] Seeded default radio section links');
       } catch (e) {
