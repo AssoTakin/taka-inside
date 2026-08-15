@@ -181,6 +181,11 @@ export async function fetchHomepage(): Promise<Record<string, unknown> | null> {
   return fetchStrapiSingle('homepage?populate[hero][populate]=*&populate[sections][populate]=*&populate[seo][populate]=*');
 }
 
+/** Fetch homepage sections with lighter populate (fallback if deep populate times out) */
+export async function fetchHomepageLight(): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle('homepage?populate=hero&populate=sections');
+}
+
 /** Fetch a page content by slug */
 export async function fetchPageContent(slug: string): Promise<Record<string, unknown> | null> {
   return fetchStrapiSingle(`page-contents?filters[slug][$eq]=${slug}&populate=*`);

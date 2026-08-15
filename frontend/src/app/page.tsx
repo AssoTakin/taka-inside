@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
 import SiteLayout from "@/components/layout/SiteLayout";
-import { fetchHomepage, fetchSiteConfig, fetchStrapiList, getImageUrl, extractData, fetchGlobalCta } from "@/lib/api";
+import { fetchHomepage, fetchHomepageLight, fetchSiteConfig, fetchStrapiList, getImageUrl, extractData, fetchGlobalCta } from "@/lib/api";
 import { formatPrice } from "@/lib/price";
 import { Metadata } from "next";
 
@@ -95,11 +95,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const [homepage, configRaw, ctaRaw, projetsData, artistesData] = await Promise.all([
-    fetchHomepage(),
-    fetchSiteConfig(),
-    fetchGlobalCta('header-don'),
-    fetchStrapiList("projets?populate=*&sort=createdAt:desc"),
-    fetchStrapiList("artistes?populate=*&sort=createdAt:desc"),
+    fetchHomepage().catch(() => fetchHomepageLight()).catch(() => null),
+    fetchSiteConfig().catch(() => null),
+    fetchGlobalCta('header-don').catch(() => null),
+    fetchStrapiList("projets?populate=*&sort=createdAt:desc").catch(() => null),
+    fetchStrapiList("artistes?populate=*&sort=createdAt:desc").catch(() => null),
   ]);
 
   const homepageData = extractData(homepage) || {};
