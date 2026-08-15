@@ -103,7 +103,7 @@ export default {
     const seedRadioLinks = async () => {
       try {
         const homepage = await strapi.documents('api::homepage.homepage').findFirst({
-          populate: { sections: { populate: { links: true } } }
+          populate: ['sections.links']
         });
         if (!homepage) return;
 
@@ -128,7 +128,6 @@ export default {
         await strapi.documents('api::homepage.homepage').update({
           documentId: homepage.documentId,
           data: { sections },
-          populate: { sections: { populate: { links: true } } }
         });
         console.log('[Taka Inside] Seeded default radio section links');
       } catch (e) {
