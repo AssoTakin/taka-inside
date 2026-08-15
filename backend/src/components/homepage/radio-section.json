@@ -39,6 +39,12 @@
     "projectLink": {
       "type": "string",
       "description": "Lien vers la page projet (ex: /projets/made-in-benin-radio)"
+    },
+    "links": {
+      "type": "component",
+      "component": "shared.cta-button",
+      "repeatable": true,
+      "description": "Liens/logos à droite de la section radio (ex: Facebook, Instagram, X). Ajoutez autant d'éléments que nécessaire."
     }
   }
 }
