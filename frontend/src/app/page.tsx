@@ -211,7 +211,8 @@ export default async function HomePage() {
           return <CtaDonSection key={idx} section={section} />;
         }
         if (comp === 'homepage.cta-benevole-section') {
-          return <CtaBenevoleSection key={idx} section={section} />;
+          // Skip standalone benevole section since it's merged with CTA don
+          return null;
         }
         if (comp === 'homepage.social-section') {
           return <SocialSection key={idx} section={section} socialLinks={socialLinks} />;
@@ -236,13 +237,6 @@ function RadioSection({ section, socialLinks }: { section: Record<string, unknow
   const description = String(section.description || 'La radio des Béninois — 100% culture béninoise, 24H/24 et 7J/7.');
   const logo = extractUrl(section.logo);
   const listenCta = (section.listenCta as Record<string, unknown> | undefined) || { label: 'Écouter la radio', link: '/projets/made-in-benin-radio', style: 'primary' };
-  const logoSize = String(section.logoSize || 'medium');
-  const sizeClasses: Record<string, string> = {
-    small: 'w-20 h-20 md:w-28 md:h-28',
-    medium: 'w-32 h-32 md:w-44 md:h-44',
-    large: 'w-40 h-40 md:w-52 md:h-52 lg:w-60 lg:h-60',
-  };
-  const logoClasses = sizeClasses[logoSize] || sizeClasses.medium;
 
   return (
     <SectionWrapper className="py-12 md:py-20 bg-taka-yellow relative overflow-hidden">
@@ -256,7 +250,7 @@ function RadioSection({ section, socialLinks }: { section: Record<string, unknow
           <div className="flex items-center gap-6">
             <div className="relative flex-shrink-0">
               {logo ? (
-                <Image src={getImageUrl({ url: logo }) || logo} alt={title} width={240} height={240} className={`${logoClasses} rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300`} />
+                <Image src={getImageUrl({ url: logo }) || logo} alt={title} width={120} height={120} className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-contain relative z-10 hover:animate-spin-slow transition-transform duration-300" />
               ) : (
                 <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-taka-black flex items-center justify-center text-white font-display text-xl">
                   {title.slice(0, 2).toUpperCase()}
@@ -340,29 +334,14 @@ function AboutSection({ section }: { section: Record<string, unknown> }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
+            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{title}</p>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-              {title.split(' ').length > 1 ? (
-                <>
-                  {title.split(' ').slice(0, -1).join(' ')} <span className="text-taka-red">{title.split(' ').pop()}</span>
-                </>
-              ) : (
-                <span className="text-taka-black">{title}</span>
-              )}
+              {titleStart} <span className="text-taka-red">{lastWord}</span>
             </h2>
             <div className="text-taka-gray text-lg leading-relaxed mb-6">
               <RichTextToPlain text={description} />
             </div>
-            {cta && (
-              <Link
-                href={String(cta.link || '/association')}
-                className="inline-flex items-center gap-2 text-taka-black font-semibold hover:gap-4 hover:text-taka-yellow transition-all group"
-              >
-                {String(cta.label || 'En savoir plus')}
-                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </Link>
-            )}
+            {cta && <CtaButton cta={cta} />}
           </div>
           <div className="relative">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-taka-gray-light flex items-center justify-center">
@@ -488,7 +467,7 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
           {cta && <CtaButton cta={cta} />}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-8 items-stretch">
           {featured.map((artiste) => {
             const photoUrl = extractUrl(artiste.photo);
             const bio = String(artiste.biographie || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 140);
@@ -570,22 +549,33 @@ function CtaDonSection({ section }: { section: Record<string, unknown> }) {
   return (
     <SectionWrapper className="py-16 md:py-24 bg-taka-yellow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12 max-w-3xl mx-auto">
-          <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
-            <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-          </div>
-          <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{title}</h3>
-          <div className="text-taka-gray mb-8">
-            <RichTextToPlain text={description} />
-          </div>
-          {amounts.length > 0 && (
-            <div className="flex flex-wrap gap-3 mb-8">
-              {amounts.map((amount) => (
-                <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
-              ))}
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12">
+            <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
+              <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             </div>
-          )}
-          <CtaButton cta={button} baseClass="w-full justify-center text-center block" />
+            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{title}</h3>
+            <div className="text-taka-gray mb-8">
+              <RichTextToPlain text={description} />
+            </div>
+            {amounts.length > 0 && (
+              <div className="flex flex-wrap gap-3 mb-8">
+                {amounts.map((amount) => (
+                  <span key={amount} className='bg-white/10 px-4 py-2 rounded-lg font-semibold'>{formatPrice(amount)}</span>
+                ))}
+              </div>
+            )}
+            <CtaButton cta={button} baseClass="w-full justify-center text-center block" />
+          </div>
+
+          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black">
+            <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
+              <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">Devenir Bénévole</h3>
+            <p className="text-taka-gray mb-8">Rejoignez notre communauté de passionnés et contribuez activement à la promotion de la culture béninoise.</p>
+            <Link href="/devenir-benevole" className="bg-taka-yellow text-taka-black px-8 py-4 rounded-xl font-semibold text-center block border-2 border-taka-black hover:bg-opacity-90 transition-all">Rejoindre l&apos;équipe</Link>
+          </div>
         </div>
       </div>
     </SectionWrapper>
