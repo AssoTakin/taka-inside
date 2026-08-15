@@ -134,13 +134,13 @@ export default {
         ];
 
         const updatedRadio = { ...radio, links: defaultLinks };
-        // Remove internal IDs to avoid "components not related" error on update
+        // Remove internal IDs and keep only component data to avoid "components not related" error on update
         const cleanSections = sections.map((s: any) => {
-          if (s.__component === 'homepage.radio-section') {
-            const { id: _id, ...rest } = updatedRadio;
-            return rest;
-          }
           const { id: _id, ...rest } = s;
+          if (rest.__component === 'homepage.radio-section') {
+            const { links: _links, ...radioRest } = rest;
+            return { ...radioRest, links: defaultLinks };
+          }
           return rest;
         });
 

@@ -33,8 +33,7 @@
     },
     "listenCta": {
       "type": "component",
-      "component": "shared.cta-button",
-      "required": true
+      "component": "shared.cta-button"
     },
     "projectLink": {
       "type": "string",
