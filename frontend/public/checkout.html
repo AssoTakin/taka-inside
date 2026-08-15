@@ -250,10 +250,10 @@
           </div>
 
           <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">Méthode de paiement</h3>
-          <div class="method-grid">
-            <button class="method-btn selected" onclick="setMethod('stripe')" id="method-stripe">💳 Stripe</button>
-            <button class="method-btn" onclick="setMethod('fedapay')" id="method-fedapay">📱 Mobile Money</button>
+          <div class="method-grid" id="method-grid">
+            <!-- Rempli dynamiquement depuis Strapi -->
           </div>
+          <div id="methods-error" class="error" style="display:none; color: var(--red); font-size: 0.875rem; margin-top: 8px;"></div>
 
           <p class="help-text" style="margin-top: 12px;">
             🔒 Vos données sont sécurisées. Nous ne stockons pas vos informations de paiement.
@@ -304,8 +304,9 @@
   <script>
     let state = {
       items: [],
-      method: 'stripe',
+      method: null,
       loading: false,
+      methods: [],
       shipping: {
         type: 'standard',
         cost: 0,
@@ -398,11 +399,76 @@
       return 'physical';
     }
 
+    const METHOD_LABELS = {
+      stripe: '💳 Carte Bancaire',
+      fedapay: '📱 Mobile Money',
+      paypal: 'PayPal',
+      'mobile-money': '📱 Mobile Money'
+    };
+
+    async function loadPaymentMethods() {
+      try {
+        const res = await fetch('/api/payment-methods?populate=*&sort=displayOrder&filters[isActive][$eq]=true');
+        if (!res.ok) throw new Error('Erreur de chargement');
+        const data = await res.json();
+        const methods = (data.data || [])
+          .map(item => item.attributes || item)
+          .filter(m => m.isActive !== false)
+          .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+        state.methods = methods.map(m => ({
+          ...m,
+          code: m.code || mapLegacyCode(m.name)
+        }));
+        if (state.methods.length === 0) {
+          document.getElementById('methods-error').textContent = 'Aucun moyen de paiement disponible.';
+          document.getElementById('methods-error').style.display = 'block';
+          document.getElementById('pay-btn').disabled = true;
+        } else {
+          // Map codes from name
+          state.methods = methods.map(m => ({
+            ...m,
+            code: mapCode(m.name)
+          }));
+          state.method = state.methods[0].code;
+          document.getElementById('methods-error').style.display = 'none';
+        }
+        renderMethods();
+        render();
+      } catch (err) {
+        document.getElementById('methods-error').textContent = 'Impossible de charger les moyens de paiement.';
+        document.getElementById('methods-error').style.display = 'block';
+        document.getElementById('pay-btn').disabled = true;
+      }
+    }
+
+    function mapCode(name) {
+      const n = (name || '').toLowerCase();
+      if (n.includes('carte') || n.includes('stripe')) return 'stripe';
+      if (n.includes('mobile') || n.includes('fedapay') || n.includes('momo')) return 'fedapay';
+      if (n.includes('paypal')) return 'paypal';
+      return 'stripe';
+    }
+
+    function renderMethods() {
+      const container = document.getElementById('method-grid');
+      if (state.methods.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = state.methods.map(m => {
+        const code = m.code;
+        const label = m.displayName || METHOD_LABELS[code] || m.name;
+        const selected = state.method === code ? 'selected' : '';
+        return `<button class="method-btn ${selected}" onclick="setMethod('${code}')">${label}</button>`;
+      }).join('');
+    }
+
     function loadCart() {
       try {
         const stored = localStorage.getItem('taka-cart');
         if (stored) state.items = JSON.parse(stored);
       } catch (e) { console.error('Erreur chargement panier:', e); }
+      loadPaymentMethods();
       render();
       adaptFormForDigital();
       calculateShipping();
@@ -721,8 +787,7 @@
       }
 
       // Method buttons
-      document.getElementById('method-stripe').className = 'method-btn ' + (state.method === 'stripe' ? 'selected' : '');
-      document.getElementById('method-fedapay').className = 'method-btn ' + (state.method === 'fedapay' ? 'selected' : '');
+      renderMethods();
     }
 
     function setMethod(method) {
@@ -737,7 +802,7 @@
     }
 
     async function handlePayment() {
-      if (state.items.length === 0) return;
+      if (state.items.length === 0 || !state.method) return;
 
       clearErrors();
 
