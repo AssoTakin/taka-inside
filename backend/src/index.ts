@@ -103,7 +103,15 @@ export default {
     const seedRadioLinks = async () => {
       try {
         const homepage = await strapi.documents('api::homepage.homepage').findFirst({
-          populate: ['sections.links']
+          populate: {
+            sections: {
+              on: {
+                'homepage.radio-section': {
+                  populate: ['links']
+                }
+              }
+            }
+          }
         });
         if (!homepage) return;
 
