@@ -102,6 +102,7 @@ export default {
     // Seed default radio section links if empty
     const seedRadioLinks = async () => {
       try {
+        // Do NOT touch existing sections; only fix missing radio links
         const homepage = await strapi.documents('api::homepage.homepage').findFirst({
           status: 'published',
           populate: {
@@ -121,7 +122,6 @@ export default {
         if (radioIdx === -1) return;
 
         const radio = sections[radioIdx];
-        console.log('[Taka Inside] Radio links debug:', JSON.stringify(radio.links));
         if (Array.isArray(radio.links) && radio.links.length > 0) {
           console.log('[Taka Inside] Radio links already populated, skipping seed');
           return;
@@ -133,20 +133,18 @@ export default {
           { label: 'X', link: 'https://x.com/takainsideasso', style: 'primary', icon: 'twitter', isExternal: true },
         ];
 
-        const updatedRadio = { ...radio, links: defaultLinks };
-        // Remove internal IDs and keep only component data to avoid "components not related" error on update
-        const cleanSections = sections.map((s: any) => {
-          const { id: _id, ...rest } = s;
-          if (rest.__component === 'homepage.radio-section') {
-            const { links: _links, ...radioRest } = rest;
-            return { ...radioRest, links: defaultLinks };
+        // Rebuild only the radio section, preserve everything else exactly as-is
+        const updatedSections = sections.map((s: any) => {
+          if (s.__component === 'homepage.radio-section') {
+            const { links: _links, ...rest } = s;
+            return { ...rest, links: defaultLinks };
           }
-          return rest;
+          return s;
         });
 
         await strapi.documents('api::homepage.homepage').update({
           documentId: homepage.documentId,
-          data: { sections: cleanSections },
+          data: { sections: updatedSections },
           status: 'published',
         });
         console.log('[Taka Inside] Seeded default radio section links');
