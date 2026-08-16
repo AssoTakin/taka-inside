@@ -163,6 +163,14 @@ export default async function HomePage() {
   const statsSection = activeSections.find(s => s.__component === 'homepage.stats-section') as Record<string, unknown> | undefined;
   const stats = statsSection?.stats as Record<string, unknown>[] | undefined;
 
+  // Use default stats if Strapi stats are empty/missing
+  const effectiveStats = (stats && stats.length > 0) ? stats : [
+    { value: "10+", label: "Projets réalisés" },
+    { value: "5+", label: "Artistes signés" },
+    { value: "3", label: "Années d'existence" },
+    { value: "50+", label: "Bénévoles actifs" },
+  ];
+
   return (
     <SiteLayout>
       {/* Hero */}
@@ -201,7 +209,7 @@ export default async function HomePage() {
           return <RadioSection key={idx} section={section} socialLinks={socialLinks} />;
         }
         if (comp === 'homepage.about-section') {
-          return <AboutSection key={idx} section={section} stats={stats} />;
+          return <AboutSection key={idx} section={section} stats={effectiveStats} />;
         }
         if (comp === 'homepage.featured-projects-section') {
           return <FeaturedProjectsSection key={idx} section={section} projets={projets} />;
