@@ -65,7 +65,7 @@ function CtaButton({ cta, baseClass }: { cta?: Record<string, unknown> | null; b
         ? 'border border-white/30 text-white hover:bg-white/5'
         : 'bg-taka-yellow text-taka-black hover:bg-opacity-90';
 
-  const className = `${baseClass || ''} ${styleClass} px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center justify-center gap-2 min-w-[180px] text-center`;
+  const className = `${baseClass || ''} ${styleClass} px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center justify-center gap-2 w-full sm:w-auto sm:min-w-[180px] text-center`;
 
   const content = (
     <>
