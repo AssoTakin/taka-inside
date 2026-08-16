@@ -127,6 +127,12 @@ export default {
           return;
         }
 
+        // If there is only the radio section, do not run automatically to avoid data loss
+        if (sections.length < 2) {
+          console.log('[Taka Inside] Homepage sections look incomplete; skipping radio links auto-seed to avoid overwriting content.');
+          return;
+        }
+
         const defaultLinks = [
           { label: 'Facebook', link: 'https://www.facebook.com/takainside', style: 'primary', icon: 'facebook', isExternal: true },
           { label: 'Instagram', link: 'https://www.instagram.com/takainside_asso', style: 'primary', icon: 'instagram', isExternal: true },
