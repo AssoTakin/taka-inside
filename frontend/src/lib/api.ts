@@ -178,12 +178,12 @@ export async function fetchMenuItems(position?: 'header' | 'footer' | 'both'): P
 
 /** Fetch homepage (Single Type) */
 export async function fetchHomepage(): Promise<Record<string, unknown> | null> {
-  return fetchStrapiSingle('homepage?populate[hero][populate]=*&populate[sections][on][homepage.radio-section][populate][links][populate]=*&populate[sections][populate]=*&populate[seo][populate]=*');
+  return fetchStrapiSingle('homepage?populate=hero&populate[sections][populate]=*&populate[seo][populate]=*');
 }
 
 /** Fetch homepage sections with lighter populate (fallback if deep populate times out) */
 export async function fetchHomepageLight(): Promise<Record<string, unknown> | null> {
-  return fetchStrapiSingle('homepage?populate=hero&populate[sections][on][homepage.radio-section][populate][links][populate]=*&populate[sections][populate]=*');
+  return fetchStrapiSingle('homepage?populate=hero&populate=sections');
 }
 
 /** Fetch a page content by slug */
