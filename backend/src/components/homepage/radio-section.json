@@ -9,7 +9,6 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "default": "LA Radio des Béninois"
     },
     "subtitle": {
@@ -17,13 +16,11 @@
       "default": "Radio"
     },
     "description": {
-      "type": "richtext",
-      "required": true
+      "type": "richtext"
     },
     "logo": {
       "type": "media",
       "multiple": false,
-      "required": true,
       "allowedTypes": ["images"]
     },
     "logoSize": {

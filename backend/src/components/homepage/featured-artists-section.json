@@ -9,7 +9,6 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "default": "Artistes du label"
     },
     "description": {

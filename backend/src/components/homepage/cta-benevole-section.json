@@ -9,12 +9,10 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "default": "Devenir Bénévole"
     },
     "description": {
-      "type": "richtext",
-      "required": true
+      "type": "richtext"
     },
     "items": {
       "type": "component",
@@ -25,8 +23,7 @@
     },
     "button": {
       "type": "component",
-      "component": "shared.cta-button",
-      "required": true
+      "component": "shared.cta-button"
     }
   }
 }

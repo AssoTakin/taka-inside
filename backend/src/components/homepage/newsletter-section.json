@@ -9,12 +9,10 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "default": "Restez informés"
     },
     "description": {
-      "type": "text",
-      "required": true
+      "type": "text"
     },
     "placeholderText": {
       "type": "string",

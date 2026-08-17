@@ -9,12 +9,10 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "default": "À Propos"
     },
     "description": {
-      "type": "richtext",
-      "required": true
+      "type": "richtext"
     },
     "image": {
       "type": "media",

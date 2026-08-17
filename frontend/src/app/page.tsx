@@ -384,7 +384,9 @@ function AboutSection({ section, stats }: { section: Record<string, unknown>; st
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{title}</p>
+            {title && (
+              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{title}</p>
+            )}
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
               {titleStart} <span className="text-taka-red">{lastWord}</span>
             </h2>
@@ -451,12 +453,14 @@ function FeaturedProjectsSection({ section, projets }: { section: Record<string,
   return (
     <SectionWrapper className="py-16 md:py-24 bg-taka-gray-light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
           <div>
-            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description || 'Nos Projets'}</p>
+            {description && description !== title && (
+              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description}</p>
+            )}
             <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-yellow">{lastWord}</span></h2>
           </div>
-          {cta && <CtaButton cta={cta} />}
+          {cta && <div className="sm:ml-auto"><CtaButton cta={cta} /></div>}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -535,12 +539,14 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
   return (
     <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
           <div>
-            <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description || 'Label Musical'}</p>
+            {description && description !== title && (
+              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description}</p>
+            )}
             <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-red">{lastWord}</span></h2>
           </div>
-          {cta && <CtaButton cta={cta} />}
+          {cta && <div className="sm:ml-auto"><CtaButton cta={cta} /></div>}
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 items-stretch">
@@ -610,7 +616,7 @@ function NewsletterSection({ section }: { section: Record<string, unknown> }) {
     <SectionWrapper className="py-16 md:py-24 bg-taka-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">{title}</h2>
-        <p className="text-taka-gray mb-8 max-w-2xl mx-auto">{description}</p>
+        {description && <p className="text-taka-gray mb-8 max-w-2xl mx-auto">{description}</p>}
         <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
           <input type="email" placeholder={placeholder} className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-taka-gray focus:outline-none focus:border-taka-yellow" />
           <button type="submit" className="px-6 py-3 bg-taka-yellow text-taka-black rounded-xl font-semibold hover:bg-opacity-90 transition-all">{buttonText}</button>
@@ -635,7 +641,7 @@ function CtaDonSection({ section, benevoleSection }: { section: Record<string, u
     <SectionWrapper className="py-16 md:py-24 bg-taka-yellow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-8 items-stretch">
-          <div className="bg-taka-black text-white rounded-2xl p-8 md:p-12 flex flex-col">
+          <div className="bg-taka-black text-white rounded-2xl p-6 sm:p-8 md:p-12 flex flex-col">
             <div className="w-14 h-14 rounded-xl bg-taka-green/20 flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-taka-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             </div>
@@ -655,7 +661,7 @@ function CtaDonSection({ section, benevoleSection }: { section: Record<string, u
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-taka-black flex flex-col">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-12 border-2 border-taka-black flex flex-col">
             <div className="w-14 h-14 rounded-xl bg-taka-yellow/20 flex items-center justify-center mb-6">
               <svg className="w-7 h-7 text-taka-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
