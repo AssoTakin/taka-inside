@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('Console log during checkout', async ({ page, context }) => {
-  const errors = [];
+  const errors: string[] = [];
   page.on('console', msg => {
     if (msg.type() === 'error') errors.push('CONSOLE ERROR: ' + msg.text().slice(0, 200));
   });

@@ -13,8 +13,8 @@ test('dons avec configs serveur', async ({ page }) => {
   // Click 25€
   await page.locator('button:has-text("25 €")').click();
   await page.waitForTimeout(500);
-  
-  const text = await page.locator('body').textContent();
+
+  const text = (await page.locator('body').textContent()) ?? '';
   console.log('After click, has 15 € selected:', text.includes('15 €'));
   console.log('After click, has 25 €:', text.includes('25 €'));
 });

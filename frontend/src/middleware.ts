@@ -8,12 +8,13 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const pathname = request.nextUrl.pathname;
 
-  // Ne pas intercepter les assets statiques, API, et la page coming-soon
+  // Ne pas intercepter les assets statiques, API, la page coming-soon, et le formulaire bénévole
   const isPublicPath =
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/images") ||
     pathname.startsWith("/coming-soon") ||
+    pathname.startsWith("/devenir-benevole") ||
     pathname === "/favicon.ico" ||
     pathname === "/icon.png";
 
@@ -53,5 +54,5 @@ export const config = {
   // Next.js 16 a déplacé les middlewares vers le runtime 'proxy' par défaut,
   // mais la convention `middleware.ts` reste supportée via matcher + runtime.
   runtime: 'nodejs',
-  matcher: "/((?!api|_next/static|_next/image|favicon.ico|icon.png|images|coming-soon).*)",
+  matcher: "/((?!api|_next/static|_next/image|favicon.ico|icon.png|images|coming-soon|devenir-benevole).*)",
 };

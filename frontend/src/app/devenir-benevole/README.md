@@ -82,12 +82,10 @@ Variables d'environnement Vercel nécessaires :
 ## Vérifications effectuées
 
 - Build frontend local : OK
-- Build backend local : OK
-- Déploiement Vercel production (`takainside.org`) : OK
-- Soumission formulaire en production : OK, message de confirmation visible
-- Enregistrement dans Strapi : OK
-- Compétences/disponibilités cliquables : OK
-- Affichage conditionnel du champ "Autre" : OK
+- `npx tsc --noEmit` : OK
+- Déploiement Vercel production (`takainside.org`) : en cours
+- Middleware : `/devenir-benevole` autorisé en production malgré l'écran coming-soon
+- Formulaire React standard, pas de duplication layout (SiteLayout gère header/footer)
 
 ## Note sur les emails
 
