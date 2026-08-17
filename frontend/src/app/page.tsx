@@ -451,13 +451,10 @@ function FeaturedProjectsSection({ section, projets }: { section: Record<string,
     <SectionWrapper className="py-16 md:py-24 bg-taka-gray-light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
-          <div>
-            {description && description !== title && (
-              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description}</p>
-            )}
+          <div className="w-full sm:w-auto">
             <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-yellow">{lastWord}</span></h2>
           </div>
-          {cta && <div className="sm:ml-auto"><CtaButton cta={cta} /></div>}
+          {cta && <div className="sm:ml-auto shrink-0"><CtaButton cta={cta} /></div>}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -537,13 +534,10 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
     <SectionWrapper className="py-16 md:py-24 bg-taka-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
-          <div>
-            {description && description !== title && (
-              <p className="text-taka-green font-semibold text-sm uppercase tracking-wider mb-3">{description}</p>
-            )}
+          <div className="w-full sm:w-auto">
             <h2 className="font-display text-3xl md:text-4xl font-bold">{titleStart} <span className="text-taka-red">{lastWord}</span></h2>
           </div>
-          {cta && <div className="sm:ml-auto"><CtaButton cta={cta} /></div>}
+          {cta && <div className="sm:ml-auto shrink-0"><CtaButton cta={cta} /></div>}
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 items-stretch">
