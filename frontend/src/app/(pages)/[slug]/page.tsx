@@ -105,7 +105,6 @@ export async function generateStaticParams() {
   return [
     { slug: 'association' },
     { slug: 'contact' },
-    { slug: 'devenir-benevole' },
     { slug: 'label-musical' },
   ];
 }
