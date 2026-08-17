@@ -98,7 +98,12 @@ export default function BenevolePageClient({ content }: { content: Record<string
         setErrorDetail(data?.error || `${response.status} ${response.statusText}`);
         return;
       }
-      setStatus("success");
+      if (data.emailErrors && data.emailErrors.length > 0) {
+        // La candidature est enregistrée mais au moins un email n'a pas pu partir
+        setStatus("success");
+        setErrorDetail(`Notification partielle : ${data.emailErrors.join(" ; ")}`);
+        return;
+      }
       setForm({
         lastName: "",
         firstName: "",
