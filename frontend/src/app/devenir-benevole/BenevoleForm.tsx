@@ -54,33 +54,6 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    console.log("BenevoleForm useEffect mounted");
-  }, []);
-
-  if (!mounted) {
-    return (
-      <SiteLayout>
-        <section className="bg-taka-green text-white py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
-            <p className="mt-4 max-w-xl opacity-90">{subtitle}</p>
-          </div>
-        </section>
-        <section className="py-16 md:py-24 bg-taka-cream">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            {body && <p className="text-taka-gray text-lg mb-8">{body}</p>}
-            <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6 opacity-70">
-              <p className="text-center text-taka-gray">Chargement du formulaire…</p>
-            </div>
-          </div>
-        </section>
-      </SiteLayout>
-    );
-  }
 
   const isRequired = (name: string) => requiredFields.includes(name);
 
@@ -178,9 +151,33 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
         : "border-taka-gray-light hover:border-taka-yellow hover:text-taka-yellow"
     }`;
 
+  // Hydration-safe: ensure form only renders after client mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <SiteLayout>
+        <section className="bg-taka-green text-white py-16 md:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
+            <p className="mt-4 max-w-xl opacity-90">{subtitle}</p>
+          </div>
+        </section>
+        <section className="py-16 md:py-24 bg-taka-cream">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            {body && <p className="text-taka-gray text-lg mb-8">{body}</p>}
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6 opacity-70">
+              <p className="text-center text-taka-gray">Chargement du formulaire…</p>
+            </div>
+          </div>
+        </section>
+      </SiteLayout>
+    );
+  }
+
   return (
     <SiteLayout>
-      <script dangerouslySetInnerHTML={{ __html: `console.log('BenevoleForm mounted')` }} />
       <section className="bg-taka-green text-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
@@ -307,10 +304,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
                   <button
                     key={comp}
                     type="button"
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      toggleSkill(comp);
-                    }}
+                    onClick={() => toggleSkill(comp)}
                     className={skillBtnClass(form.skills.includes(comp))}
                     aria-pressed={form.skills.includes(comp)}
                   >
@@ -345,10 +339,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
                   <button
                     key={a}
                     type="button"
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      toggleAvailability(a);
-                    }}
+                    onClick={() => toggleAvailability(a)}
                     className={availBtnClass(form.availabilities.includes(a))}
                     aria-pressed={form.availabilities.includes(a)}
                   >
