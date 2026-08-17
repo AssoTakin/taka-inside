@@ -65,7 +65,8 @@ function CtaButton({ cta, baseClass }: { cta?: Record<string, unknown> | null; b
         ? 'border border-white/30 text-white hover:bg-white/5'
         : 'bg-taka-yellow text-taka-black hover:bg-opacity-90';
 
-  const className = `${baseClass || ''} ${styleClass} px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center justify-center gap-2 w-full sm:w-[200px] text-center whitespace-nowrap`;
+  const isFullWidth = baseClass?.includes('w-full') || false;
+  const className = `${baseClass || ''} ${styleClass} px-6 py-3 rounded-xl font-semibold transition-all ${isFullWidth ? 'flex' : 'inline-flex'} items-center justify-center gap-2 w-full sm:w-[200px] text-center whitespace-nowrap`;
 
   const content = (
     <>
