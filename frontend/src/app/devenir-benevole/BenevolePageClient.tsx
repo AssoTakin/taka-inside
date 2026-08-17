@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function blocksToText(blocks: unknown): string {
   if (!Array.isArray(blocks)) return "";
@@ -12,6 +12,9 @@ function blocksToText(blocks: unknown): string {
 }
 
 export default function BenevolePageClient({ content }: { content: Record<string, unknown> | null }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const title = String(content?.title || "Devenir Bénévole");
   const subtitle = String(content?.subtitle || "Rejoignez l'équipe Taka Inside et participez à nos projets culturels et musicaux au Bénin.");
   const body = blocksToText(content?.content);
@@ -145,6 +148,10 @@ export default function BenevolePageClient({ content }: { content: Record<string
           )}
 
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6">
+            {!mounted ? (
+              <p className="text-center text-taka-gray">Chargement du formulaire…</p>
+            ) : (
+            <>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="lastName" className="block text-sm font-semibold mb-1">{labels.lastName || "Nom"}{req("lastName")}</label>
@@ -225,6 +232,8 @@ export default function BenevolePageClient({ content }: { content: Record<string
             <button type="submit" disabled={status === "loading"} className="w-full bg-taka-green text-white font-semibold py-4 rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-60">
               {status === "loading" ? "Envoi en cours…" : submitButton}
             </button>
+            </>
+            )}
           </form>
         </div>
       </section>
