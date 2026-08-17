@@ -648,7 +648,7 @@ function CtaDonSection({ section, benevoleSection }: { section: Record<string, u
               </div>
             )}
             <div className="mt-auto">
-              <CtaButton cta={button} baseClass="w-full justify-center text-center block py-4" />
+              <CtaButton cta={button} baseClass="w-full justify-center text-center !rounded-full py-4" />
             </div>
           </div>
 
@@ -659,7 +659,7 @@ function CtaDonSection({ section, benevoleSection }: { section: Record<string, u
             <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">{bTitle}</h3>
             <p className="text-taka-gray mb-8">{bDescription}</p>
             <div className="mt-auto">
-              <CtaButton cta={bButton} baseClass="w-full justify-center text-center block py-4 border-2 border-taka-black" />
+              <CtaButton cta={bButton} baseClass="w-full justify-center text-center !rounded-full py-4" />
             </div>
           </div>
         </div>
