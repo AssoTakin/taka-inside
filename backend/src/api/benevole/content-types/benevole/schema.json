@@ -9,9 +9,10 @@
     "telephone": { "type": "string" },
     "ville": { "type": "string" },
     "pays": { "type": "string" },
-    "competences": { "type": "text" },
+    "competences": { "type": "json" },
+    "autreCompetence": { "type": "text" },
+    "disponibilites": { "type": "json" },
     "motivations": { "type": "text" },
-    "disponibilites": { "type": "text" },
     "cv": { "type": "media", "multiple": false, "allowedTypes": ["files"] },
     "statut": { "type": "enumeration", "enum": ["recue", "en_cours", "acceptee", "refusee"], "default": "recue" }
   }
