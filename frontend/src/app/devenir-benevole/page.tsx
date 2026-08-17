@@ -1,7 +1,6 @@
 import { Metadata } from "next";
-import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchPageContent, extractData } from "@/lib/api";
-import BenevoleForm from "./BenevoleForm";
+import BenevolePageClient from "./BenevolePageClient";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +18,5 @@ export default async function BenevolePage() {
   const raw = await fetchPageContent("devenir-benevole");
   const content = extractData(raw);
 
-  return (
-    <SiteLayout>
-      <BenevoleForm content={content} />
-    </SiteLayout>
-  );
+  return <BenevolePageClient content={content} />;
 }
