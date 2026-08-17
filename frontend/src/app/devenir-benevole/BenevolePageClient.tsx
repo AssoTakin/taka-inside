@@ -255,7 +255,7 @@ export default function BenevolePageClient({ content }: { content: Record<string
                   ))}
                 </div>
                 {hasOther && (
-                  <div className="mt-3">
+                  <div className="mt-3" id="other-skill-container">
                     <label htmlFor="otherSkill" className="block text-sm font-semibold mb-1">{otherSkillLabel}</label>
                     <input id="otherSkill" name="otherSkill" type="text" required value={form.otherSkill} onChange={(e) => setForm((p) => ({ ...p, otherSkill: e.target.value }))} className={inputClass()} placeholder={otherSkillPlaceholder} />
                   </div>
