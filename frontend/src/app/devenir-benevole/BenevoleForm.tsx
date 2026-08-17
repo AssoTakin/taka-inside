@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SiteLayout from "@/components/layout/SiteLayout";
 
 function blocksToText(blocks: unknown): string {
@@ -54,6 +54,12 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    console.log("BenevoleForm useEffect mounted");
+  }, []);
 
   const isRequired = (name: string) => requiredFields.includes(name);
 
@@ -153,6 +159,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
 
   return (
     <SiteLayout>
+      <script dangerouslySetInnerHTML={{ __html: `console.log('BenevoleForm mounted')` }} />
       <section className="bg-taka-green text-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
@@ -169,7 +176,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
               <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
               </svg>
-              <p>{successMessage}</p>
+              <p className="font-medium">{successMessage}</p>
             </div>
           )}
           {status === "error" && (
@@ -177,7 +184,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
               <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
               </svg>
-              <p>{errorMessage}</p>
+              <p className="font-medium">{errorMessage}</p>
             </div>
           )}
 
@@ -279,7 +286,10 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
                   <button
                     key={comp}
                     type="button"
-                    onClick={() => toggleSkill(comp)}
+                    onClick={() => {
+                      console.log("toggle skill", comp);
+                      toggleSkill(comp);
+                    }}
                     className={skillBtnClass(form.skills.includes(comp))}
                   >
                     {comp}

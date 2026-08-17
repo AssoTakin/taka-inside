@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { fetchPageContent, extractData } from "@/lib/api";
 import BenevoleForm from "./BenevoleForm";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const raw = await fetchPageContent("devenir-benevole");
   const data = extractData(raw);
