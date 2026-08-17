@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import SiteLayout from "@/components/layout/SiteLayout";
 
 function blocksToText(blocks: unknown): string {
   if (!Array.isArray(blocks)) return "";
@@ -157,7 +156,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
 
   if (!mounted) {
     return (
-      <SiteLayout>
+      <>
         <section className="bg-taka-green text-white py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
@@ -172,12 +171,12 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
             </div>
           </div>
         </section>
-      </SiteLayout>
+      </>
     );
   }
 
   return (
-    <SiteLayout>
+    <>
       <section className="bg-taka-green text-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
@@ -389,6 +388,6 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
           </form>
         </div>
       </section>
-    </SiteLayout>
+    </>
   );
 }

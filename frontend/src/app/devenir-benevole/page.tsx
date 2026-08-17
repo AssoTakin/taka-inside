@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchPageContent, extractData } from "@/lib/api";
 import BenevoleForm from "./BenevoleForm";
 
@@ -18,5 +19,9 @@ export default async function BenevolePage() {
   const raw = await fetchPageContent("devenir-benevole");
   const content = extractData(raw);
 
-  return <BenevoleForm content={content} />;
+  return (
+    <SiteLayout>
+      <BenevoleForm content={content} />
+    </SiteLayout>
+  );
 }
