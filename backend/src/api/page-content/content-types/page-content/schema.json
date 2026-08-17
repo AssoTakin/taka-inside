@@ -43,7 +43,7 @@
     },
     "formConfig": {
       "type": "json",
-      "description": "Configuration du formulaire bénévole : labels, placeholders, requiredFields, skills, availabilities, submitButton, otherSkillLabel, otherSkillPlaceholder, successMessage, errorMessage"
+      "description": "Configuration du formulaire : labels, placeholders, requiredFields, skills, availabilities, submitButton, otherSkillLabel, otherSkillPlaceholder, successMessage, errorMessage, emailTemplates { candidateSubject, candidateBody, adminSubject, adminBody, fromName, fromEmail }. Variables disponibles : {{firstName}}, {{lastName}}, {{email}}, {{phone}}, {{city}}, {{country}}, {{skills}}, {{availabilities}}, {{otherSkill}}, {{motivation}}."
     }
   }
 }
