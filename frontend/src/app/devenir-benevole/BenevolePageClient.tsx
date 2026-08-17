@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/contexts/CartContext";
 
 function blocksToText(blocks: unknown): string {
@@ -40,7 +39,11 @@ export default function BenevolePageClient({ content }: { content: Record<string
   const errorMessage = String(formConfig?.errorMessage || "Une erreur est survenue. Veuillez réessayer.");
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [statusText, setStatusText] = useState(errorMessage);
+  const [showOther, setShowOther] = useState(false);
   const { itemCount, setIsOpen } = useCart();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const menuItems = [
     { label: "Accueil", link: "/" },
@@ -53,92 +56,93 @@ export default function BenevolePageClient({ content }: { content: Record<string
   const isRequired = (name: string) => requiredFields.includes(name);
   const req = (name: string) => (isRequired(name) ? " *" : "");
 
-  const scriptHtml = `
-(function(){
-  const form = document.getElementById('benevole-form');
-  const otherInput = document.getElementById('other-skill-input');
-  const otherContainer = document.getElementById('other-skill-container');
-  const successMsg = document.getElementById('benevole-success');
-  const errorMsg = document.getElementById('benevole-error');
-  const submitBtn = document.getElementById('benevole-submit');
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
 
-  function setLoading(loading){
-    if(!submitBtn) return;
-    submitBtn.disabled = loading;
-    submitBtn.innerHTML = loading ? 'Envoi en cours…' : ${JSON.stringify(submitButton)};
-  }
+    const otherInput = document.getElementById("otherSkill") as HTMLInputElement | null;
 
-  function show(el){ if(el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
-  function hide(el){ if(el) { el.classList.add('hidden'); el.classList.remove('flex'); } }
-
-  // Show/hide "Autre" detail input
-  document.querySelectorAll('input[name="skills"]').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      const isOther = !!document.querySelector('input[name="skills"][value="Autre"]:checked');
-      if(isOther){ otherContainer.classList.remove('hidden'); otherInput.setAttribute('required','required'); }
-      else { otherContainer.classList.add('hidden'); otherInput.removeAttribute('required'); otherInput.value = ''; }
-    });
-  });
-
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    hide(successMsg); hide(errorMsg);
-
-    const data = {
-      lastName: document.getElementById('lastName').value.trim(),
-      firstName: document.getElementById('firstName').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      city: document.getElementById('city').value.trim(),
-      country: document.getElementById('country').value.trim(),
-      skills: Array.from(document.querySelectorAll('input[name="skills"]:checked')).map(function(cb){ return cb.value; }),
-      otherSkill: document.getElementById('otherSkill').value.trim(),
-      availabilities: Array.from(document.querySelectorAll('input[name="availabilities"]:checked')).map(function(cb){ return cb.value; }),
-      motivation: document.getElementById('motivation').value.trim(),
+    const handleSkillChange = () => {
+      const isOther = !!form.querySelector('input[name="skills"][value="Autre"]:checked');
+      setShowOther(isOther);
+      if (otherInput) {
+        if (isOther) otherInput.setAttribute("required", "required");
+        else {
+          otherInput.removeAttribute("required");
+          otherInput.value = "";
+        }
+      }
     };
 
-    const required = ${JSON.stringify(requiredFields)};
-    let errors = [];
-    if(required.includes('lastName') && !data.lastName) errors.push('Nom requis');
-    if(required.includes('firstName') && !data.firstName) errors.push('Prénom requis');
-    if(required.includes('email') && !data.email) errors.push('Email requis');
-    else if(data.email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(data.email)) errors.push('Email invalide');
-    if(required.includes('city') && !data.city) errors.push('Ville requise');
-    if(required.includes('skills') && data.skills.length === 0) errors.push('Sélectionnez au moins une compétence');
-    if(data.skills.includes('Autre') && !data.otherSkill) errors.push('Précisez votre compétence');
-    if(required.includes('motivation') && !data.motivation) errors.push('Motivation requise');
+    const skillBoxes = form.querySelectorAll('input[name="skills"]');
+    skillBoxes.forEach((cb) => cb.addEventListener("change", handleSkillChange));
 
-    if(errors.length > 0){
-      if(errorMsg) errorMsg.querySelector('p').textContent = errors.join('. ');
-      show(errorMsg);
-      return;
-    }
+    const handleSubmit = async (e: Event) => {
+      e.preventDefault();
+      setStatus("loading");
 
-    setLoading(true);
-    try{
-      const res = await fetch('/api/benevole', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if(res.ok && json.success){
-        show(successMsg);
-        form.reset();
-        otherContainer.classList.add('hidden');
-        otherInput.removeAttribute('required');
-      } else {
-        if(errorMsg) errorMsg.querySelector('p').textContent = ${JSON.stringify(errorMessage)};
-        show(errorMsg);
+      const getValue = (id: string) => (document.getElementById(id) as HTMLInputElement | null)?.value?.trim() || "";
+      const data = {
+        lastName: getValue("lastName"),
+        firstName: getValue("firstName"),
+        email: getValue("email"),
+        phone: getValue("phone"),
+        city: getValue("city"),
+        country: getValue("country"),
+        skills: Array.from(form.querySelectorAll('input[name="skills"]:checked')).map((cb) => (cb as HTMLInputElement).value),
+        otherSkill: getValue("otherSkill"),
+        availabilities: Array.from(form.querySelectorAll('input[name="availabilities"]:checked')).map((cb) => (cb as HTMLInputElement).value),
+        motivation: getValue("motivation"),
+      };
+
+      const errors: string[] = [];
+      if (isRequired("lastName") && !data.lastName) errors.push("Le nom est requis.");
+      if (isRequired("firstName") && !data.firstName) errors.push("Le prénom est requis.");
+      if (isRequired("email") && !data.email) errors.push("L'email est requis.");
+      else if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.push("Email invalide.");
+      if (isRequired("city") && !data.city) errors.push("La ville est requise.");
+      if (isRequired("skills") && data.skills.length === 0) errors.push("Sélectionnez au moins une compétence.");
+      if (data.skills.includes("Autre") && !data.otherSkill) errors.push("Précisez votre compétence.");
+      if (isRequired("motivation") && !data.motivation) errors.push("La motivation est requise.");
+
+      if (errors.length > 0) {
+        setStatusText(errors.join(" "));
+        setStatus("error");
+        return;
       }
-    } catch(err){
-      if(errorMsg) errorMsg.querySelector('p').textContent = ${JSON.stringify(errorMessage)};
-      show(errorMsg);
-    }
-    setLoading(false);
-  });
-})();
-`;
+
+      try {
+        const res = await fetch("/api/benevole", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (res.ok && json.success) {
+          setStatus("success");
+          form.reset();
+          setShowOther(false);
+          if (otherInput) {
+            otherInput.removeAttribute("required");
+            otherInput.value = "";
+          }
+        } else {
+          setStatusText(errorMessage);
+          setStatus("error");
+        }
+      } catch {
+        setStatusText(errorMessage);
+        setStatus("error");
+      }
+    };
+
+    form.addEventListener("submit", handleSubmit);
+
+    return () => {
+      form.removeEventListener("submit", handleSubmit);
+      skillBoxes.forEach((cb) => cb.removeEventListener("change", handleSkillChange));
+    };
+  }, [errorMessage]);
 
   return (
     <div className="font-body bg-taka-cream text-taka-black antialiased">
@@ -200,20 +204,24 @@ export default function BenevolePageClient({ content }: { content: Record<string
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {body && <p className="text-taka-gray text-lg mb-8">{body}</p>}
 
-            <div id="benevole-success" className="hidden mb-8 bg-taka-green/10 border border-taka-green/30 text-taka-green-dark rounded-xl p-4 items-start gap-3">
-              <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="font-medium">{successMessage}</p>
-            </div>
-            <div id="benevole-error" className="hidden mb-8 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 items-start gap-3">
-              <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <p className="font-medium">{errorMessage}</p>
-            </div>
+            {status === "success" && (
+              <div className="mb-8 bg-taka-green/10 border border-taka-green/30 text-taka-green-dark rounded-xl p-4 flex items-start gap-3">
+                <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className="font-medium">{successMessage}</p>
+              </div>
+            )}
+            {status === "error" && (
+              <div className="mb-8 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 flex items-start gap-3">
+                <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <p className="font-medium">{statusText || errorMessage}</p>
+              </div>
+            )}
 
-            <form id="benevole-form" className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6">
+            <form ref={formRef} id="benevole-form" className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-semibold mb-1">{labels.lastName || "Nom"}{req("lastName")}</label>
@@ -256,10 +264,12 @@ export default function BenevolePageClient({ content }: { content: Record<string
                     </label>
                   ))}
                 </div>
-                <div id="other-skill-container" className="hidden mt-3">
-                  <label htmlFor="otherSkill" className="block text-sm font-semibold mb-1">{otherSkillLabel}</label>
-                  <input id="otherSkill" name="otherSkill" type="text" className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-green focus:ring-2 focus:ring-taka-green/20 outline-none transition-all" placeholder={otherSkillPlaceholder} />
-                </div>
+                {showOther && (
+                  <div className="mt-3">
+                    <label htmlFor="otherSkill" className="block text-sm font-semibold mb-1">{otherSkillLabel}</label>
+                    <input id="otherSkill" name="otherSkill" type="text" required className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-green focus:ring-2 focus:ring-taka-green/20 outline-none transition-all" placeholder={otherSkillPlaceholder} />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -279,7 +289,9 @@ export default function BenevolePageClient({ content }: { content: Record<string
                 <textarea id="motivation" name="motivation" rows={4} required={isRequired("motivation")} className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-green focus:ring-2 focus:ring-taka-green/20 outline-none transition-all resize-none" placeholder={placeholders.motivation || "Pourquoi souhaitez-vous rejoindre Taka Inside ?"} />
               </div>
 
-              <button id="benevole-submit" type="submit" className="w-full bg-taka-green text-white font-semibold py-4 rounded-xl hover:bg-opacity-90 transition-all">{submitButton}</button>
+              <button type="submit" disabled={status === "loading"} className="w-full bg-taka-green text-white font-semibold py-4 rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-60">
+                {status === "loading" ? "Envoi en cours…" : submitButton}
+              </button>
             </form>
           </div>
         </section>
@@ -315,8 +327,6 @@ export default function BenevolePageClient({ content }: { content: Record<string
           </div>
         </div>
       </footer>
-
-      <Script id="benevole-form-handler" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: scriptHtml }} />
     </div>
   );
 }
