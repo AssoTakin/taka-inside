@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import Script from "next/script";
 import { useCart } from "@/contexts/CartContext";
 
 function blocksToText(blocks: unknown): string {
@@ -315,7 +316,7 @@ export default function BenevolePageClient({ content }: { content: Record<string
         </div>
       </footer>
 
-      <script dangerouslySetInnerHTML={{ __html: scriptHtml }} />
+      <Script id="benevole-form-handler" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: scriptHtml }} />
     </div>
   );
 }
