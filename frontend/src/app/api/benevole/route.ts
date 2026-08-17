@@ -96,12 +96,13 @@ export async function POST(request: NextRequest) {
     const availabilitiesLabel = Array.isArray(availabilities) ? availabilities.join(", ") : String(availabilities || "");
 
     // Email au candidat
-    await getResend().emails.send({
-      from: `${SITE_NAME} <${ADMIN_EMAIL}>`,
-      to: email,
-      replyTo: REPLY_TO_EMAIL,
-      subject: `${SITE_NAME} — Confirmation de votre candidature bénévole`,
-      html: `<!DOCTYPE html>
+    try {
+      await getResend().emails.send({
+        from: `${SITE_NAME} <${ADMIN_EMAIL}>`,
+        to: email,
+        replyTo: REPLY_TO_EMAIL,
+        subject: `${SITE_NAME} — Confirmation de votre candidature bénévole`,
+        html: `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a1a; background: #f8f8f8; padding: 24px;">
@@ -122,15 +123,19 @@ export async function POST(request: NextRequest) {
   </table>
 </body>
 </html>`,
-    });
+      });
+    } catch (emailErr) {
+      console.error("[Benevole API] Candidate email error:", emailErr);
+    }
 
     // Email à l'admin
-    await getResend().emails.send({
-      from: `${SITE_NAME} <${ADMIN_EMAIL}>`,
-      to: ADMIN_EMAIL,
-      replyTo: email,
-      subject: `[Bénévole] Nouvelle candidature de ${candidateName}`,
-      html: `<!DOCTYPE html>
+    try {
+      await getResend().emails.send({
+        from: `${SITE_NAME} <${ADMIN_EMAIL}>`,
+        to: ADMIN_EMAIL,
+        replyTo: email,
+        subject: `[Bénévole] Nouvelle candidature de ${candidateName}`,
+        html: `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #1a1a1a; background: #f8f8f8; padding: 24px;">
@@ -153,7 +158,10 @@ export async function POST(request: NextRequest) {
   </table>
 </body>
 </html>`,
-    });
+      });
+    } catch (emailErr) {
+      console.error("[Benevole API] Admin email error:", emailErr);
+    }
 
     return NextResponse.json({ success: true, message: "Candidature envoyée avec succès." });
   } catch (error) {
