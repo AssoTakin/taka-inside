@@ -154,27 +154,6 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) {
-    return (
-      <>
-        <section className="bg-taka-green text-white py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="font-display text-3xl md:text-5xl font-bold">{title}</h1>
-            <p className="mt-4 max-w-xl opacity-90">{subtitle}</p>
-          </div>
-        </section>
-        <section className="py-16 md:py-24 bg-taka-cream">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            {body && <p className="text-taka-gray text-lg mb-8">{body}</p>}
-            <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6 opacity-70">
-              <p className="text-center text-taka-gray">Chargement du formulaire…</p>
-            </div>
-          </div>
-        </section>
-      </>
-    );
-  }
-
   return (
     <>
       <section className="bg-taka-green text-white py-16 md:py-24">
@@ -205,7 +184,7 @@ export default function BenevoleForm({ content }: BenevoleFormProps) {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6">
+          <form onSubmit={handleSubmit} className={`bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light space-y-6 transition-opacity duration-300 ${mounted ? 'opacity-100' : 'opacity-70'}`}>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-1">
