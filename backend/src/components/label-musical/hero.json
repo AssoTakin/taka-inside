@@ -11,6 +11,10 @@
       "type": "string",
       "required": true
     },
+    "badgeIcon": {
+      "type": "string",
+      "default": "music"
+    },
     "title": {
       "type": "string",
       "required": true
