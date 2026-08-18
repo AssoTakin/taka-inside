@@ -30,7 +30,6 @@ export default async function ContactPage() {
   const submitButton = (formConfig?.submitButton as string) || "Envoyer le message";
 
   const email = (config?.contactEmail as string) || "kwabo@takainside.org";
-  const phone = (config?.contactPhone as string) || "";
   const whatsapp = (config?.whatsappNumber as string) || "";
   const address = (config?.contactAddress as string) || "";
   const socialLinks = Array.isArray(config?.socialLinks) ? (config.socialLinks as Record<string, unknown>[]) : [];
@@ -102,18 +101,6 @@ export default async function ContactPage() {
                 </div>
                 <a href={`mailto:${email}`} className="font-semibold text-lg hover:text-taka-yellow transition-colors">{email}</a>
               </div>
-
-              {phone && (
-                <div className="bg-white rounded-2xl p-6 border border-taka-gray-light">
-                  <div className="flex items-center gap-2 text-taka-gray text-sm font-medium mb-1">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                    </svg>
-                    <span>Téléphone</span>
-                  </div>
-                  <a href={`tel:${phone}`} className="font-semibold text-lg hover:text-taka-yellow transition-colors">{phone}</a>
-                </div>
-              )}
 
               {whatsapp && (
                 <div className="bg-white rounded-2xl p-6 border border-taka-gray-light">
