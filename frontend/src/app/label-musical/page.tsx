@@ -44,14 +44,16 @@ export default async function LabelMusicalPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {artistes.map((artiste) => {
-              const nom = String(artiste.nom || "");
               const id = String(artiste.documentId || "");
+              const slug = String(artiste.slug || "");
+              const artistPath = slug ? `/label-musical/${slug}` : (id ? `/label-musical/${id}` : '/label-musical');
+              const nom = String(artiste.nom || "");
               const genre = String(artiste.genre || "");
               const bio = String(artiste.biographie || "");
               const photoUrl = getImageUrl(artiste.photo as { url: string } | null);
               if (!id) return null;
               return (
-                <Link href={`/label-musical/${id}`} key={id} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md transition-all group">
+                <Link href={artistPath} key={id} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md transition-all group">
                   <div className="w-20 h-20 rounded-xl bg-taka-gray-light flex-shrink-0 overflow-hidden relative">
                     {photoUrl ? (
                       <Image src={photoUrl} alt={nom} fill className="object-cover" sizes="80px" />

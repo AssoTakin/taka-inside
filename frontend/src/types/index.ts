@@ -21,23 +21,61 @@ export interface Artiste {
   documentId: string;
   nom: string;
   slug: string;
-  biographie: string;
-  genreMusical: string;
+  biographie?: string;
+  citation?: string;
+  genre?: string;
+  genre_musical?: string;
+  genreMusical?: string;
   photo?: { url: string; alt?: string };
+  photo_cover?: { url: string; alt?: string };
+  photoCover?: { url: string; alt?: string };
   albums?: Album[];
   concerts?: Concert[];
+  actualites?: Actualite[];
   liensSociaux?: LiensSociaux;
-  estSigne: boolean;
+  liens?: LiensSociaux | LiensSociaux[];
+  liens_streaming?: StreamingLink[];
+  liensStreaming?: StreamingLink[];
+  produitsLies?: Produit[];
+  produits_lies?: Produit[];
+  estSigne?: boolean;
+  est_signe?: boolean;
+  discographie?: Record<string, unknown>[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface StreamingLink {
+  platform: 'spotify' | 'apple_music' | 'youtube_music' | 'deezer' | 'tidal' | 'soundcloud' | 'bandcamp' | 'youtube' | 'website';
+  url: string;
+}
+
+export interface Actualite {
+  id: number;
+  titre: string;
+  contenu?: string;
+  date?: string;
+  image?: { url: string; alt?: string };
+  lien?: string;
 }
 
 export interface Album {
   id: number;
   titre: string;
-  annee: number;
+  annee?: number;
+  dateSortie?: string;
+  type?: 'album' | 'ep' | 'single' | 'compilation' | 'live';
+  description?: string;
   pochette?: { url: string; alt?: string };
-  liensStreaming: string;
+  extraitAudio?: { url: string };
+  liensStreaming?: StreamingLink[];
+  lienSpotify?: string;
+  lienApple?: string;
+  lienYoutube?: string;
+  lienDeezer?: string;
+  lienTidal?: string;
+  lienSoundcloud?: string;
+  lienBandcamp?: string;
 }
 
 export interface Concert {

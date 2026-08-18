@@ -3,10 +3,21 @@
   "info": { "displayName": "Album", "icon": "music" },
   "attributes": {
     "titre": { "type": "string", "required": true },
-    "annee": { "type": "string" },
+    "type": {
+      "type": "enumeration",
+      "enum": ["album", "ep", "single", "compilation", "live"],
+      "default": "single"
+    },
+    "date_sortie": { "type": "date" },
+    "description": { "type": "text" },
     "pochette": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "extrait_audio": { "type": "media", "multiple": false, "allowedTypes": ["audios"] },
     "lien_spotify": { "type": "string" },
     "lien_apple": { "type": "string" },
-    "lien_youtube": { "type": "string" }
+    "lien_youtube": { "type": "string" },
+    "lien_deezer": { "type": "string" },
+    "lien_tidal": { "type": "string" },
+    "lien_soundcloud": { "type": "string" },
+    "lien_bandcamp": { "type": "string" }
   }
 }

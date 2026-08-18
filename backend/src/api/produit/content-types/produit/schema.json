@@ -16,6 +16,7 @@
     "date_evenement": { "type": "datetime" },
     "lieu_evenement": { "type": "string" },
     "quantite_disponible": { "type": "integer", "default": -1 },
-    "categorie": { "type": "relation", "relation": "manyToOne", "target": "api::categorie-produit.categorie-produit" }
+    "categorie": { "type": "relation", "relation": "manyToOne", "target": "api::categorie-produit.categorie-produit" },
+    "artistes": { "type": "relation", "relation": "manyToMany", "target": "api::artiste.artiste", "mappedBy": "produits_lies" }
   }
 }

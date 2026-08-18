@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_shared_streaming_links",
+  "info": { "displayName": "Streaming Link", "icon": "music" },
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["spotify", "apple_music", "youtube_music", "deezer", "tidal", "soundcloud", "bandcamp", "amazon_music", "boomplay", "youtube"],
+      "required": true
+    },
+    "url": { "type": "string", "required": true }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "collectionName": "components_musique_actualites",
+  "info": { "displayName": "Actualité Artiste", "icon": "newspaper" },
+  "attributes": {
+    "titre": { "type": "string", "required": true },
+    "date": { "type": "date" },
+    "contenu": { "type": "richtext" },
+    "image": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "lien": { "type": "string" }
+  }
+}

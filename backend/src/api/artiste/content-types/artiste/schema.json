@@ -28,7 +28,15 @@
     "biographie": {
       "type": "richtext"
     },
+    "citation": {
+      "type": "text"
+    },
     "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "photo_cover": {
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
@@ -37,6 +45,36 @@
       "type": "component",
       "component": "shared.liens-sociaux",
       "repeatable": false
+    },
+    "liens_streaming": {
+      "type": "component",
+      "component": "shared.streaming-link",
+      "repeatable": true
+    },
+    "discographie": {
+      "type": "component",
+      "component": "musique.album",
+      "repeatable": true
+    },
+    "actualites": {
+      "type": "component",
+      "component": "musique.actualite",
+      "repeatable": true
+    },
+    "concerts": {
+      "type": "component",
+      "component": "evenement.concert",
+      "repeatable": true
+    },
+    "produits_lies": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::produit.produit",
+      "inversedBy": "artistes"
+    },
+    "est_signe": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

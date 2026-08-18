@@ -543,16 +543,18 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
 
         <div className="grid md:grid-cols-2 gap-6 items-stretch">
           {featured.map((artiste) => {
+            const artistId = String(artiste.documentId || '');
             const slug = String(artiste.slug || '');
+            const artistPath = slug ? `/label-musical/${slug}` : (artistId ? `/label-musical/${artistId}` : '/label-musical');
             const nom = String(artiste.nom || 'Artiste');
-            const bio = String(artiste.bio || '');
+            const bio = String(artiste.bio || artiste.biographie || '');
             const photoUrl =
               getImageUrl(artiste.photo as { url: string } | null) || "/images/logo-taka-inside.jpg";
 
             return (
               <Link
-                key={slug}
-                href={`/label-musical/${slug}`}
+                key={artistId || slug}
+                href={artistPath}
                 className="bg-white rounded-2xl p-6 border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group flex items-center gap-4"
               >
                 <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-taka-gray-light">
