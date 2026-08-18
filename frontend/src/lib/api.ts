@@ -200,7 +200,9 @@ export function renderRichText(value: unknown): string {
 
 /** Fetch label musical page (Single Type) */
 export async function fetchLabelMusicalPage(): Promise<Record<string, unknown> | null> {
-  return fetchStrapiSingle('label-musical-page?populate=*');
+  return fetchStrapiSingle(
+    'label-musical-page?populate[hero][populate][primaryCta]=*&populate[hero][populate][secondaryCta]=*&populate[stats][populate]=*&populate[artistsSectionCta][populate]=*&populate[callout][populate][primaryCta]=*&populate[callout][populate][secondaryCta]=*&populate[seo][populate][ogImage][populate]=*'
+  );
 }
 
 /** Fetch a legal page by slug */
