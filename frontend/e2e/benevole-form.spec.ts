@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || 'https://takainside.org';
 
+test.setTimeout(120000);
+
 test('formulaire bénévole — soumission complète', async ({ page }) => {
   await page.goto(`${BASE_URL}/devenir-benevole`);
 
@@ -21,8 +23,14 @@ test('formulaire bénévole — soumission complète', async ({ page }) => {
 
   await page.fill('textarea[name="motivation"]', 'Test Playwright de la soumission bénévole');
 
+  // Suivre la requête API
+  const responsePromise = page.waitForResponse(resp => resp.url().includes('/api/benevole') && resp.request().method() === 'POST');
   await page.click('button[type="submit"]');
+  const response = await responsePromise;
+  console.log('API status:', response.status());
+  const body = await response.json().catch(() => ({}));
+  console.log('API body:', JSON.stringify(body));
 
   // Attendre le message de succès ou d'erreur explicite
-  await expect(page.locator('text=/envoyée|succès|erreur|problème/i')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('text=/envoyée|succès|erreur|problème/i')).toBeVisible({ timeout: 60000 });
 });

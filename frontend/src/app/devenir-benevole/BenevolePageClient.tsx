@@ -100,6 +100,18 @@ export default function BenevolePageClient({ content }: { content: Record<string
       }
       if (data.emailErrors && data.emailErrors.length > 0) {
         // La candidature est enregistrée mais au moins un email n'a pas pu partir
+        setForm({
+          lastName: "",
+          firstName: "",
+          email: "",
+          phone: "",
+          city: "",
+          country: "",
+          skills: [],
+          availabilities: [],
+          motivation: "",
+          otherSkill: "",
+        });
         setStatus("success");
         setErrorDetail(`Notification partielle : ${data.emailErrors.join(" ; ")}`);
         return;
@@ -116,6 +128,7 @@ export default function BenevolePageClient({ content }: { content: Record<string
         motivation: "",
         otherSkill: "",
       });
+      setStatus("success");
     } catch (err) {
       setStatus("error");
       setErrorDetail(err instanceof Error ? err.message : String(err));
