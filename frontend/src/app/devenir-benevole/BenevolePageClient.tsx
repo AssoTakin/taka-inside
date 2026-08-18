@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function blocksToText(blocks: unknown): string {
   if (!Array.isArray(blocks)) return "";
@@ -60,8 +60,9 @@ export default function BenevolePageClient({ content }: { content: Record<string
     otherSkill: "",
   });
 
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorDetail, setErrorDetail] = useState<string>("");
+  const statusRef = useRef<HTMLDivElement>(null);
 
   const toggleArray = (
     key: "skills" | "availabilities",
@@ -78,8 +79,8 @@ export default function BenevolePageClient({ content }: { content: Record<string
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
-    setErrorDetail(null);
+    setStatus("submitting");
+    setErrorDetail("");
     try {
       const payload = {
         ...form,
@@ -137,6 +138,12 @@ export default function BenevolePageClient({ content }: { content: Record<string
 
   const showOther = form.skills.includes("Autre");
 
+  useEffect(() => {
+    if (status === "success" || status === "error") {
+      statusRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [status]);
+
   return (
     <>
       <section className="bg-taka-green text-white py-16 md:py-24">
@@ -157,13 +164,16 @@ export default function BenevolePageClient({ content }: { content: Record<string
           )}
 
           {status === "success" && (
-            <div className="bg-taka-green/10 border border-taka-green text-taka-green px-6 py-4 rounded-xl mb-6">
+            <div ref={statusRef} className="bg-taka-green/10 border border-taka-green text-taka-green px-6 py-4 rounded-xl mb-6">
               {successMessage}
+              {errorDetail && (
+                <p className="text-sm mt-2 opacity-80">{errorDetail}</p>
+              )}
             </div>
           )}
 
           {status === "error" && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-6">
+            <div ref={statusRef} className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-6">
               {errorMessage}
               {errorDetail && (
                 <p className="text-sm mt-2 opacity-80">Détail : {errorDetail}</p>
@@ -253,8 +263,8 @@ export default function BenevolePageClient({ content }: { content: Record<string
               <textarea id="motivation" name="motivation" rows={4} required={isRequired("motivation")} value={form.motivation} onChange={(e) => setForm((p) => ({ ...p, motivation: e.target.value }))} className={`${inputClass} resize-none`} placeholder={placeholders.motivation || "Pourquoi souhaitez-vous rejoindre Taka Inside ?"} />
             </div>
 
-            <button type="submit" disabled={status === "loading"} className="w-full bg-taka-green text-white font-semibold py-4 rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-60">
-              {status === "loading" ? "Envoi en cours…" : submitButton}
+            <button type="submit" disabled={status === "submitting"} className="w-full bg-taka-green text-white font-semibold py-4 rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-60">
+              {status === "submitting" ? "Envoi en cours…" : submitButton}
             </button>
           </form>
         </div>

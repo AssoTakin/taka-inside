@@ -251,12 +251,15 @@ export async function POST(request: NextRequest) {
       }
       adminHtml = interpolateTemplate(adminHtml, templateValues);
 
+      const adminSubjectInterpolated = interpolateTemplate(adminSubject, templateValues);
+      const adminTitle = `Nouvelle candidature bénévole — ${candidateName}`;
+
       const res = await getResend().emails.send({
         from,
         to: ADMIN_EMAIL,
         replyTo: email,
-        subject: interpolateTemplate(adminSubject, templateValues),
-        html: defaultEmailWrapper(`Nouvelle candidature bénévole — {{candidateName}}`, adminHtml),
+        subject: adminSubjectInterpolated,
+        html: defaultEmailWrapper(adminTitle, adminHtml),
       });
       console.log("[Benevole API] Admin email sent:", res.data?.id || res);
     } catch (emailErr: any) {
