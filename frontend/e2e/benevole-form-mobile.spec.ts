@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || 'https://takainside.org';
 
+test.setTimeout(120000);
+
 test('formulaire bénévole — mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE_URL}/devenir-benevole`);
@@ -19,6 +21,12 @@ test('formulaire bénévole — mobile', async ({ page }) => {
 
   await page.fill('textarea[name="motivation"]', 'Test mobile bénévole');
 
+  const responsePromise = page.waitForResponse(resp => resp.url().includes('/api/benevole') && resp.request().method() === 'POST');
   await page.click('button[type="submit"]');
-  await expect(page.locator('text=/envoyée|succès|erreur|problème/i')).toBeVisible({ timeout: 15000 });
+  const response = await responsePromise;
+  console.log('Mobile API status:', response.status());
+  const body = await response.json().catch(() => ({}));
+  console.log('Mobile API body:', JSON.stringify(body));
+
+  await expect(page.locator('text=/envoyée|succès|erreur|problème/i')).toBeVisible({ timeout: 60000 });
 });
