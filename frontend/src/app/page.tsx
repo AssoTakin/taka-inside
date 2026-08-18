@@ -548,8 +548,8 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
             const artistPath = slug ? `/label-musical/${slug}` : (artistId ? `/label-musical/${artistId}` : '/label-musical');
             const nom = String(artiste.nom || 'Artiste');
             const bio = String(artiste.bio || artiste.biographie || '');
-            const photoUrl =
-              getImageUrl(artiste.photo as { url: string } | null) || "/images/logo-taka-inside.jpg";
+            const firstLetter = nom.charAt(0).toUpperCase();
+            const photoUrl = getImageUrl(artiste.photo as { url: string } | null);
 
             return (
               <Link
@@ -557,8 +557,12 @@ function FeaturedArtistsSection({ section, artistes }: { section: Record<string,
                 href={artistPath}
                 className="bg-white rounded-2xl p-6 border border-taka-gray-light hover:shadow-lg hover:-translate-y-1 transition-all group flex items-center gap-4"
               >
-                <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-taka-gray-light">
-                  <Image src={photoUrl} alt={nom} width={80} height={80} className="w-full h-full object-cover" />
+                <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-taka-gray-light flex items-center justify-center text-taka-gray font-display font-bold text-2xl">
+                  {photoUrl ? (
+                    <Image src={photoUrl} alt={nom} width={80} height={80} className="w-full h-full object-cover" />
+                  ) : (
+                    firstLetter
+                  )}
                 </div>
                 <div>
                   <span className="text-xs text-taka-green font-semibold uppercase">Artiste</span>
