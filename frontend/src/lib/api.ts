@@ -96,6 +96,7 @@ async function _fetchStrapiRaw(
     const res = await fetch(url, {
       next: { revalidate: options?.revalidate ?? 300 },
       headers,
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!res.ok) {

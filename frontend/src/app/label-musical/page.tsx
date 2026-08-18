@@ -85,11 +85,21 @@ export default async function LabelMusicalPage() {
   const artistes = artistesData || [];
 
   const hero = page?.hero;
+  const heroDescription = hero?.description || "Taka Inside déniche, accompagne et met en lumière les talents de la scène musicale béninoise et africaine.";
+  const heroPrimaryCta = buildCta(hero?.primaryCta) || { label: "Découvrir les artistes", link: "#artistes", style: "primary" };
+  const heroSecondaryCta = buildCta(hero?.secondaryCta) || { label: "Boutique artistes", link: "/boutique", style: "outline" };
+  const heroTitle = hero?.title || "Notre";
+  const heroHighlighted = hero?.highlightedWord || "Label";
   const stats = page?.stats || [];
   const artistsSectionTitle = page?.artistsSectionTitle || 'Les talents Taka Inside';
   const artistsSectionDescription = page?.artistsSectionDescription || '';
-  const artistsSectionCta = buildCta(page?.artistsSectionCta);
-  const callout = page?.callout;
+  const artistsSectionCta = buildCta(page?.artistsSectionCta) || { label: "Voir tous les artistes", link: "#artistes", style: "outline" };
+  const callout = page?.callout || {
+    title: "Vous êtes artiste et souhaitez rejoindre le label ?",
+    description: "Envoyez-nous votre dossier. On étudie chaque proposition avec attention.",
+    primaryCta: { label: "Nous contacter", link: "/contact", style: "primary" },
+    secondaryCta: { label: "En savoir plus", link: "/association", style: "outline" }
+  };
   const artistFallbackLabel = page?.artistFallbackLabel || 'Artiste';
 
   const heroBgUrl = hero?.backgroundImage ? getImageUrl(hero.backgroundImage as unknown as { url: string } | null) : null;
@@ -106,26 +116,21 @@ export default async function LabelMusicalPage() {
         )}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            {hero?.badgeText && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-medium mb-4">
-                <IconFor name="music" />
-                {hero.badgeText}
-              </div>
-            )}
-            {hero?.title && (
-              <h1 className="font-display text-4xl md:text-6xl font-bold mb-6">
-                {hero.title}
-                {hero.highlightedWord && <span className="text-taka-red"> {hero.highlightedWord}</span>}
-              </h1>
-            )}
-            {hero?.description && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-medium mb-4">
+              <IconFor name={hero?.badgeIcon || 'music'} />
+              {hero?.badgeText || "Label Musical"}
+            </div>
+            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+              {heroTitle} <span className="text-taka-red">{heroHighlighted}</span>
+            </h1>
+            {heroDescription && (
               <div className="text-lg md:text-xl text-taka-gray mb-8 leading-relaxed">
-                {renderRichText(hero.description)}
+                {renderRichText(heroDescription)}
               </div>
             )}
             <div className="flex flex-wrap gap-4">
-              {hero?.primaryCta && <CtaButtonLink cta={hero.primaryCta} baseColor="red" />}
-              {hero?.secondaryCta && <CtaButtonLink cta={hero.secondaryCta} baseColor="white" />}
+              {heroPrimaryCta && <CtaButtonLink cta={heroPrimaryCta} baseColor="red" />}
+              {heroSecondaryCta && <CtaButtonLink cta={heroSecondaryCta} baseColor="white" />}
             </div>
           </div>
         </div>

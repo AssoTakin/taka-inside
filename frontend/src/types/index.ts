@@ -164,6 +164,7 @@ export interface SeoMeta {
 
 export interface LabelMusicalHero {
   badgeText: string;
+  badgeIcon?: string;
   title: string;
   highlightedWord?: string;
   description: string;
