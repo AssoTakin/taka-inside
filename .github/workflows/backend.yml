@@ -1,6 +1,7 @@
 name: Backend CI/CD — Railway
 
 on:
+  workflow_dispatch:
   push:
     branches: [master, main, develop]
     paths:
