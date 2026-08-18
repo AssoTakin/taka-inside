@@ -56,6 +56,9 @@ function formatDate(dateRaw: string): string {
   return isNaN(date.getTime()) ? dateRaw : date.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
 }
 
+export const dynamicParams = true;
+export const revalidate = 3600;
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const artiste = await fetchArtiste(slug);
@@ -69,7 +72,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 async function fetchArtiste(slug: string) {
-  const artistesData = await fetchStrapiList("artistes?populate[photo]=*&populate[photo_cover]=*&populate[liens]=*&populate[liens_streaming]=*&populate[discographie][populate]=*&populate[actualites][populate]=*&populate[concerts]=*&populate[produits_lies][populate]=*");
+  const qs = new URLSearchParams({
+    "populate[photo][fields][0]": "url",
+    "populate[photo][fields][1]": "alternativeText",
+    "populate[photo_cover][fields][0]": "url",
+    "populate[photo_cover][fields][1]": "alternativeText",
+    "populate[liens]": "true",
+    "populate[liens_streaming]": "true",
+    "populate[discographie][populate]": "*",
+    "populate[actualites][populate]": "*",
+    "populate[concerts]": "true",
+    "populate[produits_lies][populate]": "*",
+  });
+  const artistesData = await fetchStrapiList(`artistes?${qs.toString()}`);
   const artistes: Artiste[] = artistesData && Array.isArray(artistesData) ? (artistesData as unknown as Artiste[]) : [];
   return artistes.find((a) => (a.slug && a.slug === slug) || a.documentId === slug) || null;
 }
