@@ -139,8 +139,9 @@ export default function BenevolePageClient({ content }: { content: Record<string
   const showOther = form.skills.includes("Autre");
 
   useEffect(() => {
-    if (status === "success" || status === "error") {
-      statusRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if ((status === "success" || status === "error") && statusRef.current) {
+      const y = statusRef.current.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     }
   }, [status]);
 
