@@ -146,3 +146,55 @@ export type CompetenceBenevole =
   | 'design'
   | 'traduction'
   | 'autre';
+
+export interface CtaButton {
+  label: string;
+  link: string;
+  style?: 'primary' | 'secondary' | 'outline';
+  icon?: string;
+  isExternal?: boolean;
+}
+
+export interface SeoMeta {
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string;
+  ogImage?: { url: string; alt?: string };
+}
+
+export interface LabelMusicalHero {
+  badgeText: string;
+  title: string;
+  highlightedWord?: string;
+  description: string;
+  primaryCta?: CtaButton;
+  secondaryCta?: CtaButton;
+  backgroundImage?: { url: string; alt?: string };
+}
+
+export interface LabelMusicalStat {
+  value: string;
+  label: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface LabelMusicalCallout {
+  title: string;
+  description?: string;
+  primaryCta?: CtaButton;
+  secondaryCta?: CtaButton;
+}
+
+export interface LabelMusicalPage {
+  documentId: string;
+  seo?: SeoMeta;
+  hero: LabelMusicalHero;
+  stats: LabelMusicalStat[];
+  artistsSectionTitle: string;
+  artistsSectionDescription?: string;
+  artistsSectionCta?: CtaButton;
+  callout?: LabelMusicalCallout;
+  artistFallbackLabel?: string;
+}
+

@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_label_musical_heroes",
+  "info": {
+    "displayName": "Hero Label Musical",
+    "icon": "picture",
+    "description": "Hero de la page globale Label Musical"
+  },
+  "category": "label-musical",
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "highlightedWord": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "primaryCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    },
+    "secondaryCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

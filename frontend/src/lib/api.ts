@@ -183,6 +183,25 @@ export async function fetchPageContent(slug: string): Promise<Record<string, unk
   return fetchStrapiSingle(`page-contents?filters[slug][$eq]=${slug}&populate=*`);
 }
 
+/** Render richtext field from Strapi to plain text */
+export function renderRichText(value: unknown): string {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    return value.map((block) => {
+      if (typeof block === 'string') return block;
+      const children = (block?.children || []) as Array<{ text?: string } | string>;
+      return children.map(child => typeof child === 'string' ? child : (child?.text || '')).join('');
+    }).join('\n\n');
+  }
+  return '';
+}
+
+/** Fetch label musical page (Single Type) */
+export async function fetchLabelMusicalPage(): Promise<Record<string, unknown> | null> {
+  return fetchStrapiSingle('label-musical-page?populate=*');
+}
+
 /** Fetch a legal page by slug */
 export async function fetchLegalPage(slug: string): Promise<Record<string, unknown> | null> {
   return fetchStrapiSingle(`legal-pages?filters[slug][$eq]=${slug}&populate=*`);

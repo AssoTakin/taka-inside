@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_label_musical_callouts",
+  "info": {
+    "displayName": "Callout Label Musical",
+    "icon": "bullhorn",
+    "description": "Bloc d'appel à l'action en bas de page Label Musical"
+  },
+  "category": "label-musical",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "primaryCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    },
+    "secondaryCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    }
+  }
+}

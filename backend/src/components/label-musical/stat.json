@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_label_musical_stats",
+  "info": {
+    "displayName": "Stat Label Musical",
+    "icon": "chart-bar",
+    "description": "Chiffre clé affiché sur la page Label Musical"
+  },
+  "category": "label-musical",
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": ["mic", "radio", "globe", "calendar", "music", "users", "star", "heart"],
+      "default": "music"
+    }
+  }
+}

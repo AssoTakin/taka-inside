@@ -1,0 +1,53 @@
+{
+  "kind": "singleType",
+  "collectionName": "label_musical_pages",
+  "info": {
+    "singularName": "label-musical-page",
+    "pluralName": "label-musical-pages",
+    "displayName": "Page Label Musical",
+    "description": "Contenu éditorial de la page globale /label-musical"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "component": "shared.seo"
+    },
+    "hero": {
+      "type": "component",
+      "component": "label-musical.hero",
+      "required": true
+    },
+    "stats": {
+      "type": "component",
+      "component": "label-musical.stat",
+      "repeatable": true,
+      "required": true,
+      "min": 1
+    },
+    "artistsSectionTitle": {
+      "type": "string",
+      "required": true,
+      "default": "Les talents Taka Inside"
+    },
+    "artistsSectionDescription": {
+      "type": "richtext"
+    },
+    "artistsSectionCta": {
+      "type": "component",
+      "component": "shared.cta-button"
+    },
+    "callout": {
+      "type": "component",
+      "component": "label-musical.callout"
+    },
+    "artistFallbackLabel": {
+      "type": "string",
+      "default": "Artiste",
+      "description": "Label affiché au-dessus du nom de chaque artiste quand le genre n'est pas renseigné"
+    }
+  }
+}
