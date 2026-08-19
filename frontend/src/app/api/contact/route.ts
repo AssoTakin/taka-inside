@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY || "");
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const DESTINATION_EMAIL = process.env.CONTACT_DESTINATION_EMAIL || "kwabo@takainside.org";
 const FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || "Taka Inside <contact@takainside.org>";
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     let emailSent = false;
-    if (process.env.RESEND_API_KEY) {
+    if (resend) {
       try {
         await resend.emails.send({
           from: FROM_EMAIL,
