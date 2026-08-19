@@ -231,7 +231,13 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                               {cover ? (
                                 <Image src={cover} alt={titre} fill className="object-cover" sizes="112px" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-taka-gray font-display font-bold text-2xl">{(nom || "").charAt(0)}</div>
+                                <div className="w-full h-full flex items-center justify-center text-taka-gray">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M9 18V5l12-2v13" />
+                                    <circle cx="6" cy="18" r="3" />
+                                    <circle cx="18" cy="16" r="3" />
+                                  </svg>
+                                </div>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -362,7 +368,13 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                             {image ? (
                               <Image src={image} alt={produit.nom} fill className="object-cover" sizes="80px" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-taka-gray font-bold">{(produit.nom || "").charAt(0)}</div>
+                              <div className="w-full h-full flex items-center justify-center text-taka-gray">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                                  <line x1="3" y1="6" x2="21" y2="6" />
+                                  <path d="M16 10a4 4 0 0 1-8 0" />
+                                </svg>
+                              </div>
                             )}
                           </div>
                           <div className="flex-1">
