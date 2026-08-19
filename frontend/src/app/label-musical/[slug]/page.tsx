@@ -209,7 +209,11 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                       const dateSortie = asString(album.date_sortie || album.annee);
                       const description = asString(album.description);
                       const cover = getImageUrl(album.pochette as { url: string } | null);
-                      const extraitUrl = getImageUrl(album.extrait_audio as { url: string } | null);
+                      const extraitAudio = album.extrait_audio as { url?: string } | null;
+                      const audioUrl = asString(album.audio_url) || (extraitAudio?.url ? getImageUrl(extraitAudio as { url: string }) : "");
+                      const audioType = asString(album.audio_type || "preview");
+                      const soutienLabel = asString(album.cta_soutien_label);
+                      const soutienUrl = asString(album.cta_soutien_lien);
                       const streamLinks = [
                         { key: "lien_spotify", label: "Spotify" },
                         { key: "lien_apple", label: "Apple Music" },
@@ -237,7 +241,24 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                             </div>
                           </div>
                           {description ? <p className="text-sm text-taka-black/70 mt-3 line-clamp-3">{description}</p> : null}
-                          {extraitUrl ? <div className="mt-3"><AudioPreviewPlayer url={extraitUrl} title={`${titre} — extrait`} /></div> : null}
+                          {audioUrl ? (
+                            <div className="mt-3">
+                              <AudioPreviewPlayer url={audioUrl} title={`${titre} — ${audioType === "full" ? "morceau complet" : "extrait"}`} />
+                            </div>
+                          ) : null}
+                          {soutienLabel && soutienUrl ? (
+                            <div className="mt-4">
+                              <a
+                                href={soutienUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-taka-yellow text-taka-black text-sm font-bold hover:bg-taka-red hover:text-white transition-colors"
+                              >
+                                {soutienLabel}
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                              </a>
+                            </div>
+                          ) : null}
                           {streamLinks.length > 0 ? (
                             <div className="flex flex-wrap gap-2 mt-4">
                               {streamLinks.map((l) => (

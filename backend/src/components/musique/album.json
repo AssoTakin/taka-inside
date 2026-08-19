@@ -12,6 +12,15 @@
     "description": { "type": "text" },
     "pochette": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
     "extrait_audio": { "type": "media", "multiple": false, "allowedTypes": ["audios"] },
+    "audio_url": { "type": "string", "description": "URL d'ecoute directe (preview ou morceau entier). Prioritaire sur extrait_audio si renseigne." },
+    "audio_type": {
+      "type": "enumeration",
+      "enum": ["preview", "full"],
+      "default": "preview",
+      "description": "Type d'ecoute : preview (extrait) ou full (morceau entier)"
+    },
+    "cta_soutien_label": { "type": "string", "description": "Label du bouton de soutien (ex. Soutenez le morceau)" },
+    "cta_soutien_lien": { "type": "string", "description": "Lien vers le produit / page de soutien (interne ou externe)" },
     "lien_spotify": { "type": "string" },
     "lien_apple": { "type": "string" },
     "lien_youtube": { "type": "string" },
