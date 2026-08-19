@@ -6,9 +6,10 @@ interface ContactFormProps {
   subjects: string[];
   submitButton: string;
   destinationEmail: string;
+  successMessage: string;
 }
 
-export default function ContactForm({ subjects, submitButton, destinationEmail }: ContactFormProps) {
+export default function ContactForm({ subjects, submitButton, destinationEmail, successMessage }: ContactFormProps) {
   const [form, setForm] = useState({
     nom: "",
     email: "",
@@ -124,7 +125,7 @@ export default function ContactForm({ subjects, submitButton, destinationEmail }
 
       {status === "success" && (
         <div className="rounded-xl bg-green-50 border border-green-200 p-4 text-green-800 text-sm">
-          ✅ Message envoyé ! Nous vous répondrons sous 48h à l’adresse {form.email || "indiquée"}.
+          ✅ {successMessage || "Message envoye ! Nous vous repondrons sous 48h."}
         </div>
       )}
 

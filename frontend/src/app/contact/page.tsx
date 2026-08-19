@@ -25,9 +25,10 @@ export default async function ContactPage() {
   const subtitle = (content?.subtitle as string) || "Une question ? Une proposition de collaboration ? Contactez-nous, nous répondons sous 48h.";
   const formConfig = (content?.formConfig as Record<string, unknown>) || {};
   const formTitle = (formConfig?.formTitle as string) || "Envoyez-nous un message";
+  const successMessage = (formConfig?.successMessage as string) || "Message envoyé ! Nous vous repondrons sous 48h.";
   const subjects = Array.isArray(formConfig?.subjects)
     ? (formConfig.subjects as string[])
-    : ["Question générale", "Partenariat", "Artiste / Label", "Presse", "Projet", "Bénévolat", "Autre"];
+    : ["Question generale", "Partenariat", "Artiste / Label", "Presse", "Projet", "Benevolat", "Autre"];
   const submitButton = (formConfig?.submitButton as string) || "Envoyer le message";
 
   const email = (config?.contactEmail as string) || "kwabo@takainside.org";
@@ -50,7 +51,7 @@ export default async function ContactPage() {
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light">
               <h2 className="font-display text-2xl font-bold mb-6">{formTitle}</h2>
 
-              <ContactForm subjects={subjects} submitButton={submitButton} destinationEmail={email} />
+              <ContactForm subjects={subjects} submitButton={submitButton} destinationEmail={email} successMessage={successMessage} />
             </div>
 
             <div className="space-y-6">
