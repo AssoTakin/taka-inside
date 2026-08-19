@@ -1,6 +1,7 @@
 import SiteLayout from "@/components/layout/SiteLayout";
 import { Metadata } from "next";
 import { fetchPageContent, fetchSiteConfig, extractData } from "@/lib/api";
+import ContactForm from "@/components/ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const raw = await fetchPageContent("contact");
@@ -49,44 +50,7 @@ export default async function ContactPage() {
             <div className="bg-white rounded-2xl p-6 md:p-8 border border-taka-gray-light">
               <h2 className="font-display text-2xl font-bold mb-6">{formTitle}</h2>
 
-              <form className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">Nom *</label>
-                    <input type="text" required
-                      className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all"
-                      placeholder="Votre nom" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">Email *</label>
-                    <input type="email" required
-                      className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all"
-                      placeholder="votre@email.com" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-1">Sujet *</label>
-                  <select required
-                    className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all bg-white">
-                    <option value="">Sélectionnez...</option>
-                    {subjects.map((s) => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-1">Message *</label>
-                  <textarea required rows={5}
-                    className="w-full px-4 py-3 rounded-xl border border-taka-gray-light focus:border-taka-yellow focus:ring-2 focus:ring-taka-yellow/20 outline-none transition-all resize-none"
-                    placeholder="Votre message..."></textarea>
-                </div>
-
-                <button type="submit" disabled
-                  className="w-full bg-taka-black text-white py-4 rounded-xl font-semibold hover:bg-opacity-90 transition-all disabled:opacity-50"
-                >
-                  {submitButton}
-                </button>
-              </form>
+              <ContactForm subjects={subjects} submitButton={submitButton} destinationEmail={email} />
             </div>
 
             <div className="space-y-6">

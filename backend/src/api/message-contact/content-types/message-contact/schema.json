@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "message_contacts",
+  "info": {
+    "singularName": "message-contact",
+    "pluralName": "message-contacts",
+    "displayName": "Message de contact",
+    "description": "Messages reçus via le formulaire de contact du site"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nom": { "type": "string", "required": true },
+    "email": { "type": "email", "required": true },
+    "sujet": { "type": "string", "required": true },
+    "message": { "type": "text", "required": true },
+    "statut": {
+      "type": "enumeration",
+      "enum": ["recu", "lu", "en_cours", "traite", "archive"],
+      "default": "recu"
+    },
+    "notesInternes": { "type": "text" }
+  }
+}
