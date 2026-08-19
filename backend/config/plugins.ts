@@ -1,6 +1,7 @@
 import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({
+  // Provider Cloudflare R2 via l'API S3-compatible AWS
   upload: {
     config: {
       provider: 'aws-s3',
@@ -14,6 +15,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
           endpoint: env('R2_ENDPOINT'),
           params: {
             Bucket: env('R2_BUCKET'),
+            ACL: 'public-read',
           },
         },
       },
