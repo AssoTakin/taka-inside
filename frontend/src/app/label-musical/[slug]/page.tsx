@@ -231,7 +231,7 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                               {cover ? (
                                 <Image src={cover} alt={titre} fill className="object-cover" sizes="112px" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-taka-gray font-display font-bold text-2xl">{nom.charAt(0)}</div>
+                                <div className="w-full h-full flex items-center justify-center text-taka-gray font-display font-bold text-2xl">{(nom || "").charAt(0)}</div>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -362,7 +362,7 @@ export default async function ArtistePage({ params }: { params: Promise<{ slug: 
                             {image ? (
                               <Image src={image} alt={produit.nom} fill className="object-cover" sizes="80px" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-taka-gray font-bold">{produit.nom.charAt(0)}</div>
+                              <div className="w-full h-full flex items-center justify-center text-taka-gray font-bold">{(produit.nom || "").charAt(0)}</div>
                             )}
                           </div>
                           <div className="flex-1">
