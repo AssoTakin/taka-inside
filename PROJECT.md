@@ -4,7 +4,25 @@
 > Les documents détaillés sont dans `docs/`. Ce fichier est le résumé exécutif et le suivi d'itération.  
 > À mettre à jour à chaque livrable significatif.
 
+## Dernière livraison — 19 août 2026
+
+### Contact
+- ✅ Formulaire de contact fonctionnel (composant React client avec état, validation, loading, message de succès/erreur).
+- ✅ Envoi d'email réel via Resend vers `kwabo@takainside.org` (reply-to = email de l'expéditeur).
+- ✅ Archive des messages dans Strapi sous le content-type `message-contact`.
+- ✅ Test E2E Playwright ajouté : `frontend/e2e/contact-form.spec.ts`.
+- ⚠️ DNS : `takainside.org` et `takainside.bj` pointent actuellement sur les nameservers Hostinger `dns-parking.com` au lieu de Vercel. Le site en production est accessible via l'URL Vercel `frontend-cbx85ilcr-sam-takas-projects.vercel.app`. Action manuelle requise chez Hostinger pour basculer les NS vers `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
+
+| Élément | Détail |
+|---------|--------|
+| Commit | `ee66ce3` |
+| URL de production Vercel | https://frontend-cbx85ilcr-sam-takas-projects.vercel.app/contact |
+| Strapi CMS | https://taka-inside-production.up.railway.app |
+| Variable d'env ajoutée | `CONTACT_FROM_EMAIL=contact@solid-eat.com` (domaine Resend vérifié temporaire) |
+
 ---
+
+## 1. Vision produit
 
 ## 1. Vision produit
 
