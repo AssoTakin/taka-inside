@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
       - name: Run ESLint
         run: npm run lint
 
@@ -48,6 +51,11 @@ jobs:
           NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
           STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
+
+      - name: Run E2E tests — checkout payment methods
+        run: npx playwright test e2e/checkout-payment-methods.spec.ts --project=chromium
+        env:
+          BASE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://takainside.org' }}
 
   deploy-preview:
     name: Deploy Preview
