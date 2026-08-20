@@ -2,23 +2,22 @@
 
 > Point d'entrée central pour l'architecture, l'avancement et la feuille de route du site vitrine de l'association Taka Inside.  
 > Les documents détaillés sont dans `docs/`. Ce fichier est le résumé exécutif et le suivi d'itération.  
-> À mettre à jour à chaque livrable significatif.
+> À mettre à jour à chaque livraison significative.
 
-## Dernière livraison — 19 août 2026
+## Dernière livraison — 20 août 2026
 
-### Contact
-- ✅ Formulaire de contact fonctionnel (composant React client avec état, validation, loading, message de succès/erreur).
-- ✅ Envoi d'email réel via Resend vers `kwabo@takainside.org` (reply-to = email de l'expéditeur).
-- ✅ Archive des messages dans Strapi sous le content-type `message-contact`.
-- ✅ Test E2E Playwright ajouté : `frontend/e2e/contact-form.spec.ts`.
-- ⚠️ DNS : `takainside.org` et `takainside.bj` pointent actuellement sur les nameservers Hostinger `dns-parking.com` au lieu de Vercel. Le site en production est accessible via l'URL Vercel `frontend-cbx85ilcr-sam-takas-projects.vercel.app`. Action manuelle requise chez Hostinger pour basculer les NS vers `ns1.vercel-dns.com` / `ns2.vercel-dns.com`.
+### Boutique / Paiement Single
+- ✅ Correction du formulaire de paiement statique (`public/checkout.html`) qui ne chargeait plus les moyens de paiement et restait bloqué sur "Impossible de charger les moyens de paiement".
+- ✅ Suppression d'une référence cassée à `mapLegacyCode()` qui provoquait une exception JS et désactivait le chargement des méthodes.
+- ✅ Ajout du rewrite `/paiement → /checkout.html` dans `vercel.json` pour que l'URL utilisée par le boutique (panier → "Procéder au paiement") serve le checkout statique corrigé.
+- ✅ Vérification visuelle en production : les méthodes "Carte Bancaire" et "Mobile Money" s'affichent, le changement de méthode fonctionne, le bouton "Payer" est actif, et les deux méthodes redirigent vers leur page de paiement (Stripe / FedaPay).
 
 | Élément | Détail |
 |---------|--------|
-| Commit | `ee66ce3` |
-| URL de production Vercel | https://frontend-cbx85ilcr-sam-takas-projects.vercel.app/contact |
+| Commit | `88f7af9` |
+| URL de production | https://takainside.org/paiement?preview=taka2026 |
 | Strapi CMS | https://taka-inside-production.up.railway.app |
-| Variable d'env ajoutée | `CONTACT_FROM_EMAIL=contact@solid-eat.com` (domaine Resend vérifié temporaire) |
+| Fichiers modifiés | `frontend/public/checkout.html`, `frontend/vercel.json` |
 
 ---
 

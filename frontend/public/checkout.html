@@ -417,18 +417,13 @@
           .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
         state.methods = methods.map(m => ({
           ...m,
-          code: m.code || mapLegacyCode(m.name)
+          code: m.code || mapCode(m.name)
         }));
         if (state.methods.length === 0) {
           document.getElementById('methods-error').textContent = 'Aucun moyen de paiement disponible.';
           document.getElementById('methods-error').style.display = 'block';
           document.getElementById('pay-btn').disabled = true;
         } else {
-          // Map codes from name
-          state.methods = methods.map(m => ({
-            ...m,
-            code: mapCode(m.name)
-          }));
           state.method = state.methods[0].code;
           document.getElementById('methods-error').style.display = 'none';
         }

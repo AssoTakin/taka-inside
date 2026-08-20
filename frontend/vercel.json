@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/faire-un-don", "destination": "/faire-un-don.html" },
-    { "source": "/checkout", "destination": "/checkout.html" }
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/paiement", "destination": "/checkout.html" }
   ]
 }
