@@ -27,9 +27,9 @@
 **Build : 24/24 routes, 0 erreur TypeScript.**
 
 ### Variables d'environnement frontend (.env)
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_51L5u5c...` ✅
-- `STRIPE_SECRET_KEY` = `sk_live_51L5u5c...` ✅
-- `NEXT_PUBLIC_STRAPI_API_URL` = `http://localhost:1337` ⚠️ (à remplacer par URL Railway)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `pk_live_<PLACEHOLDER>` ✅
+- `STRIPE_SECRET_KEY` = `sk_live_<PLACEHOLDER>` ✅
+- `NEXT_PUBLIC_STRAPI_API_URL` = `http://localhost:1337` ⚠️ (à remplacer par URL Railway en prod)
 
 ---
 
@@ -85,11 +85,11 @@ Va sur https://railway.app/project/8ac9a38c-3984-4df0-abdb-e9fc52082777
 4. Dans **Variables** :
    ```
    DATABASE_URL = <généré automatiquement par PostgreSQL>
-   APP_KEYS = <génère-en 4 nouvelles : openssl rand -base64 32>
-   API_TOKEN_SALT = <openssl rand -base64 32>
-   ADMIN_JWT_SECRET = <openssl rand -base64 32>
-   JWT_SECRET = <openssl rand -base64 32>
-   TRANSFER_TOKEN_SALT = <openssl rand -base64 32>
+   APP_KEYS = <APP_KEYS>
+   API_TOKEN_SALT = <API_TOKEN_SALT>
+   ADMIN_JWT_SECRET = <ADMIN_JWT_SECRET>
+   JWT_SECRET = <JWT_SECRET>
+   TRANSFER_TOKEN_SALT = <TRANSFER_TOKEN_SALT>
    ```
 5. Clique **"Deploy"**
 6. Copie l'URL du service (ex: `https://takainside.up.railway.app`)
@@ -135,10 +135,10 @@ Va sur https://vercel.com/new
 
 | Service | Identifiants | Statut |
 |---------|-------------|--------|
-| GitHub | `AssoTakin` / `Abrakaddabr@#1` + PAT `ghp_...` | ✅ Connecté |
-| Stripe | `kwabo@takainside.bj` / `s(z8XxpUxLz&Y5@` | ✅ Validé |
-| Railway | Tokens `16c4418b...` et `93822424...` | ⚠️ Scope limité |
-| Vercel | Tokens `vcp_0OXQF...` et `vcp_6Irjt...` | ⚠️ Project tokens |
+| GitHub | compte organisationnel + PAT stocké dans `.env` / CI | ✅ Connecté |
+| Stripe | compte `kwabo@takainside.bj` — secrets dans variables d'environnement Vercel | ✅ Validé |
+| Railway | tokens de projet avec scope limité | ⚠️ Scope limité |
+| Vercel | project tokens (scope limité) | ⚠️ Project tokens |
 
 ---
 
