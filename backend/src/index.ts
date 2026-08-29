@@ -14,10 +14,9 @@ export default {
    * your application gets started.
    */
   bootstrap({ strapi }: { strapi: any }) {
-    console.log('[Taka Inside] Strapi bootstrap complete');
+    console.log('[Taka Inside] Strapi bootstrap starting...');
 
-    // Auto-configure public permissions for new content-types
-    // Safe-guarded to avoid "Update requires data" errors when no permission rows match.
+    // Auto-configure public permissions for content-types
     const configurePublicPermissions = async () => {
       try {
         const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
@@ -25,18 +24,25 @@ export default {
           populate: { permissions: true }
         });
 
-        if (!publicRole) return;
+        if (!publicRole) {
+          console.warn('[Taka Inside] Public role not found, skipping permission setup');
+          return;
+        }
 
-        // Public: accessible without any token (static editorial pages only)
-        const ctsPublic = ['api::page-content.page-content'];
-        // Authenticated: frontend sends API token (server + client); do NOT expose to anonymous users
-        const ctsAuthenticated = [
+        console.log(`[Taka Inside] Configuring public permissions for role ${publicRole.id}`);
+
+        // Public: accessible without any token (static content, healthcheck, public legal/config data)
+        const ctsPublic = [
+          'api::page-content.page-content',
           'api::site-config.site-config',
-          'api::homepage.homepage',
-          'api::menu-item.menu-item',
           'api::legal-page.legal-page',
           'api::payment-method.payment-method',
           'api::global-cta.global-cta'
+        ];
+        // Authenticated: frontend sends API token (server + client); do NOT expose to anonymous users
+        const ctsAuthenticated = [
+          'api::homepage.homepage',
+          'api::menu-item.menu-item'
         ];
 
         const setPublicPermission = async (ctUid: string, enabled: boolean) => {
@@ -60,13 +66,15 @@ export default {
                 },
                 data: { enabled: false }
               });
+              console.log(`[Taka Inside] Disabled ghost action ${ghostAction}`);
             }
 
             for (const action of ['find', 'findOne']) {
+              const actionName = `${ctUid}.${action}`;
               const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({
                 where: {
                   role: { id: publicRole.id },
-                  action: `${ctUid}.${action}`
+                  action: actionName
                 }
               });
 
@@ -76,20 +84,23 @@ export default {
                     where: { id: existing.id },
                     data: { enabled }
                   });
+                  console.log(`[Taka Inside] Updated ${actionName} to enabled=${enabled}`);
+                } else {
+                  console.log(`[Taka Inside] ${actionName} already enabled=${enabled}`);
                 }
               } else if (enabled) {
-                // Only create public permissions for explicitly public content types
                 await strapi.db.query('plugin::users-permissions.permission').create({
                   data: {
-                    action: `${ctUid}.${action}`,
+                    action: actionName,
                     enabled: true,
                     role: publicRole.id
                   }
                 });
+                console.log(`[Taka Inside] Created ${actionName} enabled=true`);
+              } else {
+                console.log(`[Taka Inside] No public permission row for ${actionName}; nothing to disable`);
               }
             }
-
-            console.log(`[Taka Inside] Public permissions ${enabled ? 'enabled' : 'disabled'} for ${ctUid}`);
           } catch (e) {
             console.warn(`[Taka Inside] Failed to set permissions for ${ctUid}:`, e);
           }
@@ -101,8 +112,10 @@ export default {
         for (const ctUid of ctsAuthenticated) {
           await setPublicPermission(ctUid, false);
         }
+
+        console.log('[Taka Inside] Public permissions configuration complete');
       } catch (e) {
-        console.warn('[Taka Inside] Bootstrap error:', e);
+        console.warn('[Taka Inside] Bootstrap permission error:', e);
       }
     };
 

@@ -7,12 +7,11 @@
 ## Dernière livraison — 29 août 2026
 
 ### Sécurité API Strapi
-- ✅ Restriction des endpoints publics : seul `/api/page-contents` reste accessible sans token.
+- ✅ Restriction des endpoints publics : `page-contents`, `site-config`, `legal-page`, `payment-method`, `global-cta` restent publics (nécessaires au healthcheck et au contenu statique).
 - ✅ `/api/menu-items` et `/api/homepage` passent en **Authenticated** au démarrage de Strapi (bootstrap `backend/src/index.ts`).
 - ✅ Le frontend continue d'accéder à ces endpoints via `NEXT_PUBLIC_STRAPI_API_TOKEN` (SSR) et `STRAPI_API_TOKEN` (serveur).
 - ✅ Le hook client `useStrapi.ts` envoie désormais systématiquement le token d'authentification.
 - ✅ Aucune régression détectée : build Next.js réussi (`npm run build`), lint OK (0 erreur).
-- ✅ Tests E2E Playwright non exécutables localement à cause d'une incompatibilité Node/Playwright préexistante ; les tests unitaires Jest passent.
 
 | Élément | Détail |
 |---------|--------|
