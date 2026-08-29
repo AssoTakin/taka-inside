@@ -27,22 +27,24 @@ export default {
 
         if (!publicRole) return;
 
-        const ctsToEnable = [
+        // Public: accessible without any token (static editorial pages only)
+        const ctsPublic = ['api::page-content.page-content'];
+        // Authenticated: frontend sends API token (server + client); do NOT expose to anonymous users
+        const ctsAuthenticated = [
           'api::site-config.site-config',
           'api::homepage.homepage',
           'api::menu-item.menu-item',
-          'api::page-content.page-content',
           'api::legal-page.legal-page',
           'api::payment-method.payment-method',
           'api::global-cta.global-cta'
         ];
 
-        for (const ctUid of ctsToEnable) {
+        const setPublicPermission = async (ctUid: string, enabled: boolean) => {
           try {
             const ctrlName = ctUid.split('.')[1];
             const ghostAction = `${ctUid}.${ctrlName}`;
 
-            // Only disable ghost action if rows exist
+            // Disable ghost controller action if rows exist
             const ghostRows = await strapi.db.query('plugin::users-permissions.permission').findMany({
               where: {
                 role: { id: publicRole.id },
@@ -60,7 +62,6 @@ export default {
               });
             }
 
-            // Enable find/findOne (create if missing)
             for (const action of ['find', 'findOne']) {
               const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({
                 where: {
@@ -70,13 +71,14 @@ export default {
               });
 
               if (existing) {
-                if (existing.enabled !== true) {
+                if (existing.enabled !== enabled) {
                   await strapi.db.query('plugin::users-permissions.permission').update({
                     where: { id: existing.id },
-                    data: { enabled: true }
+                    data: { enabled }
                   });
                 }
-              } else {
+              } else if (enabled) {
+                // Only create public permissions for explicitly public content types
                 await strapi.db.query('plugin::users-permissions.permission').create({
                   data: {
                     action: `${ctUid}.${action}`,
@@ -87,10 +89,17 @@ export default {
               }
             }
 
-            console.log(`[Taka Inside] Fixed permissions for ${ctUid}`);
+            console.log(`[Taka Inside] Public permissions ${enabled ? 'enabled' : 'disabled'} for ${ctUid}`);
           } catch (e) {
-            console.warn(`[Taka Inside] Failed for ${ctUid}:`, e);
+            console.warn(`[Taka Inside] Failed to set permissions for ${ctUid}:`, e);
           }
+        };
+
+        for (const ctUid of ctsPublic) {
+          await setPublicPermission(ctUid, true);
+        }
+        for (const ctUid of ctsAuthenticated) {
+          await setPublicPermission(ctUid, false);
         }
       } catch (e) {
         console.warn('[Taka Inside] Bootstrap error:', e);

@@ -4,7 +4,31 @@
 > Les documents détaillés sont dans `docs/`. Ce fichier est le résumé exécutif et le suivi d'itération.  
 > À mettre à jour à chaque livraison significative.
 
+## Dernière livraison — 29 août 2026
+
+### Sécurité API Strapi
+- ✅ Restriction des endpoints publics : seul `/api/page-contents` reste accessible sans token.
+- ✅ `/api/menu-items` et `/api/homepage` passent en **Authenticated** au démarrage de Strapi (bootstrap `backend/src/index.ts`).
+- ✅ Le frontend continue d'accéder à ces endpoints via `NEXT_PUBLIC_STRAPI_API_TOKEN` (SSR) et `STRAPI_API_TOKEN` (serveur).
+- ✅ Le hook client `useStrapi.ts` envoie désormais systématiquement le token d'authentification.
+- ✅ Aucune régression détectée : build Next.js réussi (`npm run build`), lint OK (0 erreur).
+- ✅ Tests E2E Playwright non exécutables localement à cause d'une incompatibilité Node/Playwright préexistante ; les tests unitaires Jest passent.
+
+| Élément | Détail |
+|---------|--------|
+| Commit | `à venir` |
+| URL de production | https://takainside.org?preview=taka2026 |
+| Strapi CMS | https://taka-inside-production.up.railway.app |
+| Fichiers modifiés | `backend/src/index.ts`, `frontend/src/hooks/useStrapi.ts` |
+
+---
+
 ## Dernière livraison — 20 août 2026
+
+### Monitoring / Healthcheck
+- ✅ Mise à jour du script `taka-inside-daily-healthcheck` : correction du chemin `.env` (`~/.hermes/profiles/taka-inside/.env`), mise à jour des endpoints Strapi réels, et du chemin admin (`/taka-admin-2026`).
+- ✅ Migration des tokens `VERCEL_TOKEN` et `GITHUB_TOKEN` dans le `.env` du profil taka-inside.
+- ✅ Healthcheck passe au vert (`HEALTHY`) : Strapi, Vercel, GitHub, headers, API publique et scan secrets validés.
 
 ### Boutique / Paiement Single
 - ✅ Correction du formulaire de paiement statique (`public/checkout.html`) qui ne chargeait plus les moyens de paiement et restait bloqué sur "Impossible de charger les moyens de paiement".
