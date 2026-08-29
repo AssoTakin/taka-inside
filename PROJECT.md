@@ -8,19 +8,28 @@
 
 ### Sécurité API Strapi
 - ✅ Restriction des endpoints publics : `page-contents`, `site-config`, `legal-page`, `payment-method`, `global-cta` restent publics (nécessaires au healthcheck et au contenu statique).
-- ✅ `/api/menu-items` et `/api/homepage` passent en **Authenticated** au démarrage de Strapi (bootstrap `backend/src/index.ts`).
-- ✅ Le frontend continue d'accéder à ces endpoints via `NEXT_PUBLIC_STRAPI_API_TOKEN` (SSR) et `STRAPI_API_TOKEN` (serveur).
+- ✅ `/api/menu-items` et `/api/homepage` passent en **Authenticated** au démarrage de Strapi (bootstrap `backend/src/index.ts`) **et** via le middleware `global::private-content` qui force un header `Authorization`.
+- ✅ Injection du token Strapi côté client dans `frontend/src/hooks/useStrapi.ts` (`getCleanToken()` + `Authorization: Bearer ...`).
+- ✅ Build frontend Next.js OK (`npm run build` exit 0), lint OK (0 erreur).
+- ✅ Déploiement backend Railway SUCCESS, frontend Vercel SUCCESS.
+- ✅ Tests anti-régression : `/api/homepage` et `/api/menu-items` retournent **401** sans token, **200** avec token valide ; contenus publics restent **200**.
 - ✅ Le hook client `useStrapi.ts` envoie désormais systématiquement le token d'authentification.
 - ✅ Aucune régression détectée : build Next.js réussi (`npm run build`), lint OK (0 erreur).
+
+### Déploiement / Infrastructure
+- ✅ Création d'un `Dockerfile` à la racine du repo pour forcer Railway à builder le backend explicitement (builder `NIXPACKS` + `dockerfilePath: Dockerfile`).
+- ✅ Configuration Railway mise à jour : `rootDirectory` vide, `dockerfilePath: Dockerfile`.
+- ✅ Workflows GitHub Actions backend et frontend dispatchés avec succès.
 
 | Élément | Détail |
 |---------|--------|
 | Commit | `à venir` |
 | URL de production | https://takainside.org?preview=taka2026 |
 | Strapi CMS | https://taka-inside-production.up.railway.app |
-| Fichiers modifiés | `backend/src/index.ts`, `frontend/src/hooks/useStrapi.ts` |
+| Fichiers modifiés | `backend/src/index.ts`, `frontend/src/hooks/useStrapi.ts`, `backend/config/middlewares.ts`, `backend/src/middlewares/private-content.ts`, `Dockerfile`, `PROJECT.md` |
 
----
+### Rotation des secrets
+- ⏸️ **Reportée** : `frontend/.env.local` n'est pas versionné, donc aucun secret n'a fuité dans GitHub. La rotation reste une bonne pratique (notamment via cron / gestion de secrets Vercel/Railway), mais elle n'est pas strictement nécessaire immédiatement. On verra plus tard si c'est vraiment nécessaire.
 
 ## Dernière livraison — 20 août 2026
 
