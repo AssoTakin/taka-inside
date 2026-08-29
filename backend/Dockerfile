@@ -2,6 +2,10 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Force cache bust on every security-sensitive deploy: ensure bootstrap recompiles
+ARG DEPLOY_BUST=0
+RUN echo "deploy bust: $DEPLOY_BUST"
+
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
