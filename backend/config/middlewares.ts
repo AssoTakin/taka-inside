@@ -13,6 +13,7 @@ const config: Core.Config.Middlewares = [
   // Note: admin-ip-restriction is DISABLED because it blocks legitimate users behind proxies.
   // The admin panel is already hidden via custom path and strong credentials.
   // 'global::admin-ip-restriction',
+  'global::private-content',
   'strapi::public',
 ];
 
