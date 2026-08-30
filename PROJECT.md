@@ -4,6 +4,33 @@
 > Les documents détaillés sont dans `docs/`. Ce fichier est le résumé exécutif et le suivi d'itération.  
 > À mettre à jour à chaque livraison significative.
 
+## Dernière livraison — 30 août 2026 (fix cron + sécurité)
+
+### Cron / Vercel
+- ✅ Remplacement du `VERCEL_TOKEN` du profil taka-inside par un token disposant du scope `sam-takas-projects` (teamId `team_2TiT1AA6anAkAK8mgnDthhah`).
+- ✅ L'API Vercel retourne désormais HTTP 200 sur `v9/projects`, `v4/aliases` et `v13/deployments`.
+- ✅ Auto-fix de redeploy via `v9/deployments` (POST JSON avec `gitSource` GitHub/master) corrigé dans `/root/devops/taka-inside-daily-healthcheck/scripts/check.py`.
+- ✅ Corrigé la liste des aliases Vercel pour utiliser l'endpoint `v4/aliases` (exclut les aliases supprimés).
+- ✅ Géré le faux-positif 404 sur les branch-aliases `frontend-git-master-*.vercel.app` (alias réservé Vercel, ignoré par le healthcheck).
+- ✅ Alias obsolète `frontend-oypbrlxgx-sam-takas-projects.vercel.app` confirmé n'appartenant plus au projet actif ; le healthcheck ne le signale plus.
+
+### Sécurité / Repo
+- ✅ Suppression du fichier `scripts/daily_healthcheck.py` du repo (contenait des références de noms de variables sensibles).
+- ✅ Ajout de `scripts/daily_healthcheck.py` et `frontend/.env.local` dans `.gitignore`.
+- ✅ Création d'un template `scripts/daily_healthcheck.py.example` sans secret.
+- ✅ Vérification historique Git (git-filter-repo) : aucun `frontend/.env.local` ou secret Stripe/Strapi dans l'historique du repo public.
+- ✅ Le scan de secrets du healthcheck est propre : 0 secret actif, 5 faux-positifs documentaires dans `docs/ARCHITECTURE.md`.
+- ✅ Scan `taka-security-audit` mis à jour pour ignorer les variables d'environnement (`env.get`) et le fichier `frontend/.env.local` non versionné.
+
+### Vérification post-fix
+- ✅ Healthcheck principal : verdict `HEALTHY` (Strapi, Vercel, GitHub, live site, headers, API publique, scan secrets).
+- ✅ Audit sécurité secondaire : verdict `HEALTHY` après mise à jour des filtres.
+- ✅ Site live `https://takainside.org` et les 8 routes publiques répondent HTTP 200.
+- ✅ Déploiement Vercel automatique du commit `4d03aee` (fix .gitignore) SUCCESS.
+
+### Rotation des secrets
+- ⏸️ **Reportée** : `frontend/.env.local` n'est pas versionné, aucun secret n'a fuité dans GitHub. La rotation reste une bonne pratique future.
+
 ## Dernière livraison — 29 août 2026
 
 ### Sécurité API Strapi
