@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+"""
+Exemple de healthcheck quotidien pour taka-inside.
+Le script réel lit ses variables depuis /root/.hermes/profiles/taka-inside/.env
+et n'est PAS versionné dans le repo.
+"""
+import os
+
+# Charger depuis l'environnement ou un fichier .env local sécurisé
+VERCEL_TOKEN = os.getenv("VERCEL_TOKEN", "")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
+STRAPI_API_TOKEN = os.getenv("STRAPI_API_TOKEN", "")
+
+# Exemple de vérifications : Strapi, Vercel, GitHub, site live
+# (implémenter ici les appels API)

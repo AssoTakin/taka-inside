@@ -40,6 +40,7 @@ coverage/
 # Uploads (dev)
 uploads/
 public/uploads/
+
 # Secrets - never commit these
 frontend/.env
 backend/.env
@@ -48,5 +49,10 @@ backend/.strapi-updater.json
 backend/.strapi/client/
 frontend/test-results/
 .vercel/
+
+# Cron/ops scripts containing token references (kept on server only)
+scripts/daily_healthcheck.py
+frontend/.env.local
+
 .vercel
 __pycache__/
