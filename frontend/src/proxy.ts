@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const BYPASS_COOKIE = "taka-preview";
 const BYPASS_VALUE = "taka2026";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   const bypassParam = searchParams.get("preview") === BYPASS_VALUE;
