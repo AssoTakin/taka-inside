@@ -423,7 +423,7 @@ ${appUrl}
         subject,
         text: body,
         html,
-        from: "Taka Inside <commandes@takainside.bj>",
+        from: "Taka Inside <commandes@takainside.org>",
       }),
     });
 

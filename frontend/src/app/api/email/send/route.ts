@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const FROM_EMAIL = 'Taka Inside <commandes@takainside.bj>';
+const FROM_EMAIL = 'Taka Inside <commandes@takainside.org>';
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;

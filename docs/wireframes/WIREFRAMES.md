@@ -403,7 +403,7 @@ Footer
 - **Validation** : email valide, message min 10 caractères, feedback inline (bordure rouge si erreur).
 - **Bouton** : fond jaune, texte noir, full-width mobile.
 - **Soumission** : états "Envoi en cours…" (spinner), "Message envoyé ✅", "Erreur ❌".
-- **Backend** : email envoyé à `contact@takainside.bj` via API Next.js / service email.
+- **Backend** : email envoyé à `contact@takainside.org` via API Next.js / service email.
 
 **Responsive :**
 - **Mobile** : empilé (formulaire en haut, coordonnées dessous).
@@ -1126,7 +1126,7 @@ Footer
 │ 1. Éditeur du site                                           │
 │    Association Taka Inside                                   │
 │    Siège social : Cotonou, Bénin                             │
-│    Email : contact@takainside.bj                             │
+│    Email : contact@takainside.org                             │
 │                                                              │
 │ 2. Hébergement                                               │
 │    [Nom hébergeur]                                          │
@@ -1163,7 +1163,7 @@ Footer
 │ POLITIQUE DE CONFIDENTIALITÉ                                 │
 │                                                              │
 │ 1. Responsable du traitement                                 │
-│    Association Taka Inside — contact@takainside.bj          │
+│    Association Taka Inside — contact@takainside.org          │
 │                                                              │
 │ 2. Données collectées                                        │
 │    Formulaires (nom, email, téléphone), cookies, analytics. │
@@ -1216,7 +1216,7 @@ Footer
 │    Produits numériques : pas de rétractation post-télécharg.│
 │                                                              │
 │ 5. Service client                                            │
-│    contact@takainside.bj  |  +229 07 56 98 74 73            │
+│    contact@takainside.org  |  +229 07 56 98 74 73            │
 │                                                              │
 │ 6. Litiges                                                   │
 │    ...                                                      │

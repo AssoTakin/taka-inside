@@ -113,7 +113,6 @@ Va sur https://vercel.com/new
 
 - **Seed Strapi** : Lancer `node scripts/seed-strapi.js` sur l'instance Railway
 - **Stripe Webhook** : Configurer l'URL Vercel dans le dashboard Stripe
-- **DNS** : Pointer `takainside.bj` vers Vercel
 
 ---
 
@@ -136,7 +135,7 @@ Va sur https://vercel.com/new
 | Service | Identifiants | Statut |
 |---------|-------------|--------|
 | GitHub | compte organisationnel + PAT stocké dans `.env` / CI | ✅ Connecté |
-| Stripe | compte `kwabo@takainside.bj` — secrets dans variables d'environnement Vercel | ✅ Validé |
+| Stripe | compte `kwabo@takainside.org` — secrets dans variables d'environnement Vercel | ✅ Validé |
 | Railway | tokens de projet avec scope limité | ⚠️ Scope limité |
 | Vercel | project tokens (scope limité) | ⚠️ Project tokens |
 
