@@ -41,7 +41,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
       className={`w-full md:w-auto min-w-[240px] h-16 flex flex-col items-center justify-center rounded-xl font-bold text-base transition-all ${
         added
           ? "bg-green-500 text-white"
-          : "bg-taka-black text-white hover:opacity-90"
+          : "bg-taka-black text-white hover:bg-taka-yellow hover:text-white"
       }`}
     >
       {added ? (

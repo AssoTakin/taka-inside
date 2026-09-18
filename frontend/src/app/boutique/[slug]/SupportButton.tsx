@@ -72,7 +72,7 @@ export default function SupportButton({ product }: SupportButtonProps) {
       {!isOpen ? (
         <button
           onClick={() => setOpen(true)}
-          className="w-full md:w-auto min-w-[240px] h-16 flex items-center justify-center rounded-xl font-bold text-base transition-all border-2 border-taka-yellow text-taka-yellow hover:bg-taka-black hover:text-white hover:border-taka-black"
+          className="w-full md:w-auto min-w-[240px] h-16 flex items-center justify-center rounded-xl font-bold text-base transition-all bg-taka-black text-white hover:bg-taka-yellow hover:text-white"
         >
           {label}
         </button>
