@@ -4,6 +4,54 @@
 > Les documents détaillés sont dans `docs/`. Ce fichier est le résumé exécutif et le suivi d'itération.  
 > À mettre à jour à chaque livraison significative.
 
+## Dernière livraison — 18 septembre 2026 (boutique : bouton "Soutenir le produit")
+
+### Boutique / Soutien prix libre
+- ✅ Ajout d'un bouton **"Soutenir le produit"** sur toutes les fiches produit, en complément du bouton "Ajouter au panier".
+- ✅ Prix libre avec minimum configurable : par défaut **prix affiché + 5 €**.
+- ✅ Validation en temps réel du montant saisi : bouton désactivé si le montant est inférieur au minimum.
+- ✅ Paramétrage 100 % depuis Strapi (content-type `produit`) :
+  - `activer_soutien` : active/désactive le bouton (défaut `true`).
+  - `soutien_min_supplement` : supplément minimum au-dessus du prix affiché (défaut `5`).
+  - `soutien_label_bouton` : libellé du bouton (défaut `"Soutenir le produit"`).
+  - `soutien_prix_libre_label` : libellé du champ de saisie.
+  - `soutien_message` : message explicatif affiché dans la modale.
+  - `soutien_titre_dialogue` : titre de la modale.
+  - `soutien_label_valider` : libellé du bouton de validation.
+- ✅ Le montant personnalisé est transmis au panier et au checkout comme un article `productType: "support"`.
+- ✅ Badge **"Soutien prix libre"** affiché dans le panier (React) et dans le récapitulatif checkout statique.
+- ✅ Description Stripe/FedaPay de l'article support : `"Soutien prix libre"`.
+
+### Fichiers modifiés
+- `backend/src/api/produit/content-types/produit/schema.json`
+- `frontend/src/app/api/produits/route.ts`
+- `frontend/src/app/boutique/[slug]/page.tsx`
+- `frontend/src/app/boutique/[slug]/AddToCartButton.tsx`
+- `frontend/src/app/boutique/[slug]/SupportButton.tsx` (créé)
+- `frontend/src/app/boutique/page.tsx`
+- `frontend/src/contexts/CartContext.tsx`
+- `frontend/public/checkout.html`
+- `frontend/src/app/api/create-checkout-session/route.ts`
+
+### Vérifications
+- ✅ Build backend Strapi local : `npm run build` OK.
+- ✅ Build frontend Next.js local : `npm run build` OK.
+- ✅ Test visuel Vercel preview : https://frontend-ib96g6n53-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026
+  - Bouton "Soutenir le produit" visible.
+  - Modale titre + message + champ prix libre affichés.
+  - Montant 26 € refusé, 32 € accepté.
+  - Article ajouté au panier avec badge "Soutien prix libre" et montant 32 €.
+  - Sous-total et total mis à jour.
+- ✅ API Strapi `/api/produits?populate=*` retourne les nouveaux champs (vérifié après redeploy backend).
+- ⚠️ Déploiement backend Railway : le workflow GitHub Actions backend échoue car le `RAILWAY_TOKEN` stocké dans les secrets du repo semble révoqué (`error code: 1010`). Le backend a été redéployé manuellement via l'interface Railway, et le schéma est bien appliqué. **Action manuelle nécessaire** : renouveler le token `RAILWAY_TOKEN` dans les secrets GitHub pour rétablir le déploiement automatique.
+
+| Élément | Détail |
+|---------|--------|
+| Commit frontend | `459d45f` |
+| URL de production | https://takainside.org/boutique/t-shirt-taka-inside?preview=taka2026 |
+| URL preview Vercel | https://frontend-ib96g6n53-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026 |
+| CMS | https://taka-inside-production.up.railway.app |
+
 ## Dernière livraison — 30 août 2026 (fix cron + sécurité)
 
 ### Cron / Vercel

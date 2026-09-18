@@ -108,7 +108,9 @@ export async function POST(req: NextRequest) {
     // Construction des line_items
     const lineItems = items.map((item: any) => {
       const name = sanitizeString(item.name, 100) || "Produit Taka Inside";
-      const description = item.productType
+      const description = item.productType === 'support'
+        ? "Soutien prix libre"
+        : item.productType
         ? (isDigitalItem(item) ? "Téléchargement digital" : "Produit physique")
         : undefined;
 
