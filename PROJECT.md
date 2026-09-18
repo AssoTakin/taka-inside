@@ -36,22 +36,20 @@
 ### Vérifications
 - ✅ Build backend Strapi local : `npm run build` OK.
 - ✅ Build frontend Next.js local : `npm run build` OK.
-- ✅ Test visuel Vercel preview : https://frontend-5w6owgkju-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026
-  - Bouton "Ajouter au panier" noir uni, label sur deux lignes centré.
-  - Bouton "Soutenir le produit" mêmes dimensions, fond transparent + bordure/texte jaune, hover noir/blanc.
-  - Modale "Soutenir ce produit" affichée avec champ prix libre (min. 30 €), message et boutons Annuler / Ajouter au panier.
-  - Montant 26 € refusé, 32 € accepté.
-  - Article ajouté au panier avec badge "Soutien prix libre" et montant personnalisé.
-  - Sous-total et total mis à jour.
+- ✅ Test visuel Vercel preview : https://frontend-3jbmvg78s-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026
+  - Les deux boutons sont noirs, texte blanc, mêmes dimensions.
+  - Hover jaune + texte blanc conservé sur les deux boutons.
+  - Bouton "Ajouter au panier" : label sur deux lignes centré.
+  - Bouton "Soutenir le produit" : modale prix libre fonctionnelle.
 - ✅ Frontend fonctionnel avec fallbacks par défaut (bouton visible, prix minimum prix + 5 €, labels par défaut Strapi).
 - ⚠️ API Strapi `/api/produits?populate=*` retourne actuellement `null` pour les nouveaux champs en production : le schéma n'est pas encore synchronisé dans la base Railway. Le frontend compense via des valeurs par défaut, donc la fonctionnalité est visible et utilisable.
 - ⚠️ Déploiement backend Railway : le workflow GitHub Actions backend échoue car le `RAILWAY_TOKEN` stocké dans les secrets du repo semble révoqué (`error code: 1010`). **Action manuelle nécessaire** : renouveler le token `RAILWAY_TOKEN` dans les secrets GitHub (ou déployer manuellement le service `taka-inside-production` dans Railway) pour appliquer le nouveau schéma et permettre la configuration depuis Strapi.
 
 | Élément | Détail |
 |---------|--------|
-| Commit frontend | `89aafe9` |
+| Commit frontend | `cb6a8d9` |
 | URL de production | https://takainside.org/boutique/t-shirt-taka-inside?preview=taka2026 |
-| URL preview Vercel | https://frontend-5w6owgkju-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026 |
+| URL preview Vercel | https://frontend-3jbmvg78s-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026 |
 | CMS | https://taka-inside-production.up.railway.app |
 
 ## Dernière livraison — 30 août 2026 (fix cron + sécurité)
