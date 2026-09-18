@@ -170,6 +170,8 @@ export interface LabelMusicalHero {
   description: string;
   primaryCta?: CtaButton;
   secondaryCta?: CtaButton;
+  primaryCtaAnchor?: string;
+  secondaryCtaAnchor?: string;
   backgroundImage?: { url: string; alt?: string };
 }
 
@@ -195,6 +197,11 @@ export interface LabelMusicalPage {
   artistsSectionTitle: string;
   artistsSectionDescription?: string;
   artistsSectionCta?: CtaButton;
+  artistsSectionCtaThreshold?: number;
+  artistsPerRow?: number;
+  actualitesSectionTitle?: string;
+  actualitesSectionDescription?: string;
+  actualites?: Actualite[];
   callout?: LabelMusicalCallout;
   artistFallbackLabel?: string;
 }

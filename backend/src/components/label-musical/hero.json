@@ -34,6 +34,16 @@
       "type": "component",
       "component": "shared.cta-button"
     },
+    "primaryCtaAnchor": {
+      "type": "string",
+      "default": "#artistes",
+      "description": "Ancre interne utilisée si primaryCta n'est pas renseigné"
+    },
+    "secondaryCtaAnchor": {
+      "type": "string",
+      "default": "#actualites",
+      "description": "Ancre interne utilisée si secondaryCta n'est pas renseigné"
+    },
     "backgroundImage": {
       "type": "media",
       "multiple": false,

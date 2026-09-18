@@ -40,6 +40,31 @@
       "type": "component",
       "component": "shared.cta-button"
     },
+    "artistsSectionCtaThreshold": {
+      "type": "integer",
+      "default": 4,
+      "min": 1,
+      "description": "Nombre d'artistes à partir duquel le bouton 'Voir tous les artistes' s'affiche"
+    },
+    "artistsPerRow": {
+      "type": "integer",
+      "default": 3,
+      "min": 2,
+      "max": 4,
+      "description": "Nombre de cartes artistes par ligne sur desktop"
+    },
+    "actualitesSectionTitle": {
+      "type": "string",
+      "default": "Nos actualités"
+    },
+    "actualitesSectionDescription": {
+      "type": "richtext"
+    },
+    "actualites": {
+      "type": "component",
+      "component": "musique.actualite",
+      "repeatable": true
+    },
     "callout": {
       "type": "component",
       "component": "label-musical.callout"

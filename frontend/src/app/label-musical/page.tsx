@@ -54,7 +54,11 @@ function IconFor({ name }: { name?: string }) {
   );
 }
 
-function CtaButtonLink({ cta, baseColor = 'yellow' }: { cta: CtaButton; baseColor?: 'yellow' | 'red' | 'white' }) {
+function CtaButtonLink({ cta, baseColor = 'yellow', anchor, fallbackLabel, fallbackAnchor }: { cta: CtaButton | null; baseColor?: 'yellow' | 'red' | 'white'; anchor?: string; fallbackLabel?: string; fallbackAnchor?: string }) {
+  if (!cta?.label) return null;
+  const label = cta.label || fallbackLabel;
+  const link = cta.link?.trim() || anchor || fallbackAnchor || '#';
+  const isAnchor = link.startsWith('#');
   const colorClasses = {
     yellow: 'bg-taka-yellow text-taka-black hover:bg-taka-yellow/90',
     red: 'bg-taka-red text-white hover:bg-taka-red/90',
@@ -66,11 +70,20 @@ function CtaButtonLink({ cta, baseColor = 'yellow' }: { cta: CtaButton; baseColo
     white: 'border-2 border-white text-white hover:bg-white hover:text-taka-black',
   };
   const cls = cta.style === 'outline' ? outlineClasses[baseColor] : colorClasses[baseColor];
+
+  if (isAnchor) {
+    return (
+      <a href={link} className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${cls}`}>
+        {label}
+      </a>
+    );
+  }
+
   const target = cta.isExternal ? '_blank' : undefined;
   const rel = cta.isExternal ? 'noopener noreferrer' : undefined;
   return (
-    <Link href={cta.link} target={target} rel={rel} className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${cls}`}>
-      {cta.label}
+    <Link href={link} target={target} rel={rel} className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${cls}`}>
+      {label}
     </Link>
   );
 }
@@ -86,14 +99,20 @@ export default async function LabelMusicalPage() {
 
   const hero = page?.hero;
   const heroDescription = hero?.description || "Taka Inside déniche, accompagne et met en lumière les talents de la scène musicale béninoise et africaine.";
-  const heroPrimaryCta = buildCta(hero?.primaryCta) || { label: "Découvrir les artistes", link: "#artistes", style: "primary" };
-  const heroSecondaryCta = buildCta(hero?.secondaryCta) || { label: "Boutique artistes", link: "/boutique", style: "outline" };
+  const heroPrimaryCta = buildCta(hero?.primaryCta) || { label: "Découvrir les artistes", link: hero?.primaryCtaAnchor || "#artistes", style: "primary" };
+  const heroSecondaryCta = buildCta(hero?.secondaryCta) || { label: "Nos actualités", link: hero?.secondaryCtaAnchor || "#actualites", style: "outline" };
   const heroTitle = hero?.title || "Notre";
   const heroHighlighted = hero?.highlightedWord || "Label";
   const stats = page?.stats || [];
   const artistsSectionTitle = page?.artistsSectionTitle || 'Les talents Taka Inside';
   const artistsSectionDescription = page?.artistsSectionDescription || '';
-  const artistsSectionCta = buildCta(page?.artistsSectionCta) || { label: "Voir tous les artistes", link: "#artistes", style: "outline" };
+  const artistsSectionCta = buildCta(page?.artistsSectionCta);
+  const artistsSectionCtaThreshold = page?.artistsSectionCtaThreshold ?? 4;
+  const artistsPerRow = page?.artistsPerRow ?? 3;
+  const showArtistsCta = artistsSectionCta && artistes.length >= artistsSectionCtaThreshold;
+  const actualitesSectionTitle = page?.actualitesSectionTitle || 'Nos actualités';
+  const actualitesSectionDescription = page?.actualitesSectionDescription || '';
+  const actualites = page?.actualites || [];
   const callout = page?.callout || {
     title: "Vous êtes artiste et souhaitez rejoindre le label ?",
     description: "Envoyez-nous votre dossier. On étudie chaque proposition avec attention.",
@@ -107,7 +126,7 @@ export default async function LabelMusicalPage() {
   return (
     <SiteLayout>
       {/* Hero */}
-      <section className="relative bg-taka-black text-white py-16 md:py-24 overflow-hidden">
+      <section id="top" className="relative bg-taka-black text-white py-16 md:py-24 overflow-hidden">
         {heroBgUrl && (
           <div className="absolute inset-0 z-0">
             <Image src={heroBgUrl} alt="" fill className="object-cover opacity-30" sizes="100vw" priority />
@@ -157,7 +176,7 @@ export default async function LabelMusicalPage() {
       )}
 
       {/* Artists grid */}
-      <section className="py-16 md:py-24 bg-taka-cream">
+      <section id="artistes" className="py-16 md:py-24 bg-taka-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
@@ -167,7 +186,7 @@ export default async function LabelMusicalPage() {
                 <div className="text-taka-gray mt-3 max-w-2xl">{renderRichText(artistsSectionDescription)}</div>
               )}
             </div>
-            {artistsSectionCta && <CtaButtonLink cta={artistsSectionCta} baseColor="yellow" />}
+            {showArtistsCta && <CtaButtonLink cta={artistsSectionCta} baseColor="yellow" />}
           </div>
 
           {artistes.length === 0 && (
@@ -176,7 +195,10 @@ export default async function LabelMusicalPage() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid gap-6 ${
+            artistsPerRow === 4 ? 'md:grid-cols-2 lg:grid-cols-4' :
+            artistsPerRow === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'
+          }`}>
             {artistes.map((artiste) => {
               const id = String(artiste.documentId || "");
               const slug = String(artiste.slug || "");
@@ -206,6 +228,55 @@ export default async function LabelMusicalPage() {
           </div>
         </div>
       </section>
+
+      {/* Actualités */}
+      {actualites.length > 0 && (
+        <section id="actualites" className="py-16 md:py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-10">
+              <span className="text-taka-red text-sm font-semibold uppercase tracking-wider">Actualités du label</span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-taka-black mt-2">{actualitesSectionTitle}</h2>
+              {actualitesSectionDescription && (
+                <div className="text-taka-gray mt-3 max-w-2xl">{renderRichText(actualitesSectionDescription)}</div>
+              )}
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {actualites.map((actu, idx) => {
+                const titre = String(actu.titre || '');
+                const contenu = String(actu.contenu || '');
+                const date = actu.date ? new Date(actu.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+                const imageUrl = getImageUrl(actu.image as { url: string } | null);
+                const lien = String(actu.lien || '');
+                const CardContent = (
+                  <div className="bg-taka-cream rounded-2xl overflow-hidden border border-taka-gray-light h-full flex flex-col">
+                    {imageUrl && (
+                      <div className="relative h-48 w-full">
+                        <Image src={imageUrl} alt={titre} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                      </div>
+                    )}
+                    <div className="p-6 flex-1 flex flex-col">
+                      {date && <p className="text-taka-red text-sm font-medium mb-2">{date}</p>}
+                      <h3 className="font-display text-xl font-bold text-taka-black mb-2">{titre}</h3>
+                      {contenu && <div className="text-taka-gray text-sm line-clamp-3 mb-4">{renderRichText(contenu)}</div>}
+                      {lien && (
+                        <a href={lien} className="mt-auto inline-flex items-center text-taka-red font-semibold text-sm hover:underline">
+                          Lire la suite →
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+                return lien ? (
+                  <a key={idx} href={lien} className="block h-full">{CardContent}</a>
+                ) : (
+                  <div key={idx} className="h-full">{CardContent}</div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Callout */}
       {callout && (
