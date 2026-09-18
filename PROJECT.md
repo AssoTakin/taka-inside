@@ -42,8 +42,9 @@
   - Montant 26 € refusé, 32 € accepté.
   - Article ajouté au panier avec badge "Soutien prix libre" et montant 32 €.
   - Sous-total et total mis à jour.
-- ✅ API Strapi `/api/produits?populate=*` retourne les nouveaux champs (vérifié après redeploy backend).
-- ⚠️ Déploiement backend Railway : le workflow GitHub Actions backend échoue car le `RAILWAY_TOKEN` stocké dans les secrets du repo semble révoqué (`error code: 1010`). Le backend a été redéployé manuellement via l'interface Railway, et le schéma est bien appliqué. **Action manuelle nécessaire** : renouveler le token `RAILWAY_TOKEN` dans les secrets GitHub pour rétablir le déploiement automatique.
+- ✅ Frontend fonctionnel avec fallbacks par défaut (bouton visible, prix minimum prix + 5 €, labels par défaut Strapi).
+- ⚠️ API Strapi `/api/produits?populate=*` retourne actuellement `null` pour les nouveaux champs en production : le schéma n'est pas encore synchronisé dans la base Railway. Le frontend compense via des valeurs par défaut, donc la fonctionnalité est visible et utilisable.
+- ⚠️ Déploiement backend Railway : le workflow GitHub Actions backend échoue car le `RAILWAY_TOKEN` stocké dans les secrets du repo semble révoqué (`error code: 1010`). **Action manuelle nécessaire** : renouveler le token `RAILWAY_TOKEN` dans les secrets GitHub (ou déployer manuellement le service `taka-inside-production` dans Railway) pour appliquer le nouveau schéma et permettre la configuration depuis Strapi.
 
 | Élément | Détail |
 |---------|--------|
