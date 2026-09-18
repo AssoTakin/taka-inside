@@ -48,11 +48,12 @@ export default function SupportButton({ product }: SupportButtonProps) {
     if (!isValid) return;
     addItem({
       id: `${product.documentId}-support`,
-      name: `${product.nom} — Soutien`,
+      name: product.nom,
       price: currentValue,
       quantity: 1,
       image: product.image || undefined,
       productType: "support",
+      isSupport: true,
     });
     setOpen(false);
     setAmount("");
