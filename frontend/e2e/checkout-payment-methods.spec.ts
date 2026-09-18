@@ -13,7 +13,7 @@ const CUSTOMER = {
   prenom: 'Baba',
   nom: 'Babba',
   email: 'wwx@gmail.com',
-  telephone: '+22995133333',
+  telephone: '+229****3333',
 };
 
 async function injectCart(context) {
@@ -32,7 +32,7 @@ async function fillCustomerForm(page) {
 test.describe('Paiement single — méthodes de paiement', () => {
   test('DEV-CHK-PM-001 : les moyens de paiement se chargent et le bouton Payer est actif', async ({ page, context }) => {
     await injectCart(context);
-    await page.goto('/paiement?preview=taka2026');
+    await page.goto('/checkout?preview=taka2026');
 
     await expect(page.locator('text=/Carte Bancaire/i')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('text=/Mobile Money/i')).toBeVisible({ timeout: 5000 });
@@ -54,7 +54,7 @@ test.describe('Paiement single — méthodes de paiement', () => {
       });
     });
 
-    await page.goto('/paiement?preview=taka2026');
+    await page.goto('/checkout?preview=taka2026');
 
     await expect(page.locator('text=/Mobile Money/i')).toBeVisible({ timeout: 15000 });
     await page.locator('button:has-text("Mobile Money")').click();
@@ -93,7 +93,7 @@ test.describe('Paiement single — méthodes de paiement', () => {
       });
     });
 
-    await page.goto('/paiement?preview=taka2026');
+    await page.goto('/checkout?preview=taka2026');
 
     await expect(page.locator('text=/Carte Bancaire/i')).toBeVisible({ timeout: 15000 });
     await page.locator('button:has-text("Carte Bancaire")').click();
