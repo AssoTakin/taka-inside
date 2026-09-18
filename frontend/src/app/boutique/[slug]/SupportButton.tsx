@@ -52,7 +52,7 @@ export default function SupportButton({ product }: SupportButtonProps) {
       price: currentValue,
       quantity: 1,
       image: product.image || undefined,
-      productType: "support",
+      productType: product.type === "digital" || product.type === "album" || product.type === "single" ? product.type : "physical",
       isSupport: true,
     });
     setOpen(false);
