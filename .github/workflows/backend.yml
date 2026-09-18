@@ -49,6 +49,23 @@ jobs:
 
       - name: Deploy to Railway
         working-directory: ./backend
-        run: railway up --project 8ac9a38c-3984-4df0-abdb-e9fc52082777 --service taka-inside --environment production --detach
+        run: |
+          set -e
+          DEPLOYMENT=$(curl -sS -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36' \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            https://backboard.railway.com/graphql/v2 \
+            -d '{"query":"mutation { serviceInstanceDeployV2(serviceId: \"bceca45a-0fd3-42f4-9710-62a4df36b11c\", environmentId: \"1f8b5302-afa8-4746-aab9-a4db5cf0f8c0\") }"}')
+          echo "$DEPLOYMENT"
+          echo "$DEPLOYMENT" | grep -q 'serviceInstanceDeployV2' || exit 1
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Wait for Railway deployment to be healthy
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" https://taka-inside-production.up.railway.app/api/site-config || true)
+            echo "Attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            sleep 20
+          done
+          exit 1
