@@ -38,13 +38,20 @@ export default function AddToCartButton({ product }: { product: Product }) {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all min-w-[220px] text-center ${
+      className={`w-full md:w-auto min-w-[240px] h-16 flex flex-col items-center justify-center rounded-xl font-bold text-base transition-all ${
         added
           ? "bg-green-500 text-white"
-          : "bg-taka-black text-white hover:bg-taka-yellow hover:text-taka-black"
+          : "bg-taka-black text-white hover:opacity-90"
       }`}
     >
-      {added ? "✓ Ajouté !" : `Ajouter au panier — ${formatPrice(product.prix)}`}
+      {added ? (
+        "✓ Ajouté !"
+      ) : (
+        <>
+          <span className="block leading-tight">Ajouter au panier</span>
+          <span className="block leading-tight">— {formatPrice(product.prix)}</span>
+        </>
+      )}
     </button>
   );
 }
