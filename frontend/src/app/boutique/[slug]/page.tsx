@@ -23,6 +23,8 @@ interface Product {
   soutien_label_bouton?: string;
   soutien_prix_libre_label?: string;
   soutien_message?: string;
+  soutien_titre_dialogue?: string;
+  soutien_label_valider?: string;
 }
 
 function resolveImageUrl(image: unknown): string | null {
