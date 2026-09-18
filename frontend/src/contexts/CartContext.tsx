@@ -11,6 +11,7 @@ export interface CartItem {
   image?: string;
   size?: string;
   productType?: string;
+  isSupport?: boolean;
 }
 
 interface CartContextValue {
@@ -115,6 +116,7 @@ function CartDrawer() {
                 <div className="flex-1">
                   <h4 className="font-semibold text-sm">{item.name}</h4>
                   {item.size && <p className="text-xs text-gray-500">Taille: {item.size}</p>}
+                  {item.productType === 'support' && <p className="text-xs text-taka-yellow font-medium">Soutien prix libre</p>}
                   <div className="flex items-center gap-2 mt-2">
                     <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-6 h-6 rounded bg-gray-200 text-xs font-bold">−</button>
                     <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>

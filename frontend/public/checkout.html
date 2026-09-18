@@ -763,8 +763,9 @@
           <div class="cart-item">
             ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
             <div class="cart-item-info">
-              <h4>${item.name} ${isDigital(item) ? '<span class="digital-badge">Digital</span>' : '<span class="physical-badge">Physique</span>'}</h4>
+              <h4>${item.name} ${item.productType === 'support' ? '<span class="digital-badge" style="background:var(--yellow);color:var(--black);">Soutien</span>' : isDigital(item) ? '<span class="digital-badge">Digital</span>' : '<span class="physical-badge">Physique</span>'}</h4>
               ${item.size ? `<p>Taille: ${item.size}</p>` : ''}
+              ${item.productType === 'support' ? `<p style="font-size:0.75rem;color:var(--black);font-style:italic;">Prix libre — montant personnalisé</p>` : ''}
               <p class="price">${item.quantity} × ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}</p>
             </div>
           </div>

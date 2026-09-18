@@ -27,6 +27,11 @@ export async function GET(_req: NextRequest) {
     image: resolveImageUrl(p.image),
     slug: String(p.slug || ""),
     description: String(p.description || ""),
+    activer_soutien: Boolean(p.activer_soutien ?? false),
+    soutien_min_supplement: Number(p.soutien_min_supplement ?? 5),
+    soutien_label_bouton: String(p.soutien_label_bouton || "Soutenir le produit"),
+    soutien_prix_libre_label: String(p.soutien_prix_libre_label || "Votre montant (€)"),
+    soutien_message: String(p.soutien_message || ""),
   }));
 
   // Forcer l'image KIKOKO depuis le repo public/

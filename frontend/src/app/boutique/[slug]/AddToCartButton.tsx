@@ -38,7 +38,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all ${
+      className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all min-w-[220px] text-center ${
         added
           ? "bg-green-500 text-white"
           : "bg-taka-black text-white hover:bg-taka-yellow hover:text-taka-black"

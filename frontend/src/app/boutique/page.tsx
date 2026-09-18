@@ -13,6 +13,29 @@ interface Product {
   image: string | null;
   slug: string;
   description: string;
+  activer_soutien?: boolean;
+  soutien_min_supplement?: number;
+  soutien_label_bouton?: string;
+  soutien_prix_libre_label?: string;
+  soutien_message?: string;
+}
+
+interface StrapiSupportFields {
+  activer_soutien?: boolean;
+  soutien_min_supplement?: number;
+  soutien_label_bouton?: string;
+  soutien_prix_libre_label?: string;
+  soutien_message?: string;
+}
+
+function extractSupportFields(p: Record<string, unknown>): StrapiSupportFields {
+  return {
+    activer_soutien: Boolean(p.activer_soutien ?? false),
+    soutien_min_supplement: Number(p.soutien_min_supplement ?? 5),
+    soutien_label_bouton: String(p.soutien_label_bouton || "Soutenir le produit"),
+    soutien_prix_libre_label: String(p.soutien_prix_libre_label || "Votre montant (€)"),
+    soutien_message: String(p.soutien_message || ""),
+  };
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
@@ -77,6 +100,7 @@ async function getProducts(): Promise<Product[]> {
       image,
       slug,
       description: String(p.description || ""),
+      ...extractSupportFields(p),
     };
   });
 }

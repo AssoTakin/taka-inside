@@ -4,6 +4,7 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import { fetchStrapiList } from "@/lib/api";
 import { formatPrice } from "@/lib/price";
 import AddToCartButton from "./AddToCartButton";
+import SupportButton from "./SupportButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
 const KIKOKO_FALLBACK_IMAGE = "/images/kikoko-cover.jpg";
@@ -17,6 +18,11 @@ interface Product {
   image: string | null;
   slug: string;
   description: string;
+  activer_soutien?: boolean;
+  soutien_min_supplement?: number;
+  soutien_label_bouton?: string;
+  soutien_prix_libre_label?: string;
+  soutien_message?: string;
 }
 
 function resolveImageUrl(image: unknown): string | null {
@@ -74,6 +80,11 @@ async function getProduct(slug: string): Promise<Product | null> {
     image,
     slug: slugStr,
     description: String(p.description || ""),
+    activer_soutien: Boolean(p.activer_soutien ?? false),
+    soutien_min_supplement: Number(p.soutien_min_supplement ?? 5),
+    soutien_label_bouton: String(p.soutien_label_bouton || "Soutenir le produit"),
+    soutien_prix_libre_label: String(p.soutien_prix_libre_label || "Votre montant (€)"),
+    soutien_message: String(p.soutien_message || ""),
   };
 }
 
@@ -150,8 +161,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 </div>
               )}
 
-              <div className="mt-auto">
+              <div className="mt-auto flex flex-col sm:flex-row gap-4">
                 <AddToCartButton product={product} />
+                <SupportButton product={product} />
               </div>
 
               <div className="mt-6 flex items-center gap-4 text-sm text-taka-gray">
