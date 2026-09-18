@@ -19,7 +19,7 @@
   - `soutien_titre_dialogue` : titre de la modale.
   - `soutien_label_valider` : libellé du bouton de validation.
 - ✅ Le montant personnalisé est transmis au panier et au checkout comme un article `productType: "support"`.
-- ✅ Badge **"Soutien prix libre"** affiché dans le panier (React) et dans le récapitulatif checkout statique.
+- ✅ Badge **"SOUTIEN"** affiché dans le panier (React) et dans le récapitulatif checkout statique.
 - ✅ Description Stripe/FedaPay de l'article support : `"Soutien prix libre"`.
 
 ### Fichiers modifiés
@@ -32,25 +32,29 @@
 - `frontend/src/contexts/CartContext.tsx`
 - `frontend/public/checkout.html`
 - `frontend/src/app/api/create-checkout-session/route.ts`
+- `railway.json`
+- `.github/workflows/backend.yml`
 
 ### Vérifications
 - ✅ Build backend Strapi local : `npm run build` OK.
 - ✅ Build frontend Next.js local : `npm run build` OK.
+- ✅ Déploiement backend Railway : le workflow GitHub Actions backend a été corrigé pour utiliser l'API GraphQL Railway directement (`serviceInstanceDeployV2`) car le CLI Railway est bloqué dans l'environnement d'exécution (`Invalid RAILWAY_TOKEN` / Cloudflare 1010).
+- ✅ Schéma Strapi migré en production : les champs de soutien retournent désormais leurs valeurs par défaut via `/api/produits?populate=*`.
+- ✅ Les 3 produits existants ont été initialisés avec les valeurs par défaut via l'API Strapi.
 - ✅ Test visuel Vercel preview : https://frontend-3jbmvg78s-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026
-  - Les deux boutons sont noirs, texte blanc, mêmes dimensions.
+  - Les deux boutons sont noirs, texte blanc, mêmes dimensions (`h-16`, `min-w-[240px]`), arrondi identique.
   - Hover jaune + texte blanc conservé sur les deux boutons.
   - Bouton "Ajouter au panier" : label sur deux lignes centré.
-  - Bouton "Soutenir le produit" : modale prix libre fonctionnelle.
-- ✅ Frontend fonctionnel avec fallbacks par défaut (bouton visible, prix minimum prix + 5 €, labels par défaut Strapi).
-- ⚠️ API Strapi `/api/produits?populate=*` retourne actuellement `null` pour les nouveaux champs en production : le schéma n'est pas encore synchronisé dans la base Railway. Le frontend compense via des valeurs par défaut, donc la fonctionnalité est visible et utilisable.
-- ⚠️ Déploiement backend Railway : le workflow GitHub Actions backend échoue car le `RAILWAY_TOKEN` stocké dans les secrets du repo semble révoqué (`error code: 1010`). **Action manuelle nécessaire** : renouveler le token `RAILWAY_TOKEN` dans les secrets GitHub (ou déployer manuellement le service `taka-inside-production` dans Railway) pour appliquer le nouveau schéma et permettre la configuration depuis Strapi.
+  - Bouton "Soutenir le produit" : modale prix libre fonctionnelle, minimum 30 € pour un produit à 25 €.
+- ✅ Panier + checkout : l'article de soutien apparaît avec le badge "SOUTIEN" et le prix libre (testé avec 35 €).
 
-| Élément | Détail |
-|---------|--------|
-| Commit frontend | `cb6a8d9` |
-| URL de production | https://takainside.org/boutique/t-shirt-taka-inside?preview=taka2026 |
-| URL preview Vercel | https://frontend-3jbmvg78s-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026 |
-| CMS | https://taka-inside-production.up.railway.app |
+|| Élément | Détail |
+||---------|--------|
+|| Commit | `8050197` (frontend/style) ; `0997e69` (fix build Railway) ; `96d82cd` (force rebuild) |
+|| URL de production | https://takainside.org/boutique/t-shirt-taka-inside?preview=taka2026 |
+|| URL preview Vercel | https://frontend-3jbmvg78s-sam-takas-projects.vercel.app/boutique/t-shirt-taka-inside?preview=taka2026 |
+|| CMS | https://taka-inside-production.up.railway.app |
+|| Admin Strapi | https://taka-inside-production.up.railway.app/taka-admin-2026 |
 
 ## Dernière livraison — 30 août 2026 (fix cron + sécurité)
 
