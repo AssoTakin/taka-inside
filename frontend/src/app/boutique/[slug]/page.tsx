@@ -80,11 +80,13 @@ async function getProduct(slug: string): Promise<Product | null> {
     image,
     slug: slugStr,
     description: String(p.description || ""),
-    activer_soutien: Boolean(p.activer_soutien ?? false),
+    activer_soutien: Boolean(p.activer_soutien ?? true),
     soutien_min_supplement: Number(p.soutien_min_supplement ?? 5),
     soutien_label_bouton: String(p.soutien_label_bouton || "Soutenir le produit"),
     soutien_prix_libre_label: String(p.soutien_prix_libre_label || "Votre montant (€)"),
     soutien_message: String(p.soutien_message || ""),
+    soutien_titre_dialogue: String(p.soutien_titre_dialogue || "Soutenir ce produit"),
+    soutien_label_valider: String(p.soutien_label_valider || "Ajouter au panier"),
   };
 }
 

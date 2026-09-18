@@ -18,6 +18,8 @@ interface Product {
   soutien_label_bouton?: string;
   soutien_prix_libre_label?: string;
   soutien_message?: string;
+  soutien_titre_dialogue?: string;
+  soutien_label_valider?: string;
 }
 
 interface StrapiSupportFields {
@@ -26,15 +28,19 @@ interface StrapiSupportFields {
   soutien_label_bouton?: string;
   soutien_prix_libre_label?: string;
   soutien_message?: string;
+  soutien_titre_dialogue?: string;
+  soutien_label_valider?: string;
 }
 
 function extractSupportFields(p: Record<string, unknown>): StrapiSupportFields {
   return {
-    activer_soutien: Boolean(p.activer_soutien ?? false),
+    activer_soutien: Boolean(p.activer_soutien ?? true),
     soutien_min_supplement: Number(p.soutien_min_supplement ?? 5),
     soutien_label_bouton: String(p.soutien_label_bouton || "Soutenir le produit"),
     soutien_prix_libre_label: String(p.soutien_prix_libre_label || "Votre montant (€)"),
     soutien_message: String(p.soutien_message || ""),
+    soutien_titre_dialogue: String(p.soutien_titre_dialogue || "Soutenir ce produit"),
+    soutien_label_valider: String(p.soutien_label_valider || "Ajouter au panier"),
   };
 }
 

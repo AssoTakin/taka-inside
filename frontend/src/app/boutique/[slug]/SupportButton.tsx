@@ -18,100 +18,98 @@ interface Product {
   soutien_label_bouton?: string;
   soutien_prix_libre_label?: string;
   soutien_message?: string;
+  soutien_titre_dialogue?: string;
+  soutien_label_valider?: string;
 }
 
-export default function SupportButton({ product }: { product: Product }) {
-  const { addItem, setIsOpen } = useCart();
+interface SupportButtonProps {
+  product: Product;
+}
+
+export default function SupportButton({ product }: SupportButtonProps) {
+  const { addItem } = useCart();
   const [isOpen, setOpen] = useState(false);
   const [amount, setAmount] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [added, setAdded] = useState(false);
 
-  const minSupport = useMemo(
-    () => product.prix + (product.soutien_min_supplement ?? 5),
-    [product.prix, product.soutien_min_supplement]
-  );
+  const minAmount = useMemo(() => {
+    const supplement = Number(product.soutien_min_supplement ?? 5);
+    return product.prix + (isNaN(supplement) ? 5 : supplement);
+  }, [product.prix, product.soutien_min_supplement]);
 
-  if (!product.activer_soutien) return null;
+  const currentValue = useMemo(() => {
+    const val = parseFloat(amount.replace(",", "."));
+    return isNaN(val) ? 0 : val;
+  }, [amount]);
 
-  const handleAdd = () => {
-    const numericAmount = Number(amount.replace(",", "."));
-    if (!amount || Number.isNaN(numericAmount) || numericAmount < minSupport) {
-      setError(`Le montant minimum est de ${formatPrice(minSupport)}.`);
-      return;
-    }
-    setError("");
+  const isValid = currentValue >= minAmount;
 
-    const supportId = `${product.id}-support`;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
     addItem({
-      id: supportId,
+      id: `${product.documentId}-support`,
       name: `${product.nom} — Soutien`,
-      price: numericAmount,
+      price: currentValue,
       quantity: 1,
       image: product.image || undefined,
       productType: "support",
     });
-
-    setAdded(true);
-    setTimeout(() => {
-      setIsOpen(true);
-      setAdded(false);
-      setOpen(false);
-      setAmount("");
-    }, 500);
+    setOpen(false);
+    setAmount("");
   };
 
+  if (product.activer_soutien === false) return null;
+
+  const label = product.soutien_label_bouton?.trim() || "Soutenir le produit";
+  const priceLabel = product.soutien_prix_libre_label?.trim() || "Votre montant (€)";
+  const message = (product.soutien_message?.trim() || "Soutenez ce produit en proposant un prix libre, supérieur au montant affiché.").replace("{min}", String(minAmount));
+  const title = product.soutien_titre_dialogue?.trim() || "Soutenir ce produit";
+  const validateLabel = product.soutien_label_valider?.trim() || "Ajouter au panier";
+
   return (
-    <div className="w-full">
+    <div className="w-full md:w-auto">
       {!isOpen ? (
         <button
           onClick={() => setOpen(true)}
-          className="w-full md:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all min-w-[220px] text-center border-2 border-taka-yellow text-taka-black bg-taka-yellow hover:bg-taka-black hover:text-taka-yellow hover:border-taka-black"
+          className="w-full md:w-auto px-8 py-4 rounded-xl font-bold text-base transition-all min-w-[220px] text-center border-2 border-taka-yellow text-taka-yellow hover:bg-taka-yellow hover:text-black"
         >
-          {product.soutien_label_bouton || "Soutenir le produit"}
+          {label}
         </button>
       ) : (
-        <div className="w-full md:w-auto rounded-xl border border-taka-gray-light bg-white p-4 shadow-sm">
-          <p className="text-sm text-taka-gray mb-2">
-            {product.soutien_message || "Soutenez ce produit en proposant un prix libre."}
-          </p>
-          <label htmlFor="support-amount" className="block text-sm font-medium text-taka-black mb-1">
-            {product.soutien_prix_libre_label || "Votre montant (€)"}
-          </label>
-          <input
-            id="support-amount"
-            type="number"
-            min={minSupport}
-            step="0.01"
-            placeholder={`Min. ${formatPrice(minSupport)}`}
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value);
-              setError("");
-            }}
-            className="w-full px-4 py-2 rounded-lg border border-taka-gray-light focus:outline-none focus:ring-2 focus:ring-taka-yellow mb-3"
-          />
-          {error && (
-            <p className="text-taka-red text-sm mb-2">{error}</p>
-          )}
-          <div className="flex gap-2">
-            <button
-              onClick={handleAdd}
-              className={`flex-1 px-6 py-3 rounded-xl font-bold text-base transition-all ${
-                added
-                  ? "bg-green-500 text-white"
-                  : "bg-taka-yellow text-taka-black hover:bg-taka-black hover:text-taka-yellow"
-              }`}
-            >
-              {added ? "✓ Ajouté !" : "Ajouter au panier"}
-            </button>
-            <button
-              onClick={() => { setOpen(false); setAmount(""); setError(""); }}
-              className="px-4 py-3 rounded-xl text-sm font-semibold text-taka-gray hover:bg-gray-100 transition-colors"
-            >
-              Annuler
-            </button>
-          </div>
+        <div className="w-full md:w-[300px] bg-white rounded-xl border border-taka-yellow p-4 shadow-lg">
+          <p className="font-bold text-black mb-2">{title}</p>
+          <p className="text-sm text-gray-700 mb-3">{message}</p>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <label className="block text-sm text-gray-800">
+              {priceLabel}
+              <input
+                type="number"
+                inputMode="decimal"
+                min={minAmount}
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder={`Min. ${formatPrice(minAmount)}`}
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-black focus:border-taka-yellow focus:ring-taka-yellow"
+              />
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={!isValid}
+                className="flex-1 px-4 py-2 rounded-lg bg-taka-yellow text-black font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {validateLabel}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

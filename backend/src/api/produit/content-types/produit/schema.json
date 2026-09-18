@@ -18,10 +18,12 @@
     "quantite_disponible": { "type": "integer", "default": -1 },
     "categorie": { "type": "relation", "relation": "manyToOne", "target": "api::categorie-produit.categorie-produit" },
     "artistes": { "type": "relation", "relation": "manyToMany", "target": "api::artiste.artiste", "mappedBy": "produits_lies" },
-    "activer_soutien": { "type": "boolean", "default": false },
+    "activer_soutien": { "type": "boolean", "default": true },
     "soutien_min_supplement": { "type": "decimal", "default": 5, "min": 0 },
     "soutien_label_bouton": { "type": "string", "default": "Soutenir le produit" },
     "soutien_prix_libre_label": { "type": "string", "default": "Votre montant (€)" },
-    "soutien_message": { "type": "text", "default": "Soutenez ce produit en proposant un prix libre, supérieur au montant affiché." }
+    "soutien_message": { "type": "text", "default": "Soutenez ce produit en proposant un prix libre, supérieur au montant affiché." },
+    "soutien_titre_dialogue": { "type": "string", "default": "Soutenir ce produit" },
+    "soutien_label_valider": { "type": "string", "default": "Ajouter au panier" }
   }
 }
