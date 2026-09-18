@@ -6,6 +6,8 @@ import { formatPrice } from "@/lib/price";
 import AddToCartButton from "./AddToCartButton";
 import SupportButton from "./SupportButton";
 
+export const revalidate = 60; // ISR : rafraîchit la page toutes les 60s max
+
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://taka-inside-production.up.railway.app";
 const KIKOKO_FALLBACK_IMAGE = "/images/kikoko-cover.jpg";
 
