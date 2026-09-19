@@ -2,13 +2,30 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import SiteLayout from "@/components/layout/SiteLayout";
-import { fetchStrapiList, fetchStrapiSingle, getImageUrl, renderRichText, fetchLabelMusicalPage as fetchLabelMusicalPageData } from "@/lib/api";
+import { fetchStrapiList, getImageUrl, renderRichText, fetchLabelMusicalPage as fetchLabelMusicalPageData } from "@/lib/api";
 import type { Artiste, LabelMusicalPage, CtaButton } from "@/types";
 
+function buildHeroCta(
+  cta: CtaButton | Record<string, unknown> | undefined,
+  defaultLabel: string,
+  defaultAnchor: string
+): CtaButton {
+  const base: CtaButton =
+    cta && typeof cta === "object"
+      ? { ...(cta as CtaButton) }
+      : { label: defaultLabel, style: "primary", link: defaultAnchor };
+  const label = String(base.label || defaultLabel).trim();
+  // Si le CTA pointe déjà vers une ancre pure ou une URL interne avec hash, on garde le hash
+  const rawLink = String(base.link || "").trim();
+  const hashMatch = rawLink.match(/#(.+)$/);
+  const anchor = hashMatch ? `#${hashMatch[1]}` : defaultAnchor;
+  return { ...base, label, link: anchor };
+}
+
 function buildCta(cta: CtaButton | Record<string, unknown> | undefined) {
-  if (!cta || typeof cta !== 'object') return null;
-  const label = String((cta as CtaButton).label || '').trim();
-  const link = String((cta as CtaButton).link || '').trim();
+  if (!cta || typeof cta !== "object") return null;
+  const label = String((cta as CtaButton).label || "").trim();
+  const link = String((cta as CtaButton).link || "").trim();
   if (!label || !link) return null;
   return { ...(cta as CtaButton) };
 }
@@ -21,7 +38,9 @@ function getPageMeta(page: LabelMusicalPage | null): Metadata {
     title: seo?.metaTitle || defaultTitle,
     description: seo?.metaDescription || defaultDesc,
     keywords: seo?.keywords,
-    openGraph: seo?.ogImage?.url ? { images: [{ url: seo.ogImage.url, alt: seo.ogImage.alt || seo.metaTitle || defaultTitle }] } : undefined,
+    openGraph: seo?.ogImage?.url
+      ? { images: [{ url: seo.ogImage.url, alt: seo.ogImage.alt || seo.metaTitle || defaultTitle }] }
+      : undefined,
   };
 }
 
@@ -36,16 +55,23 @@ async function fetchLabelMusicalPage(): Promise<LabelMusicalPage | null> {
 }
 
 function IconFor({ name }: { name?: string }) {
-  const icon = name || 'music';
+  const icon = name || "music";
   const paths: Record<string, string> = {
-    mic: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v2m0-14V3m-7 7a7 7 0 017-7 7 7 0 017 7',
-    radio: 'M6.75 7.5l3 2.25-3 2.25m-3-2.25 3 2.25-3 2.25m15-4.5-3 2.25 3 2.25m-3-2.25 3 2.25-3 2.25M3.375 7.5h17.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125H3.375a1.125 1.125 0 01-1.125-1.125v-9.75c0-.621.504-1.125 1.125-1.125z',
-    globe: 'M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A11.959 11.959 0 013.685 6.698',
-    calendar: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008z',
-    music: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z',
-    users: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128a23.91 23.91 0 013.183 1.133 9.386 9.386 0 01-5.26 2.068 9.389 9.389 0 01-5.26-2.068 23.918 23.918 0 013.183-1.133M15 19.128c.346.03.694.032 1.042.032a9.375 9.375 0 004.899-1.382M9 19.128v-.003c0-1.113.285-2.16.786-3.07M9 19.128A23.91 23.91 0 005.817 20.26a9.386 9.01 0 005.26 2.068 9.389 9.389 0 005.26-2.068 23.918 23.918 0 01-3.183-1.133M9 19.128c-.346.03-.694.032-1.042.032a9.375 9.375 0 01-4.899-1.382M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 12a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z',
-    star: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
-    heart: 'M21 8.25c0 2.485-2.099 4.5-4.5 4.5S12 10.735 12 8.25 14.099 3.75 16.5 3.75 21 5.765 21 8.25zm0 0c0 2.485-2.099 4.5-4.5 4.5S12 10.735 12 8.25 14.099 3.75 16.5 3.75 21 5.765 21 8.25zM12 8.25c0 2.485-2.099 4.5-4.5 4.5S3 10.735 3 8.25 5.099 3.75 7.5 3.75 12 5.765 12 8.25zm0 0c0 2.485-2.099 4.5-4.5 4.5S3 10.735 3 8.25 5.099 3.75 7.5 3.75 12 5.765 12 8.25zM11.48 19.35l-5.23-5.23a2.25 2.25 0 013.182-3.182l2.048 2.048 2.048-2.048a2.25 2.25 0 013.182 3.182l-5.23 5.23c-.466.466-1.222.466-1.688 0z',
+    mic: "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v2m0-14V3m-7 7a7 7 0 017-7 7 7 0 017 7",
+    radio:
+      "M6.75 7.5l3 2.25-3 2.25m-3-2.25 3 2.25-3 2.25m15-4.5-3 2.25 3 2.25m-3-2.25 3 2.25-3 2.25M3.375 7.5h17.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125H3.375a1.125 1.125 0 01-1.125-1.125v-9.75c0-.621.504-1.125 1.125-1.125z",
+    globe:
+      "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A11.959 11.959 0 013.685 6.698",
+    calendar:
+      "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008z",
+    music:
+      "M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z",
+    users:
+      "M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128a23.91 23.91 0 013.183 1.133 9.386 9.386 0 01-5.26 2.068 9.389 9.389 0 01-5.26-2.068 23.918 23.918 0 013.183-1.133M15 19.128c.346.03.694.032 1.042.032a9.375 9.375 0 004.899-1.382M9 19.128v-.003c0-1.113.285-2.16.786-3.07M9 19.128A23.91 23.91 0 005.817 20.26a9.386 9.01 0 005.26 2.068 9.389 9.389 0 005.26-2.068 23.918 23.918 0 01-3.183-1.133M9 19.128c-.346.03-.694.032-1.042.032a9.375 9.375 0 01-4.899-1.382M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 12a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z",
+    star:
+      "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z",
+    heart:
+      "M21 8.25c0 2.485-2.099 4.5-4.5 4.5S12 10.735 12 8.25 14.099 3.75 16.5 3.75 21 5.765 21 8.25zm0 0c0 2.485-2.099 4.5-4.5 4.5S12 10.735 12 8.25 14.099 3.75 16.5 3.75 21 5.765 21 8.25zM12 8.25c0 2.485-2.099 4.5-4.5 4.5S3 10.735 3 8.25 5.099 3.75 7.5 3.75 12 5.765 12 8.25zm0 0c0 2.485-2.099 4.5-4.5 4.5S3 10.735 3 8.25 5.099 3.75 7.5 3.75 12 5.765 12 8.25zM11.48 19.35l-5.23-5.23a2.25 2.25 0 013.182-3.182l2.048 2.048 2.048-2.048a2.25 2.25 0 013.182 3.182l-5.23 5.23c-.466.466-1.222.466-1.688 0z",
   };
   return (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,22 +80,34 @@ function IconFor({ name }: { name?: string }) {
   );
 }
 
-function CtaButtonLink({ cta, baseColor = 'yellow', anchor, fallbackLabel, fallbackAnchor }: { cta: CtaButton | null; baseColor?: 'yellow' | 'red' | 'white'; anchor?: string; fallbackLabel?: string; fallbackAnchor?: string }) {
+function CtaButtonLink({
+  cta,
+  baseColor = "yellow",
+  fallbackLabel,
+  fallbackAnchor,
+}: {
+  cta: CtaButton | null;
+  baseColor?: "yellow" | "red" | "white";
+  fallbackLabel?: string;
+  fallbackAnchor?: string;
+}) {
   if (!cta?.label) return null;
   const label = cta.label || fallbackLabel;
-  const link = cta.link?.trim() || anchor || fallbackAnchor || '#';
-  const isAnchor = link.startsWith('#');
+  const rawLink = String(cta.link || fallbackAnchor || "#").trim();
+  const hashMatch = rawLink.match(/#(.+)$/);
+  const link = hashMatch ? `#${hashMatch[1]}` : rawLink;
+  const isAnchor = link.startsWith("#");
   const colorClasses = {
-    yellow: 'bg-taka-yellow text-taka-black hover:bg-taka-yellow/90',
-    red: 'bg-taka-red text-white hover:bg-taka-red/90',
-    white: 'bg-white text-taka-black hover:bg-white/90',
+    yellow: "bg-taka-yellow text-taka-black hover:bg-taka-yellow/90",
+    red: "bg-taka-red text-white hover:bg-taka-red/90",
+    white: "bg-white text-taka-black hover:bg-white/90",
   };
   const outlineClasses = {
-    yellow: 'border-2 border-taka-yellow text-taka-yellow hover:bg-taka-yellow hover:text-taka-black',
-    red: 'border-2 border-taka-red text-taka-red hover:bg-taka-red hover:text-white',
-    white: 'border-2 border-white text-white hover:bg-white hover:text-taka-black',
+    yellow: "border-2 border-taka-yellow text-taka-yellow hover:bg-taka-yellow hover:text-taka-black",
+    red: "border-2 border-taka-red text-taka-red hover:bg-taka-red hover:text-white",
+    white: "border-2 border-white text-white hover:bg-white hover:text-taka-black",
   };
-  const cls = cta.style === 'outline' ? outlineClasses[baseColor] : colorClasses[baseColor];
+  const cls = cta.style === "outline" ? outlineClasses[baseColor] : colorClasses[baseColor];
 
   if (isAnchor) {
     return (
@@ -79,8 +117,8 @@ function CtaButtonLink({ cta, baseColor = 'yellow', anchor, fallbackLabel, fallb
     );
   }
 
-  const target = cta.isExternal ? '_blank' : undefined;
-  const rel = cta.isExternal ? 'noopener noreferrer' : undefined;
+  const target = cta.isExternal ? "_blank" : undefined;
+  const rel = cta.isExternal ? "noopener noreferrer" : undefined;
   return (
     <Link href={link} target={target} rel={rel} className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${cls}`}>
       {label}
@@ -91,37 +129,43 @@ function CtaButtonLink({ cta, baseColor = 'yellow', anchor, fallbackLabel, fallb
 export default async function LabelMusicalPage() {
   const [pageData, artistesData] = await Promise.all([
     fetchLabelMusicalPage(),
-    fetchStrapiList("artistes?fields[0]=nom&fields[1]=slug&fields[2]=documentId&fields[3]=genre&fields[4]=biographie&fields[5]=genre_musical&populate[photo][fields][0]=url&populate[photo][fields][1]=alternativeText&sort[0]=nom:asc") as Promise<Record<string, unknown>[] | null>,
+    fetchStrapiList(
+      "artistes?fields[0]=nom&fields[1]=slug&fields[2]=documentId&fields[3]=genre&fields[4]=biographie&fields[5]=genre_musical&populate[photo][fields][0]=url&populate[photo][fields][1]=alternativeText&sort[0]=nom:asc"
+    ) as Promise<Record<string, unknown>[] | null>,
   ]);
 
   const page = pageData as LabelMusicalPage | null;
-  const artistes = artistesData || [];
+  const artistes = artistesData ? (artistesData as unknown as Artiste[]) : [];
 
   const hero = page?.hero;
-  const heroDescription = hero?.description || "Taka Inside déniche, accompagne et met en lumière les talents de la scène musicale béninoise et africaine.";
-  const heroPrimaryCta = buildCta(hero?.primaryCta) || { label: "Découvrir les artistes", link: hero?.primaryCtaAnchor || "#artistes", style: "primary" };
-  const heroSecondaryCta = buildCta(hero?.secondaryCta) || { label: "Nos actualités", link: hero?.secondaryCtaAnchor || "#actualites", style: "outline" };
+  const heroDescription =
+    hero?.description ||
+    "Taka Inside déniche, accompagne et met en lumière les talents de la scène musicale béninoise et africaine.";
+  const heroPrimaryCta = buildHeroCta(hero?.primaryCta, "Découvrir les artistes", hero?.primaryCtaAnchor || "#artistes");
+  const heroSecondaryCta = buildHeroCta(hero?.secondaryCta, "Nos actualités", hero?.secondaryCtaAnchor || "#actualites");
   const heroTitle = hero?.title || "Notre";
   const heroHighlighted = hero?.highlightedWord || "Label";
   const stats = page?.stats || [];
-  const artistsSectionTitle = page?.artistsSectionTitle || 'Les talents Taka Inside';
-  const artistsSectionDescription = page?.artistsSectionDescription || '';
+  const artistsSectionTitle = page?.artistsSectionTitle || "Les talents Taka Inside";
+  const artistsSectionDescription = page?.artistsSectionDescription || "";
   const artistsSectionCta = buildCta(page?.artistsSectionCta);
   const artistsSectionCtaThreshold = page?.artistsSectionCtaThreshold ?? 4;
   const artistsPerRow = page?.artistsPerRow ?? 3;
   const showArtistsCta = artistsSectionCta && artistes.length >= artistsSectionCtaThreshold;
-  const actualitesSectionTitle = page?.actualitesSectionTitle || 'Nos actualités';
-  const actualitesSectionDescription = page?.actualitesSectionDescription || '';
+  const actualitesSectionTitle = page?.actualitesSectionTitle || "Nos actualités";
+  const actualitesSectionDescription = page?.actualitesSectionDescription || "";
   const actualites = page?.actualites || [];
   const callout = page?.callout || {
     title: "Vous êtes artiste et souhaitez rejoindre le label ?",
     description: "Envoyez-nous votre dossier. On étudie chaque proposition avec attention.",
     primaryCta: { label: "Nous contacter", link: "/contact", style: "primary" },
-    secondaryCta: { label: "En savoir plus", link: "/association", style: "outline" }
+    secondaryCta: { label: "En savoir plus", link: "/association", style: "outline" },
   };
-  const artistFallbackLabel = page?.artistFallbackLabel || 'Artiste';
+  const artistFallbackLabel = page?.artistFallbackLabel || "Artiste";
 
-  const heroBgUrl = hero?.backgroundImage ? getImageUrl(hero.backgroundImage as unknown as { url: string } | null) : null;
+  const heroBgUrl = hero?.backgroundImage
+    ? getImageUrl(hero.backgroundImage as unknown as { url: string } | null)
+    : null;
 
   return (
     <SiteLayout>
@@ -136,16 +180,14 @@ export default async function LabelMusicalPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-taka-red/15 text-taka-red text-sm font-medium mb-4">
-              <IconFor name={hero?.badgeIcon || 'music'} />
+              <IconFor name={hero?.badgeIcon || "music"} />
               {hero?.badgeText || "Label Musical"}
             </div>
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
               {heroTitle} <span className="text-taka-red">{heroHighlighted}</span>
             </h1>
             {heroDescription && (
-              <div className="text-lg md:text-xl text-taka-gray mb-8 leading-relaxed">
-                {renderRichText(heroDescription)}
-              </div>
+              <div className="text-lg md:text-xl text-taka-gray mb-8 leading-relaxed">{renderRichText(heroDescription)}</div>
             )}
             <div className="flex flex-wrap gap-4">
               {heroPrimaryCta && <CtaButtonLink cta={heroPrimaryCta} baseColor="red" />}
@@ -195,21 +237,26 @@ export default async function LabelMusicalPage() {
             </div>
           )}
 
-          <div className={`grid gap-6 ${
-            artistsPerRow === 4 ? 'md:grid-cols-2 lg:grid-cols-4' :
-            artistsPerRow === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'
-          }`}>
+          <div
+            className={`grid gap-6 ${
+              artistsPerRow === 4 ? "md:grid-cols-2 lg:grid-cols-4" : artistsPerRow === 2 ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"
+            }`}
+          >
             {artistes.map((artiste) => {
               const id = String(artiste.documentId || "");
               const slug = String(artiste.slug || "");
-              const artistPath = slug ? `/label-musical/${slug}` : (id ? `/label-musical/${id}` : '/label-musical');
+              const artistPath = slug ? `/label-musical/${slug}` : id ? `/label-musical/${id}` : "/label-musical";
               const nom = String(artiste.nom || "");
-              const genre = String((artiste.genre_musical || artiste.genre) || "");
+              const genre = String(artiste.genre_musical || artiste.genre || "");
               const bio = String(artiste.biographie || "");
               const photoUrl = getImageUrl(artiste.photo as { url: string } | null);
               if (!id) return null;
               return (
-                <Link href={artistPath} key={id} className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md hover:-translate-y-1 transition-all group">
+                <Link
+                  href={artistPath}
+                  key={id}
+                  className="bg-white rounded-2xl p-6 border border-taka-gray-light flex gap-4 hover:shadow-md hover:-translate-y-1 transition-all group"
+                >
                   <div className="w-20 h-20 rounded-xl bg-taka-gray-light flex-shrink-0 overflow-hidden relative flex items-center justify-center text-taka-gray font-display font-bold text-xl">
                     {photoUrl ? (
                       <Image src={photoUrl} alt={nom} fill className="object-cover" sizes="80px" />
@@ -243,12 +290,14 @@ export default async function LabelMusicalPage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {actualites.map((actu, idx) => {
-                const titre = String(actu.titre || '');
-                const contenu = String(actu.contenu || '');
-                const date = actu.date ? new Date(actu.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+                const titre = String(actu.titre || "");
+                const contenu = String(actu.contenu || "");
+                const date = actu.date
+                  ? new Date(actu.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+                  : "";
                 const imageUrl = getImageUrl(actu.image as { url: string } | null);
-                const lien = String(actu.lien || '');
-                const CardContent = (
+                const lien = String(actu.lien || "");
+                const card = (
                   <div className="bg-taka-cream rounded-2xl overflow-hidden border border-taka-gray-light h-full flex flex-col">
                     {imageUrl && (
                       <div className="relative h-48 w-full">
@@ -260,17 +309,21 @@ export default async function LabelMusicalPage() {
                       <h3 className="font-display text-xl font-bold text-taka-black mb-2">{titre}</h3>
                       {contenu && <div className="text-taka-gray text-sm line-clamp-3 mb-4">{renderRichText(contenu)}</div>}
                       {lien && (
-                        <a href={lien} className="mt-auto inline-flex items-center text-taka-red font-semibold text-sm hover:underline">
+                        <span className="mt-auto inline-flex items-center text-taka-red font-semibold text-sm hover:underline">
                           Lire la suite →
-                        </a>
+                        </span>
                       )}
                     </div>
                   </div>
                 );
                 return lien ? (
-                  <a key={idx} href={lien} className="block h-full">{CardContent}</a>
+                  <a key={idx} href={lien} className="block h-full">
+                    {card}
+                  </a>
                 ) : (
-                  <div key={idx} className="h-full">{CardContent}</div>
+                  <div key={idx} className="h-full">
+                    {card}
+                  </div>
                 );
               })}
             </div>
