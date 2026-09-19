@@ -277,17 +277,21 @@ export default async function LabelMusicalPage() {
       </section>
 
       {/* Actualités */}
-      {actualites.length > 0 && (
-        <section id="actualites" className="py-16 md:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-10">
-              <span className="text-taka-red text-sm font-semibold uppercase tracking-wider">Actualités du label</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-taka-black mt-2">{actualitesSectionTitle}</h2>
-              {actualitesSectionDescription && (
-                <div className="text-taka-gray mt-3 max-w-2xl">{renderRichText(actualitesSectionDescription)}</div>
-              )}
-            </div>
+      <section id="actualites" className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-10">
+            <span className="text-taka-red text-sm font-semibold uppercase tracking-wider">Actualités du label</span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-taka-black mt-2">{actualitesSectionTitle}</h2>
+            {actualitesSectionDescription && (
+              <div className="text-taka-gray mt-3 max-w-2xl">{renderRichText(actualitesSectionDescription)}</div>
+            )}
+          </div>
 
+          {actualites.length === 0 ? (
+            <div className="text-center py-12 bg-taka-cream rounded-2xl border border-taka-gray-light">
+              <p className="text-taka-gray">Aucune actualité pour le moment. Revenez bientôt !</p>
+            </div>
+          ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {actualites.map((actu, idx) => {
                 const titre = String(actu.titre || "");
@@ -327,9 +331,9 @@ export default async function LabelMusicalPage() {
                 );
               })}
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* Callout */}
       {callout && (
